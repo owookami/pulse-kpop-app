@@ -15,7 +15,7 @@ dependencies:
   # UI
   cached_network_image: 3.3.0
   flutter_svg: 2.0.7
-  google_fonts: 5.1.0
+  google_fonts: 6.2.1
   # 상태 관리
   flutter_riverpod: 2.4.0
   flutter_hooks: 0.20.1
