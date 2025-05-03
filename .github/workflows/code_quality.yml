@@ -1,0 +1,60 @@
+name: 코드 품질 검사
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  lint:
+    name: 린트 및 포맷팅 검사
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Flutter 설치
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.10.0'
+          channel: 'stable'
+      
+      - name: Melos 설치
+        run: |
+          dart pub global activate melos
+          echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
+      
+      - name: 의존성 설치
+        run: melos bootstrap
+      
+      - name: 코드 분석
+        run: melos analyze
+      
+      - name: 코드 포맷팅 검사
+        run: melos format
+      
+      - name: 의존성 일관성 검사
+        run: dart run scripts/dependency_checker.dart
+
+  test:
+    name: 테스트
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Flutter 설치
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.10.0'
+          channel: 'stable'
+      
+      - name: Melos 설치
+        run: |
+          dart pub global activate melos
+          echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
+      
+      - name: 의존성 설치
+        run: melos bootstrap
+      
+      - name: 테스트 실행
+        run: melos test 

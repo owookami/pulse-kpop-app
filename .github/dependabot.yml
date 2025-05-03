@@ -1,0 +1,89 @@
+version: 2
+updates:
+  # Flutter 종속성 업데이트 (app 패키지)
+  - package-ecosystem: "pub"
+    directory: "/apps/mobile"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels:
+      - "dependencies"
+      - "flutter"
+      - "app"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    open-pull-requests-limit: 10
+  
+  # Flutter 종속성 업데이트 (api_client 패키지)
+  - package-ecosystem: "pub"
+    directory: "/packages/api_client"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels:
+      - "dependencies"
+      - "flutter"
+      - "api_client"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    open-pull-requests-limit: 10
+  
+  # Flutter 종속성 업데이트 (core 패키지)
+  - package-ecosystem: "pub"
+    directory: "/packages/core"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels:
+      - "dependencies"
+      - "flutter"
+      - "core"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    open-pull-requests-limit: 10
+  
+  # Flutter 종속성 업데이트 (ui_kit 패키지)
+  - package-ecosystem: "pub"
+    directory: "/packages/ui_kit"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels:
+      - "dependencies"
+      - "flutter"
+      - "ui_kit"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    open-pull-requests-limit: 10
+  
+  # Python 종속성 업데이트 (크롤러)
+  - package-ecosystem: "pip"
+    directory: "/crawler"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+    labels:
+      - "dependencies"
+      - "python"
+      - "crawler"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    open-pull-requests-limit: 10
+  
+  # GitHub Actions 종속성 업데이트
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    open-pull-requests-limit: 5 

@@ -1,0 +1,17 @@
+[
+  {
+    "id": "dfe3c46c-e5b9-4896-adac-a47ab1bcc887",
+    "name": "매일 새벽 1시 크롤링",
+    "cron_expression": "0 1 * * *",
+    "is_active": true,
+    "params": {
+      "artist": "",
+      "group": "",
+      "event": "",
+      "limit": 50,
+      "save_to_db": true
+    },
+    "last_run": null,
+    "next_run": "2025-05-04T01:00:00"
+  }
+]

@@ -1,0 +1,234 @@
+name: Flutter CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'apps/**'
+      - 'packages/**'
+      - '.github/workflows/flutter_workflow.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'apps/**'
+      - 'packages/**'
+      - '.github/workflows/flutter_workflow.yml'
+  workflow_dispatch:
+
+jobs:
+  setup:
+    name: 개발 환경 설정
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Flutter 설치
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.10.0'
+          channel: 'stable'
+      
+      - name: Melos 설치
+        run: |
+          dart pub global activate melos
+          echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
+      
+      - name: Flutter 버전 정보
+        run: flutter --version
+      
+      - name: 의존성 설치
+        run: melos bootstrap
+      
+      - name: 캐시 저장
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ env.PUB_CACHE }}
+            **/.dart_tool
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+  
+  test:
+    name: 테스트
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Flutter 설치
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.10.0'
+          channel: 'stable'
+      
+      - name: 캐시 복원
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ env.PUB_CACHE }}
+            **/.dart_tool
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+      
+      - name: Melos 설치
+        run: |
+          dart pub global activate melos
+          echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
+      
+      - name: 의존성 설치
+        run: melos bootstrap
+      
+      - name: 테스트 실행
+        run: melos test
+      
+      - name: 테스트 결과 업로드
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-results
+          path: "**/test-results/**"
+          retention-days: 7
+
+  build-android:
+    name: Android 빌드
+    needs: test
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Java 설정
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      
+      - name: Flutter 설치
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.10.0'
+          channel: 'stable'
+      
+      - name: 캐시 복원
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ env.PUB_CACHE }}
+            **/.dart_tool
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+      
+      - name: Melos 설치
+        run: |
+          dart pub global activate melos
+          echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
+      
+      - name: 의존성 설치
+        run: melos bootstrap
+      
+      - name: .env 파일 생성
+        run: |
+          cd apps/mobile
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" > .env
+          echo "SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}" >> .env
+          echo "FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }}" >> .env
+          echo "FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}" >> .env
+          echo "FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}" >> .env
+          echo "APP_ENV=${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}" >> .env
+          
+      - name: 환경 설정 및 앱 구성
+        run: |
+          cd apps/mobile
+          flutter pub run build_runner build --delete-conflicting-outputs
+      
+      - name: Android AAB 빌드
+        run: |
+          cd apps/mobile
+          flutter build appbundle --flavor ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }} --release
+      
+      - name: Android APK 빌드
+        run: |
+          cd apps/mobile
+          flutter build apk --flavor ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }} --release --split-per-abi
+      
+      - name: 빌드 결과물 저장
+        uses: actions/upload-artifact@v3
+        with:
+          name: android-build
+          path: |
+            apps/mobile/build/app/outputs/bundle/**/app-*.aab
+            apps/mobile/build/app/outputs/apk/**/app-*-release.apk
+          retention-days: 7
+          
+      - name: Firebase App Distribution에 배포
+        if: github.ref == 'refs/heads/develop'
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ secrets.FIREBASE_APP_ID }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+          groups: testers
+          file: apps/mobile/build/app/outputs/apk/developmentRelease/app-development-release.apk
+          releaseNotes: |
+            개발 버전 빌드
+            커밋: ${{ github.sha }}
+            빌드 시간: ${{ github.event.repository.updated_at }}
+
+  build-ios:
+    name: iOS 빌드
+    needs: test
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Flutter 설치
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.10.0'
+          channel: 'stable'
+      
+      - name: Melos 설치
+        run: |
+          dart pub global activate melos
+          echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
+      
+      - name: Flutter 버전 정보
+        run: flutter --version
+      
+      - name: 의존성 설치
+        run: melos bootstrap
+      
+      - name: .env 파일 생성
+        run: |
+          cd apps/mobile
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" > .env
+          echo "SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}" >> .env
+          echo "FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }}" >> .env
+          echo "FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}" >> .env
+          echo "FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}" >> .env
+          echo "APP_ENV=${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}" >> .env
+      
+      - name: 환경 설정 및 앱 구성
+        run: |
+          cd apps/mobile
+          flutter pub run build_runner build --delete-conflicting-outputs
+      
+      - name: iOS 빌드 설정
+        run: |
+          cd apps/mobile/ios
+          pod install
+      
+      - name: iOS 개발 빌드
+        run: |
+          cd apps/mobile
+          flutter build ios --flavor ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }} --release --no-codesign
+      
+      - name: 빌드 결과물 저장
+        uses: actions/upload-artifact@v3
+        with:
+          name: ios-build
+          path: apps/mobile/build/ios/iphoneos
+          retention-days: 7 

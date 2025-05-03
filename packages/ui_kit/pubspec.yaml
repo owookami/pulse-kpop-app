@@ -1,0 +1,50 @@
+name: ui_kit
+description: Pulse 앱의 UI 컴포넌트 라이브러리
+version: 0.1.0
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # 프로젝트 내부 패키지
+  core:
+    path: ../core
+  # UI
+  cached_network_image: 3.3.0
+  flutter_svg: 2.0.7
+  google_fonts: 5.1.0
+  # 상태 관리
+  flutter_riverpod: 2.4.0
+  flutter_hooks: 0.20.1
+  hooks_riverpod: 2.4.0
+  # 애니메이션
+  lottie: 2.6.0
+  # 반응형
+  flutter_screenutil: 5.9.0
+  # 유틸리티
+  logger: 2.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  # 린트 및 분석
+  flutter_lints: 2.0.3
+
+flutter:
+  # 필요한 Flutter 설정 추가
+  # 아래는 예시로, 필요에 따라 실제 애셋 경로를 설정합니다
+  # uses-material-design: true
+  # assets:
+  #   - assets/images/
+  #   - assets/icons/
+  # fonts:
+  #   - family: Pretendard
+  #     fonts:
+  #       - asset: assets/fonts/Pretendard-Regular.ttf
+  #       - asset: assets/fonts/Pretendard-Medium.ttf
+  #         weight: 500
+  #       - asset: assets/fonts/Pretendard-Bold.ttf
+  #         weight: 700 

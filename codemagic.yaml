@@ -1,0 +1,54 @@
+workflows:
+  pulse-flutter-workflow:
+    name: Pulse 모바일 앱 빌드
+    instance_type: mac_mini_m1
+    environment:
+      flutter: stable
+      xcode: latest
+      groups:
+        - pulse_credentials # Codemagic 팀 설정에서 만든 환경 변수 그룹
+      vars:
+        APP_ENV: production
+      flutter: stable
+      
+    scripts:
+      - name: 모노레포 설정 (Melos)
+        script: |
+          dart pub global activate melos
+          melos bootstrap
+      
+      - name: 플러터 테스트
+        script: |
+          cd apps/mobile
+          flutter test
+      
+      - name: iOS 빌드
+        script: |
+          cd apps/mobile
+          flutter build ios --flavor production --release --no-codesign
+      
+      - name: Android 빌드
+        script: |
+          cd apps/mobile
+          flutter build appbundle --flavor production --release
+    
+    artifacts:
+      - apps/mobile/build/ios/iphoneos/Runner.app
+      - apps/mobile/build/app/outputs/bundle/productionRelease/app-production-release.aab
+    
+    publishing:
+      email:
+        recipients:
+          - team@yourcompany.com
+        notify:
+          success: true
+          failure: true
+      
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
+        submit_as_draft: true 

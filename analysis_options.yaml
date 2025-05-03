@@ -1,0 +1,60 @@
+include: package:flutter_lints/flutter.yaml
+
+# 모노레포 전체에 적용되는 린트 규칙
+linter:
+  rules:
+    # 스타일
+    - always_declare_return_types
+    - always_put_required_named_parameters_first
+    - avoid_print
+    - avoid_redundant_argument_values
+    - avoid_relative_lib_imports
+    - directives_ordering
+    - prefer_const_constructors
+    - prefer_const_declarations
+    - prefer_single_quotes
+    - sort_child_properties_last
+    
+    # 성능
+    - avoid_unnecessary_containers
+    - use_key_in_widget_constructors
+    
+    # 오류 방지
+    - avoid_dynamic_calls
+    - avoid_empty_else
+    - avoid_returning_null_for_future
+    - avoid_type_to_string
+    - cancel_subscriptions
+    - close_sinks
+    - package_api_docs
+    - unawaited_futures
+    
+    # Riverpod 관련
+    - depend_on_referenced_packages
+
+# 추가 분석 옵션
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/*.gr.dart"
+    - "**/*.mocks.dart"
+    - "lib/generated/**"
+    - "lib/gen/**"
+    - ".dart_tool/**"
+    - "test/.test_coverage.dart"
+    - "bin/cache/**"
+    - "coverage/**"
+    - "packages/flutter_tools/.pub/**"
+  errors:
+    # 아래 오류를 경고로 변경
+    invalid_annotation_target: warning
+    todo: info
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+
+# dart format 옵션
+dart_style:
+  line_length: 100 

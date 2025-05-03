@@ -1,0 +1,45 @@
+name: Codemagic Flutter CI/CD
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'apps/mobile/**'
+      - 'packages/**'
+      - '.github/workflows/flutter_codemagic.yml'
+  workflow_dispatch:
+
+jobs:
+  trigger-codemagic:
+    name: Codemagic 빌드 트리거
+    runs-on: ubuntu-latest
+    steps:
+      - name: Codemagic API 호출
+        id: codemagic
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: 'https://api.codemagic.io/builds'
+          method: 'POST'
+          bearerToken: ${{ secrets.CODEMAGIC_API_TOKEN }}
+          customHeaders: '{"Content-Type": "application/json"}'
+          data: >-
+            {
+              "appId": "${{ secrets.CODEMAGIC_APP_ID }}",
+              "workflowId": "${{ secrets.CODEMAGIC_WORKFLOW_ID }}",
+              "branch": "main",
+              "environment": {
+                "variables": {
+                  "SUPABASE_URL": "${{ secrets.SUPABASE_URL }}",
+                  "SUPABASE_ANON_KEY": "${{ secrets.SUPABASE_ANON_KEY }}",
+                  "FIREBASE_APP_ID": "${{ secrets.FIREBASE_APP_ID }}",
+                  "APP_ENV": "production"
+                }
+              }
+            }
+      
+      - name: 응답 출력
+        run: echo "Codemagic 빌드 시작됨 - ${{ fromJson(steps.codemagic.outputs.response).buildId }}"
+      
+      - name: 빌드 URL 출력
+        run: |
+          echo "빌드 상태 확인: https://codemagic.io/app/${{ secrets.CODEMAGIC_APP_ID }}/build/${{ fromJson(steps.codemagic.outputs.response).buildId }}" 

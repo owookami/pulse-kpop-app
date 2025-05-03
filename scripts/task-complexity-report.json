@@ -1,0 +1,91 @@
+{
+  "meta": {
+    "generatedAt": "2025-05-02T12:56:00.873Z",
+    "tasksAnalyzed": 10,
+    "thresholdScore": 5,
+    "projectName": "Your Project Name",
+    "usedResearch": false
+  },
+  "complexityAnalysis": [
+    {
+      "taskId": 1,
+      "taskTitle": "Set up project infrastructure and monorepo",
+      "complexityScore": 7,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Break down the monorepo setup task into specific subtasks covering: 1) Initial Melos configuration, 2) Package structure creation, 3) Dependency management setup, 4) Linting and code quality tools, and 5) CI/CD pipeline configuration with environment variables",
+      "reasoning": "This task involves setting up the entire project architecture which requires technical expertise in monorepo management, package dependencies, and CI/CD configuration. The complexity comes from ensuring all packages work together correctly with proper dependency management across multiple environments."
+    },
+    {
+      "taskId": 2,
+      "taskTitle": "Configure Supabase backend and database schema",
+      "complexityScore": 6,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Divide the Supabase configuration task into subtasks covering: 1) Project initialization, 2) Database schema creation with tables and relationships, 3) Row Level Security policy implementation, 4) Index creation and performance optimization, and 5) Authentication setup",
+      "reasoning": "Setting up the database schema requires careful planning of relationships between tables and implementing proper security policies. The complexity is moderate as it involves database design, security considerations, and authentication setup, but follows standard patterns."
+    },
+    {
+      "taskId": 3,
+      "taskTitle": "Implement YouTube fancam crawler service",
+      "complexityScore": 8,
+      "recommendedSubtasks": 6,
+      "expansionPrompt": "Break down the YouTube crawler service implementation into subtasks covering: 1) FastAPI application setup, 2) YouTube API integration, 3) Search and metadata extraction logic, 4) Database storage integration, 5) Scheduled job configuration, and 6) Containerization and deployment",
+      "reasoning": "This task involves creating a separate service with multiple complex components: API integration, data processing, scheduled jobs, and containerization. The complexity is high due to handling YouTube API quotas, implementing efficient crawling algorithms, and ensuring reliable data storage."
+    },
+    {
+      "taskId": 4,
+      "taskTitle": "Develop Flutter app foundation and authentication",
+      "complexityScore": 7,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Divide the Flutter app foundation task into subtasks covering: 1) Project setup with Material 3 and theming, 2) Navigation configuration with GoRouter, 3) State management implementation with Riverpod, 4) Authentication UI screens development, and 5) Secure token storage and session management",
+      "reasoning": "Building the app foundation requires setting up multiple architectural components like navigation, state management, and authentication. The complexity comes from ensuring these systems work together seamlessly while implementing secure authentication flows."
+    },
+    {
+      "taskId": 5,
+      "taskTitle": "Implement integrated fancam feed",
+      "complexityScore": 6,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Break down the fancam feed implementation into subtasks covering: 1) Feed UI layout and components, 2) API client methods for video fetching, 3) Infinite scrolling and pagination implementation, 4) Caching and offline support, and 5) Loading states and error handling",
+      "reasoning": "This task involves creating the main content display with data fetching, UI rendering, and performance optimizations. The complexity is moderate as it requires implementing standard list views with pagination, but also needs careful performance consideration for smooth scrolling and image loading."
+    },
+    {
+      "taskId": 6,
+      "taskTitle": "Build integrated video player",
+      "complexityScore": 7,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Divide the video player implementation into subtasks covering: 1) YouTube player integration, 2) Custom playback controls development, 3) Video information display UI, 4) Orientation and picture-in-picture handling, and 5) Performance optimization",
+      "reasoning": "Implementing a video player involves complex UI interactions, third-party package integration, and handling various device states. The complexity comes from ensuring smooth playback across different network conditions and device orientations while optimizing for performance."
+    },
+    {
+      "taskId": 7,
+      "taskTitle": "Implement fan voting system",
+      "complexityScore": 6,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Break down the voting system implementation into subtasks covering: 1) Rating UI components development, 2) Backend integration for storing votes, 3) Ranking algorithm implementation, and 4) Optimistic UI updates and animations",
+      "reasoning": "This task involves creating interactive UI components with backend integration and implementing a statistical ranking algorithm. The complexity is moderate as it requires careful consideration of user experience with immediate feedback while ensuring data consistency."
+    },
+    {
+      "taskId": 8,
+      "taskTitle": "Develop artist profile and follow system",
+      "complexityScore": 7,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Divide the artist profile and follow system into subtasks covering: 1) Artist profile UI development, 2) Follow/unfollow functionality implementation, 3) Followed artists screen creation, 4) Push notification setup with Firebase, and 5) Notification preferences management",
+      "reasoning": "This task combines UI development with real-time updates and push notification integration. The complexity comes from implementing the follow system with proper real-time updates and setting up the notification infrastructure across multiple services."
+    },
+    {
+      "taskId": 9,
+      "taskTitle": "Implement search and discovery features",
+      "complexityScore": 6,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Break down the search implementation into subtasks covering: 1) Search UI with query suggestions, 2) Search functionality with filters, 3) Trending searches and history implementation, and 4) Discovery section development",
+      "reasoning": "Implementing search requires creating responsive UI with real-time suggestions and efficient backend queries. The complexity is moderate as it involves standard search patterns but requires optimization for performance and user experience with features like debouncing."
+    },
+    {
+      "taskId": 10,
+      "taskTitle": "Implement bookmarks and personalization",
+      "complexityScore": 7,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Divide the bookmarks and personalization features into subtasks covering: 1) Bookmark functionality implementation, 2) Collections management UI, 3) Recommendation algorithm development, 4) 'For You' section integration, and 5) Sharing functionality",
+      "reasoning": "This task involves creating a personalized experience with bookmarks, collections, and recommendations. The complexity comes from implementing the recommendation algorithm and ensuring seamless sync of user data across devices with real-time updates."
+    }
+  ]
+}

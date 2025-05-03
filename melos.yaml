@@ -1,0 +1,135 @@
+name: pulse
+repository: https://github.com/username/pulse
+sdkPath: auto
+
+packages:
+  - apps/**
+  - packages/**
+
+command:
+  version:
+    # 버전 관리 전략 설정
+    workspaceChangelog: true
+    linkToCommits: true
+    branch: main
+    updateGitTagRefs: true
+    # 패키지 버전 일관성 유지
+    enforceConsistency: true
+    # 의존성 버전 자동 업데이트
+    updateDependentsRecursively: true
+
+scripts:
+  analyze:
+    # 전체 프로젝트 정적 분석
+    run: melos exec -- "flutter analyze"
+    description: Run 'flutter analyze' in all packages
+
+  format:
+    # 코드 포맷팅
+    run: melos exec -- "dart format . --fix"
+    description: Run 'dart format' in all packages
+
+  test:
+    # 유닛 테스트 실행
+    run: melos exec -- "flutter test"
+    description: Run 'flutter test' in all packages
+    select-package:
+      dir-exists:
+        - test
+      flutter: true
+
+  clean:
+    # 전체 프로젝트 clean
+    run: melos exec -- "flutter clean"
+    description: Run 'flutter clean' in all packages
+    select-package:
+      flutter: true
+
+  generate:
+    # 코드 생성 실행
+    run: melos exec -- "flutter pub run build_runner build --delete-conflicting-outputs"
+    description: Run code generation in all packages
+    select-package:
+      depends-on: "build_runner"
+      flutter: true
+
+  deps:outdated:
+    # 오래된 의존성 확인
+    run: melos exec -- "flutter pub outdated"
+    description: Check for outdated dependencies
+    select-package:
+      flutter: true
+
+  deps:upgrade:
+    # 의존성 업그레이드
+    run: melos exec -- "flutter pub upgrade"
+    description: Upgrade dependencies to latest versions
+    select-package:
+      flutter: true
+
+  deps:upgrade:major:
+    # 메이저 버전을 포함한 의존성 업그레이드
+    run: melos exec -- "flutter pub upgrade --major-versions"
+    description: Upgrade dependencies including major version changes
+    select-package:
+      flutter: true
+
+  deps:check:
+    # 의존성 일관성 검사
+    run: dart run scripts/dependency_checker.dart
+    description: Check dependency consistency across all packages
+
+  deps:fix:
+    # 의존성 고정 및 최신화
+    run: >
+      melos deps:outdated &&
+      melos bootstrap
+    description: Fix dependencies by updating and bootstrapping
+
+  build:
+    # 모든 패키지 빌드
+    run: melos exec -- "flutter build"
+    description: Build all packages
+    select-package:
+      flutter: true
+
+  bootstrap:
+    # 의존성 해결을 위한 최적화 설정
+    usePubspecOverrides: true
+    runPubGetInParallel: true
+    hooks:
+      post: >
+        melos format &&
+        melos generate
+
+  # 일관성 검증 스크립트
+  check:
+    run: >
+      melos analyze &&
+      melos format &&
+      melos test &&
+      melos deps:check
+    description: Run all checks (analyze, format, test, deps)
+
+  # 환경 초기화 및 설정
+  setup:environment:
+    run: >
+      flutter clean &&
+      melos clean &&
+      melos bootstrap
+    description: Clean and setup development environment
+
+dev_dependencies:
+  melos: ^3.1.0
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+# 의존성 오버라이드를 위한 pubspec_overrides.yaml 구성
+# 개발 중인 버전 재정의에 사용됩니다.
+ide:
+  intellij:
+    enabled: true
+  vscode:
+    enabled: true 

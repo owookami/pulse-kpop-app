@@ -1,0 +1,43 @@
+# Dart/Flutter 관련 파일
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+.pub/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+.buildlog
+.history
+.svn/
+pubspec.lock
+
+# IDE 파일
+.idea/
+*.iml
+.vscode/
+*.code-workspace
+.project
+.classpath
+.settings/
+.tools/
+.vscode/
+.DS_Store
+
+# 로그 파일
+*.log
+
+# Freezed 생성 파일
+*.freezed.dart
+*.g.dart
+
+# 캐시 디렉토리
+.*.cache
+.cache/ 

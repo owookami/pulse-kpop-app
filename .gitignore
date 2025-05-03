@@ -1,0 +1,162 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dev-debug.log
+
+# Dependency directories
+node_modules/
+
+# Environment variables
+.env
+
+# Cursor 관련 파일 (API 키 등 민감 정보 포함)
+.cursor/
+
+# Editor directories and files
+.idea
+# .vscode를 주석 처리하여 VS Code 설정 파일을 공유할 수 있도록 합니다
+# .vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS specific
+.DS_Store
+
+# Task files
+tasks.json
+tasks/
+
+# Flutter/Dart related
+**/build/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+**/.pub-cache/
+**/.pub/
+**/pubspec.lock
+**/doc/api/
+**/.DS_Store
+
+# Android related
+**/android/**/gradle-wrapper.jar
+**/android/.gradle
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.java
+
+# iOS related
+**/ios/Flutter/.last_build_id
+**/ios/**/*.mode1v3
+**/ios/**/*.mode2v3
+**/ios/**/*.moved-aside
+**/ios/**/*.pbxuser
+**/ios/**/*.perspectivev3
+**/ios/**/*sync/
+**/ios/**/.sconsign.dblite
+**/ios/**/.tags*
+**/ios/**/.vagrant/
+**/ios/**/DerivedData/
+**/ios/**/Icon?
+**/ios/**/Pods/
+**/ios/**/.symlinks/
+**/ios/**/profile
+**/ios/**/xcuserdata
+**/ios/.generated/
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/ephemeral
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
+
+# Xcode related
+**/ios/**/xcshareddata/
+
+# macOS related
+**/macos/Flutter/GeneratedPluginRegistrant.swift
+**/macos/Flutter/Flutter-Debug.xcconfig
+**/macos/Flutter/Flutter-Release.xcconfig
+**/macos/Flutter/Flutter-Profile.xcconfig
+
+# Web related
+**/web/packages
+**/web/build/
+**/web/.*
+
+# Melos related
+.melos_tool/
+**/pubspec_overrides.yaml
+
+# IDE related
+**/.idea/
+# **/.vscode/ 주석 처리하여 VS Code 설정 파일 공유 가능
+**/*.iml
+**/*.ipr
+**/*.iws
+**/.atom/
+
+# Coverage and reports
+**/coverage/
+**/.test_coverage.dart
+**/.test_runner.dart
+
+# Environment files
+**/.env*
+!**/.env.example
+
+# Logs and errors
+**/logs/
+**/*.log
+**/crash.log
+
+# Generated files
+**/*.freezed.dart
+**/*.g.dart
+**/*.gr.dart
+**/*.config.dart
+**/*.mocks.dart
+**/*.chopper.dart
+
+# Firebase
+**/google-services.json
+**/GoogleService-Info.plist
+**/firebase_options.dart
+
+# 의존성 관리 관련 파일
+pubspec_overrides.yaml
+.melos_tool/
+**/pubspec_overrides.yaml
+
+# 자주 생성되는 생성된 파일들
+*.freezed.dart
+*.g.dart
+*.gr.dart
+*.mocks.dart
+
+# General files
+.DS_Store
+.idea/
+*.iml
+*.ipr
+*.iws
+*.log
+*.tmp
+*.bak
+.vscode/
+*~
+.history
+.cache/ 
