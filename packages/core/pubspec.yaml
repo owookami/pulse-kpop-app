@@ -15,7 +15,7 @@ dependencies:
   uuid: 4.1.0
   # 유틸리티
   intl: 0.18.1
-  logger: 2.0.2
+  logger: 2.5.0
   # 네트워크 및 API
   dio: 5.3.3
   # 상태 관리
