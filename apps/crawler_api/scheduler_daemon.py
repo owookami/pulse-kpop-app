@@ -135,9 +135,16 @@ def run_job(job_id: str):
         job["last_run"] = datetime.now().isoformat()
         update_job_schedule(job)
         
+        # 현재 디렉토리와 스크립트 경로 가져오기
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        crawler_script = os.path.join(current_dir, "run_crawler.py")
+        
         # 작업 매개변수 설정
         params = job.get("params", {})
-        cmd = ["python", "run_crawler.py"]
+        
+        # Python 경로 설정 (파라미터에 있다면 그것을 사용하고, 없다면 기본값으로 /usr/bin/python3 사용)
+        python_path = params.get("python_path", "/usr/bin/python3")
+        cmd = [python_path, crawler_script]
         
         if params.get("artist"):
             cmd.extend(["--artist", params["artist"]])
@@ -154,13 +161,22 @@ def run_job(job_id: str):
         if params.get("save_to_db", True):
             cmd.append("--save-to-db")
         
+        # 로그 디렉토리 절대 경로 확인
+        logs_dir = os.path.join(current_dir, "logs")
+        os.makedirs(logs_dir, exist_ok=True)
+        log_file_path = os.path.join(logs_dir, f"job_{job_id}.log")
+        
+        # 명령 로깅
+        logger.info(f"명령 실행: {' '.join(cmd)}")
+        
         # 작업 실행
-        log_file = open(f"logs/job_{job_id}.log", "a")
+        log_file = open(log_file_path, "a")
         process = subprocess.Popen(
             cmd,
             stdout=log_file,
             stderr=subprocess.STDOUT,
-            text=True
+            text=True,
+            cwd=current_dir  # 현재 디렉토리 설정
         )
         
         # 실행 중인 작업 추적
@@ -209,8 +225,12 @@ def schedule_jobs():
             next_run = None
             if "next_run" in job and job["next_run"]:
                 try:
-                    next_run = datetime.fromisoformat(job["next_run"])
-                except (ValueError, TypeError):
+                    if isinstance(job["next_run"], str):
+                        next_run = datetime.fromisoformat(job["next_run"])
+                    else:
+                        next_run = job["next_run"]
+                except (ValueError, TypeError) as e:
+                    logger.error(f"다음 실행 시간 파싱 오류: {e}")
                     next_run = None
             
             if not next_run or next_run < datetime.now():
@@ -219,15 +239,64 @@ def schedule_jobs():
                 next_run = cron.get_next(datetime)
                 job["next_run"] = next_run.isoformat()
             
-            # cron 표현식에 따라 작업 스케줄링
-            schedule.every().day.at(next_run.strftime("%H:%M")).do(run_job, job_id)
+            # cron 표현식에 기반한 스케줄링 설정
+            cron_parts = job["cron_expression"].split()
+            if len(cron_parts) >= 5:
+                minute, hour, day_of_month, month, day_of_week = cron_parts[:5]
+                
+                # 매일 특정 시간에 실행
+                if day_of_month == "*" and month == "*" and day_of_week == "*":
+                    specific_hour = hour
+                    specific_minute = minute
+                    
+                    # 단일 시간인 경우 (예: "30 13 * * *" - 매일 13:30에 실행)
+                    if specific_hour.isdigit() and specific_minute.isdigit():
+                        formattedTime = f"{specific_hour.zfill(2)}:{specific_minute.zfill(2)}"
+                        schedule.every().day.at(formattedTime).do(run_job, job_id)
+                        logger.info(f"작업 '{job['name']}' 스케줄링됨: 매일 {formattedTime}에 실행, 다음 실행: {next_run.strftime('%Y-%m-%d %H:%M:%S')}")
+                    else:
+                        # 복잡한 cron 표현식은 매 분마다 확인하는 방식으로 처리
+                        schedule.every(1).minutes.do(check_job_schedule, job)
+                        logger.info(f"작업 '{job['name']}' 스케줄링됨: 복잡한 표현식 '{job['cron_expression']}', 다음 실행: {next_run.strftime('%Y-%m-%d %H:%M:%S')}")
+                else:
+                    # 복잡한 cron 표현식은 매 분마다 확인하는 방식으로 처리
+                    schedule.every(1).minutes.do(check_job_schedule, job)
+                    logger.info(f"작업 '{job['name']}' 스케줄링됨: 복잡한 표현식 '{job['cron_expression']}', 다음 실행: {next_run.strftime('%Y-%m-%d %H:%M:%S')}")
+            else:
+                logger.error(f"잘못된 cron 표현식: {job['cron_expression']}")
             
-            logger.info(f"작업 '{job['name']}' 스케줄링됨, 다음 실행: {next_run.strftime('%Y-%m-%d %H:%M:%S')}")
         except Exception as e:
             logger.error(f"작업 '{job['name']}' 스케줄링 오류: {e}")
     
     # 변경사항 저장
     save_scheduled_jobs(jobs)
+
+def check_job_schedule(job):
+    """특정 작업이 현재 실행되어야 하는지 확인"""
+    try:
+        now = datetime.now()
+        next_run = None
+        
+        # 다음 실행 시간 파싱
+        if "next_run" in job and job["next_run"]:
+            try:
+                if isinstance(job["next_run"], str):
+                    next_run = datetime.fromisoformat(job["next_run"])
+                else:
+                    next_run = job["next_run"]
+            except (ValueError, TypeError) as e:
+                logger.error(f"다음 실행 시간 파싱 오류: {e}")
+                next_run = None
+        
+        # 실행 시간이 현재 시간을 지났으면 작업 실행
+        if next_run and next_run <= now:
+            logger.info(f"예약된 시간에 도달: {job['name']}, 작업 실행")
+            run_job(job["id"])
+            
+            # 다음 실행 시간 업데이트 (update_job_schedule 함수에서 수행)
+        
+    except Exception as e:
+        logger.error(f"작업 일정 확인 중 오류 발생: {e}")
 
 def check_jobs_schedule():
     """모든 작업의 스케줄 확인 및 업데이트"""
