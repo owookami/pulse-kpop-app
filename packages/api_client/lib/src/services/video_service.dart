@@ -355,22 +355,47 @@ class VideoService {
       );
     }
 
-    // 검색어가 포함된 비디오 제목 또는 설명 검색
-    final searchFilter = 'or(title.ilike.%$query%,description.ilike.%$query%)';
+    try {
+      // Supabase 직접 쿼리 사용
+      var queryBuilder = _client.from('videos').select('*');
 
-    // lastId가 있으면 해당 ID 이후의 데이터 조회
-    final idFilter = lastId != null ? 'and(id.lt.$lastId)' : '';
+      // 제목 검색 (ilike 사용)
+      queryBuilder = queryBuilder.ilike('title', '%$query%');
 
-    // 최종 필터 생성
-    final filter = lastId != null ? '$searchFilter,$idFilter' : searchFilter;
+      // ID 기준 페이지네이션
+      if (lastId != null) {
+        queryBuilder = queryBuilder.lt('id', lastId);
+      }
 
-    return _client.query<Video>(
-      table: 'videos',
-      fromJson: Video.fromJson,
-      orderBy: 'created_at.desc', // 최신순
-      limit: limit,
-      filter: filter,
-    );
+      // 정렬 및 한도 설정
+      queryBuilder = queryBuilder.order('created_at', ascending: false).limit(limit);
+
+      // 쿼리 실행
+      final response = await queryBuilder;
+
+      // 결과를 Video 객체로 변환
+      final List<Video> videos = [];
+      for (final item in response) {
+        try {
+          // PostgreSQL 결과는 Map<String, dynamic> 형태
+          if (item is Map<String, dynamic>) {
+            videos.add(Video.fromJson(item));
+          }
+        } catch (e) {
+          print('비디오 데이터 변환 오류: $e');
+        }
+      }
+
+      return ApiResponse.success(videos);
+    } catch (e) {
+      print('비디오 검색 오류: $e');
+      return ApiResponse.failure(
+        ApiError(
+          code: 'search_error',
+          message: '검색 중 오류가 발생했습니다: $e',
+        ),
+      );
+    }
   }
 
   /// 아티스트 검색

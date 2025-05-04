@@ -13,6 +13,9 @@ abstract class ISupabaseClient {
   /// 사용자 로그인 상태 확인
   bool get isAuthenticated;
 
+  /// Supabase 테이블에 접근
+  dynamic from(String table);
+
   /// 이메일/비밀번호로 회원가입
   Future<ApiResponse<User>> signUp({
     required String email,
@@ -81,6 +84,9 @@ class SupabaseClientImpl implements ISupabaseClient {
 
   @override
   bool get isAuthenticated => _client.auth.currentUser != null;
+
+  @override
+  dynamic from(String table) => _client.from(table);
 
   @override
   Future<ApiResponse<User>> signUp({
@@ -187,8 +193,117 @@ class SupabaseClientImpl implements ISupabaseClient {
       final selectQuery = columns?.join(',') ?? '*';
       final query = _client.from(table).select(selectQuery);
 
-      // 필터 적용
-      final filteredQuery = filter != null ? query.or(filter) : query;
+      // 필터 적용 (or 대신 정확한 필터를 위해 수정)
+      dynamic filteredQuery = query;
+      if (filter != null && filter.isNotEmpty) {
+        print('필터 적용: $filter');
+        // 여러 필터 조건이 있는 경우 (쉼표로 구분된)
+        if (filter.contains(',')) {
+          // 쉼표로 구분된 필터 조건을 개별 조건으로 분리
+          final conditions = filter.split(',');
+          for (final condition in conditions) {
+            print('개별 필터 조건 적용: $condition');
+            // 조건이 eq, neq, gt, lt 등의 형식인지 확인
+            if (condition.contains('.eq.')) {
+              final parts = condition.split('.eq.');
+              if (parts.length == 2) {
+                filteredQuery = filteredQuery.eq(parts[0], parts[1]);
+              }
+            } else if (condition.contains('.in.')) {
+              final parts = condition.split('.in.');
+              if (parts.length == 2) {
+                // in 조건은 괄호 안에 쉼표로 구분된 값들을 포함
+                final values = parts[1].replaceAll('(', '').replaceAll(')', '').split(',');
+                filteredQuery = filteredQuery.in_(parts[0], values);
+              }
+            } else if (condition.startsWith('or(') && condition.endsWith(')')) {
+              // or 조건인 경우 괄호 내용을 추출하여 처리
+              try {
+                final orContent = condition.substring(3, condition.length - 1);
+                final orParts = orContent.split(',');
+
+                String orConditions = '';
+                for (final orPart in orParts) {
+                  if (orConditions.isNotEmpty) {
+                    orConditions += ',';
+                  }
+                  orConditions += orPart;
+                }
+
+                if (orConditions.isNotEmpty) {
+                  filteredQuery = filteredQuery.or(orConditions);
+                }
+              } catch (e) {
+                print('or 조건 처리 중 오류: $e');
+                // 오류 발생 시 안전하게 진행
+                continue;
+              }
+            } else {
+              // 기타 필터 조건은 그대로 or로 처리
+              try {
+                filteredQuery = filteredQuery.or(condition);
+              } catch (e) {
+                print('필터 조건 적용 중 오류: $e, 조건: $condition');
+                // 오류 발생 시 안전하게 진행
+                continue;
+              }
+            }
+          }
+        } else if (filter.startsWith('or(') && filter.endsWith(')')) {
+          // 단일 or 필터인 경우
+          try {
+            // or 괄호 안의 내용 추출
+            final orContent = filter.substring(3, filter.length - 1);
+
+            // 쉼표로 구분된 필터 조건 처리
+            final conditions = orContent.split(',');
+
+            if (conditions.length >= 2) {
+              // 첫 번째 조건 적용
+              String field1 = '', value1 = '';
+              if (conditions[0].contains('.ilike.')) {
+                final parts = conditions[0].split('.ilike.');
+                if (parts.length == 2) {
+                  field1 = parts[0];
+                  value1 = parts[1];
+                  filteredQuery = filteredQuery.ilike(field1, value1);
+                }
+              }
+
+              // 두 번째 조건 적용 (or 조건)
+              for (int i = 1; i < conditions.length; i++) {
+                String condition = conditions[i];
+                if (condition.contains('.ilike.')) {
+                  final parts = condition.split('.ilike.');
+                  if (parts.length == 2) {
+                    String field = parts[0];
+                    String value = parts[1];
+                    filteredQuery = filteredQuery.or('$field.ilike.$value');
+                  }
+                }
+              }
+            } else {
+              // 단일 조건인 경우 or 없이 적용
+              filteredQuery = filteredQuery.or(orContent);
+            }
+          } catch (e) {
+            print('or 필터 처리 중 오류: $e');
+            // 실패 시 그대로 적용 시도
+            try {
+              filteredQuery = filteredQuery.or(filter);
+            } catch (_) {
+              print('필터 적용 실패, 필터링 없이 진행');
+            }
+          }
+        } else {
+          // 단일 필터 조건
+          try {
+            filteredQuery = filteredQuery.or(filter);
+          } catch (e) {
+            print('단일 필터 적용 오류: $e, 필터: $filter');
+          }
+        }
+      }
 
       // 정렬 적용
       dynamic orderedQuery = filteredQuery;
@@ -225,42 +340,40 @@ class SupabaseClientImpl implements ISupabaseClient {
       }
 
       // 쿼리 실행
+      print(
+          '쿼리 실행 전 최종 구성: table=$table, filter=$filter, orderBy=$orderBy, limit=$limit, offset=$offset');
       final response = await orderedQuery;
       final List<dynamic> data = response as List<dynamic>;
+      print('쿼리 결과 수: ${data.length}');
 
       // 타입 안전성 향상을 위한 변환 로직
-      final items = data
-          .map((dynamic item) {
-            try {
-              // Supabase에서 반환된 데이터가 Map 타입인지 확인하고 안전하게 변환
-              Map<String, dynamic> safeMap;
+      final List<T> items = [];
 
-              if (item is Map<String, dynamic>) {
-                // 이미 정확한 타입인 경우
-                safeMap = item;
-              } else if (item is Map) {
-                // 다른 Map 타입(예: _Map<String, dynamic>)인 경우 안전하게 변환
-                safeMap = Map<String, dynamic>.from(item);
-              } else {
-                // Map이 아닌 경우 예외 발생
-                throw FormatException('예상치 못한 데이터 타입: ${item.runtimeType}');
-              }
+      for (final dynamic item in data) {
+        try {
+          // Supabase에서 반환된 데이터를 안전하게 Map<String, dynamic>으로 변환
+          Map<String, dynamic> safeMap;
 
-              try {
-                // fromJson 실행 및 예외 포착
-                return fromJson(safeMap);
-              } catch (conversionError) {
-                print('fromJson 변환 오류: $conversionError, 데이터: $safeMap');
-                throw FormatException('fromJson 변환 실패: $conversionError');
-              }
-            } catch (e) {
-              print('데이터 변환 오류: $e, 데이터 타입: ${item.runtimeType}, 데이터: $item');
-              // 비어있는 데이터로 판단되면 건너뛰기 (필터링을 위해 null 반환)
-              return null;
-            }
-          })
-          .whereType<T>()
-          .toList(); // null 값 필터링
+          if (item is Map<String, dynamic>) {
+            // 이미 정확한 타입인 경우
+            safeMap = item;
+          } else if (item is Map) {
+            // 다른 Map 타입(예: _Map<String, dynamic>)인 경우 명시적으로 변환
+            safeMap = Map<String, dynamic>.from(item);
+          } else {
+            // Map이 아닌 경우 건너뛰기
+            print('예상치 못한 데이터 타입 건너뛰기: ${item.runtimeType}');
+            continue;
+          }
+
+          // fromJson 변환 시도
+          final T convertedItem = fromJson(safeMap);
+          items.add(convertedItem);
+        } catch (e) {
+          print('데이터 변환 실패: $e, 데이터: $item, 타입: ${item.runtimeType}');
+          // 변환 실패 시 이 항목은 건너뛰기
+        }
+      }
 
       return ApiResponse<List<T>>.success(items);
     } catch (e) {
@@ -294,8 +407,8 @@ class SupabaseClientImpl implements ISupabaseClient {
         // 이미 정확한 타입인 경우
         safeMap = data;
 
+        // fromJson 변환 시도
         try {
-          // fromJson 실행 및 예외 포착
           return ApiResponse.success(fromJson(safeMap));
         } catch (conversionError) {
           print('fromJson 변환 오류: $conversionError, 데이터: $safeMap');
@@ -336,7 +449,10 @@ class SupabaseClientImpl implements ISupabaseClient {
 
       try {
         // 안전한 타입 변환
-        final Map<String, dynamic> safeMap = Map<String, dynamic>.from(response);
+        Map<String, dynamic> safeMap;
+
+        safeMap = response;
+
         return ApiResponse.success(fromJson(safeMap));
       } catch (conversionError) {
         print('레코드 생성 결과 변환 오류: $conversionError, 데이터: $response');
@@ -377,7 +493,10 @@ class SupabaseClientImpl implements ISupabaseClient {
 
       try {
         // 안전한 타입 변환
-        final Map<String, dynamic> safeMap = Map<String, dynamic>.from(response);
+        Map<String, dynamic> safeMap;
+
+        safeMap = response;
+
         return ApiResponse.success(fromJson(safeMap));
       } catch (conversionError) {
         print('레코드 업데이트 결과 변환 오류: $conversionError, 데이터: $response');

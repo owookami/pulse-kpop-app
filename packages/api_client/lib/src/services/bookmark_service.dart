@@ -156,19 +156,25 @@ class BookmarkService {
       debugPrint('북마크 상태 확인 API 호출: userId=$userId, videoId=$videoId');
 
       final List<String> columns = ['id'];
+      final filter = 'user_id.eq.$userId,video_id.eq.$videoId';
+      debugPrint('북마크 필터: $filter');
+
       final response = await _client.query<Map<String, dynamic>>(
         table: 'bookmarks',
         fromJson: (data) => data,
         columns: columns,
-        filter: 'user_id.eq.$userId,video_id.eq.$videoId',
+        filter: filter,
       );
 
       // 북마크 여부 확인
       if (response.isSuccess && response.dataOrNull != null) {
         final isBookmarked = response.dataOrNull!.isNotEmpty;
+        debugPrint(
+            '북마크 결과: $isBookmarked, 결과 개수: ${response.dataOrNull!.length}, 데이터: ${response.dataOrNull}');
         return ApiResponse<bool>.success(isBookmarked);
       }
 
+      debugPrint('북마크 조회 실패: ${response.errorOrNull?.message}');
       return ApiResponse<bool>.failure(ApiError(
         code: 'query_error',
         message: '북마크 상태를 확인하는 중 오류가 발생했습니다.',
