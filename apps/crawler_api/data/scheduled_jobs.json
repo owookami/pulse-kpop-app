@@ -1,0 +1,15 @@
+[
+  {
+    "id": "01234567-89ab-cdef-0123-456789abcdef",
+    "name": "테스트 스케줄",
+    "cron_expression": "*/5 * * * *",
+    "is_active": true,
+    "params": {
+      "limit": 5,
+      "save_to_db": true,
+      "python_path": "/usr/bin/python3"
+    },
+    "last_run": "2025-05-05T08:15:44.438871",
+    "next_run": "2025-05-05T08:20:00"
+  }
+]

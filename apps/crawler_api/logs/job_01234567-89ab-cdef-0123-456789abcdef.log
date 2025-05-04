@@ -1,0 +1,114 @@
+/Users/owookami/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+2025-05-04 21:36:00,078 - pulse-crawler - INFO - [크롤링 프로세스] 크롤러 스크립트 실행 시작
+2025-05-04 21:36:00,079 - pulse-crawler - INFO - [크롤링 프로세스] 명령줄 인수 파싱 완료:
+2025-05-04 21:36:00,079 - pulse-crawler - INFO - [크롤링 프로세스] - 아티스트: 지정되지 않음
+2025-05-04 21:36:00,079 - pulse-crawler - INFO - [크롤링 프로세스] - 그룹: 지정되지 않음
+2025-05-04 21:36:00,079 - pulse-crawler - INFO - [크롤링 프로세스] - 이벤트: 지정되지 않음
+2025-05-04 21:36:00,079 - pulse-crawler - INFO - [크롤링 프로세스] - 날짜 범위: 시작일 없음 ~ 종료일 없음
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] - 결과 수 제한: 5
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] - 출력 디렉토리: output
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] - 저장 형식: both
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] - DB 저장: 활성화
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] - DB 타입: supabase
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] - 썸네일 다운로드: 비활성화
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] 명령줄 인수: {'artist': None, 'group': None, 'event': None, 'start_date': None, 'end_date': None, 'limit': 5, 'skip_existing': False, 'output': 'output', 'format': 'both', 'save_to_db': True, 'download_thumbnails': False, 'db_type': 'supabase'}
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 확인 중...
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 확인됨 (미리보기: AIzaS...XKD_w)
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 로드 완료
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] 검색어 구성 중...
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] 검색어가 비어있어 기본 검색어 사용: 'kpop fancam'
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] 최종 검색어: 'kpop fancam'
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] 검색어 구성: 'kpop fancam'
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] 'kpop fancam' 검색어로 크롤링을 시작합니다.
+2025-05-04 21:36:00,081 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-05-04 21:36:00,083 - youtube-crawler - INFO - YouTube 크롤러가 초기화되었습니다.
+2025-05-04 21:36:00,083 - youtube-crawler - INFO - 'kpop fancam' 검색 시작. 최대 5개 결과
+2025-05-04 21:36:00,775 - youtube-crawler - INFO - 5개의 비디오를 찾았습니다.
+2025-05-04 21:36:00,775 - pulse-crawler - INFO - [크롤링 프로세스] 검색 결과: 5개 비디오
+2025-05-04 21:36:00,775 - pulse-crawler - INFO - [크롤링 프로세스] 5개 비디오의 세부 정보를 가져옵니다.
+2025-05-04 21:36:00,775 - youtube-crawler - INFO - 5개 비디오의 세부 정보를 가져옵니다.
+2025-05-04 21:36:00,893 - youtube-crawler - INFO - 5개 비디오의 세부 정보를 가져왔습니다.
+2025-05-04 21:36:00,893 - pulse-crawler - INFO - [크롤링 프로세스] 5개 비디오 세부 정보 획득 완료
+2025-05-04 21:36:00,893 - pulse-crawler - INFO - [크롤링 프로세스] 결과를 both 형식으로 저장합니다.
+2025-05-04 21:36:00,893 - pulse-crawler - INFO - [크롤링 프로세스] 결과 파일 저장 시작 (형식: both)
+2025-05-04 21:36:00,893 - pulse-crawler - INFO - [크롤링 프로세스] 출력 디렉토리 확인: output
+2025-05-04 21:36:00,894 - pulse-crawler - INFO - [크롤링 프로세스] CSV 파일 생성 중: output/videos_20250504_213600.csv
+2025-05-04 21:36:00,905 - pulse-crawler - INFO - [크롤링 프로세스] 결과가 output/videos_20250504_213600.csv에 CSV 형식으로 저장되었습니다.
+2025-05-04 21:36:00,905 - pulse-crawler - INFO - [크롤링 프로세스] JSON 파일 생성 중: output/videos_20250504_213600.json
+2025-05-04 21:36:00,906 - pulse-crawler - INFO - [크롤링 프로세스] 결과가 output/videos_20250504_213600.json에 JSON 형식으로 저장되었습니다.
+2025-05-04 21:36:00,906 - pulse-crawler - INFO - [크롤링 프로세스] 결과 파일 저장 완료
+2025-05-04 21:36:00,906 - pulse-crawler - INFO - [크롤링 프로세스] 데이터베이스 저장 시작
+2025-05-04 21:36:00,906 - pulse-crawler - INFO - [크롤링 프로세스] 5개 비디오를 데이터베이스에 저장합니다.
+2025-05-04 21:36:00,906 - pulse-crawler - INFO - [크롤링 프로세스] Supabase 서비스 키 미리보기: eyJhbGciOi...tmgQg
+2025-05-04 21:36:00,906 - pulse-crawler - INFO - [크롤링 프로세스] Supabase URL: https://mdqfbcoexjdhuweziwff.supabase.co
+2025-05-04 21:36:00,906 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 엔드포인트: https://mdqfbcoexjdhuweziwff.supabase.co/rest/v1/videos
+2025-05-04 21:36:00,906 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 헤더 설정 완료
+2025-05-04 21:36:00,906 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: nIeUbkAw7aU -> 463ffae7-503a-4c24-9a72-5b0f1e19ac6e (platform_id: nIeUbkAw7aU)
+2025-05-04 21:36:00,907 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: uiWuRa_8gcM -> fd727263-eb58-43aa-8880-0b4375265486 (platform_id: uiWuRa_8gcM)
+2025-05-04 21:36:00,907 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: K9mNU4aSCjU -> d9c74a5d-1812-4125-bda4-b1f65db82702 (platform_id: K9mNU4aSCjU)
+2025-05-04 21:36:00,907 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: lGd_IL_MOn4 -> 44184113-19f1-41f3-915f-169420cbc932 (platform_id: lGd_IL_MOn4)
+2025-05-04 21:36:00,907 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: D7Gn7HDfvnc -> e4f7644f-7474-4a76-be8f-088aad2844bc (platform_id: D7Gn7HDfvnc)
+2025-05-04 21:36:00,907 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 요청 시작 (배치 크기: 5)
+2025-05-04 21:36:00,907 - pulse-crawler - INFO - [크롤링 프로세스] 샘플 데이터 형식 - tags 타입: list
+2025-05-04 21:36:01,688 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 응답 상태 코드: 201
+2025-05-04 21:36:01,688 - pulse-crawler - INFO - [크롤링 프로세스] Supabase에 5개의 비디오 데이터를 성공적으로 저장했습니다. (상태 코드: 201)
+2025-05-04 21:36:01,690 - pulse-crawler - INFO - [크롤링 프로세스] 데이터베이스 저장 완료
+2025-05-04 21:36:01,690 - pulse-crawler - INFO - [크롤링 프로세스] 크롤링 완료
+/Users/owookami/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+2025-05-05 08:15:45,027 - pulse-crawler - INFO - [크롤링 프로세스] 크롤러 스크립트 실행 시작
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] 명령줄 인수 파싱 완료:
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] - 아티스트: 지정되지 않음
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] - 그룹: 지정되지 않음
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] - 이벤트: 지정되지 않음
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] - 날짜 범위: 시작일 없음 ~ 종료일 없음
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] - 결과 수 제한: 5
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] - 출력 디렉토리: output
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] - 저장 형식: both
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] - DB 저장: 활성화
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] - DB 타입: supabase
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] - 썸네일 다운로드: 비활성화
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] 명령줄 인수: {'artist': None, 'group': None, 'event': None, 'start_date': None, 'end_date': None, 'limit': 5, 'skip_existing': False, 'output': 'output', 'format': 'both', 'save_to_db': True, 'download_thumbnails': False, 'db_type': 'supabase'}
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 확인 중...
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 확인됨 (미리보기: AIzaS...XKD_w)
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 로드 완료
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] 검색어 구성 중...
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] 검색어가 비어있어 기본 검색어 사용: 'kpop fancam'
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] 최종 검색어: 'kpop fancam'
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] 검색어 구성: 'kpop fancam'
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] 'kpop fancam' 검색어로 크롤링을 시작합니다.
+2025-05-05 08:15:45,029 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-05-05 08:15:45,031 - youtube-crawler - INFO - YouTube 크롤러가 초기화되었습니다.
+2025-05-05 08:15:45,031 - youtube-crawler - INFO - 'kpop fancam' 검색 시작. 최대 5개 결과
+2025-05-05 08:15:45,524 - youtube-crawler - INFO - 5개의 비디오를 찾았습니다.
+2025-05-05 08:15:45,524 - pulse-crawler - INFO - [크롤링 프로세스] 검색 결과: 5개 비디오
+2025-05-05 08:15:45,524 - pulse-crawler - INFO - [크롤링 프로세스] 5개 비디오의 세부 정보를 가져옵니다.
+2025-05-05 08:15:45,524 - youtube-crawler - INFO - 5개 비디오의 세부 정보를 가져옵니다.
+2025-05-05 08:15:45,631 - youtube-crawler - INFO - 5개 비디오의 세부 정보를 가져왔습니다.
+2025-05-05 08:15:45,631 - pulse-crawler - INFO - [크롤링 프로세스] 5개 비디오 세부 정보 획득 완료
+2025-05-05 08:15:45,631 - pulse-crawler - INFO - [크롤링 프로세스] 결과를 both 형식으로 저장합니다.
+2025-05-05 08:15:45,631 - pulse-crawler - INFO - [크롤링 프로세스] 결과 파일 저장 시작 (형식: both)
+2025-05-05 08:15:45,631 - pulse-crawler - INFO - [크롤링 프로세스] 출력 디렉토리 확인: output
+2025-05-05 08:15:45,631 - pulse-crawler - INFO - [크롤링 프로세스] CSV 파일 생성 중: output/videos_20250505_081545.csv
+2025-05-05 08:15:45,634 - pulse-crawler - INFO - [크롤링 프로세스] 결과가 output/videos_20250505_081545.csv에 CSV 형식으로 저장되었습니다.
+2025-05-05 08:15:45,634 - pulse-crawler - INFO - [크롤링 프로세스] JSON 파일 생성 중: output/videos_20250505_081545.json
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] 결과가 output/videos_20250505_081545.json에 JSON 형식으로 저장되었습니다.
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] 결과 파일 저장 완료
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] 데이터베이스 저장 시작
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] 5개 비디오를 데이터베이스에 저장합니다.
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] Supabase 서비스 키 미리보기: eyJhbGciOi...tmgQg
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] Supabase URL: https://mdqfbcoexjdhuweziwff.supabase.co
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 엔드포인트: https://mdqfbcoexjdhuweziwff.supabase.co/rest/v1/videos
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 헤더 설정 완료
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: nIeUbkAw7aU -> 8a594b98-6f0d-45c9-994d-b1db08a90f66 (platform_id: nIeUbkAw7aU)
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: K9mNU4aSCjU -> aa11d8a2-780a-4885-8682-f4f15041785e (platform_id: K9mNU4aSCjU)
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: lGd_IL_MOn4 -> d75823ed-b0fe-4d31-921d-ebe6a781b3e4 (platform_id: lGd_IL_MOn4)
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: Cta2y5PyGR0 -> 16774f40-8774-4510-a0ae-6d1eecda4bfb (platform_id: Cta2y5PyGR0)
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: D7Gn7HDfvnc -> 04c79d0a-5e63-46a7-a8a9-5a1f3060cdb1 (platform_id: D7Gn7HDfvnc)
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 요청 시작 (배치 크기: 5)
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] 샘플 데이터 형식 - tags 타입: list
+2025-05-05 08:15:46,331 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 응답 상태 코드: 201
+2025-05-05 08:15:46,331 - pulse-crawler - INFO - [크롤링 프로세스] Supabase에 5개의 비디오 데이터를 성공적으로 저장했습니다. (상태 코드: 201)
+2025-05-05 08:15:46,332 - pulse-crawler - INFO - [크롤링 프로세스] 데이터베이스 저장 완료
+2025-05-05 08:15:46,332 - pulse-crawler - INFO - [크롤링 프로세스] 크롤링 완료

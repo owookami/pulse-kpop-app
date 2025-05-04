@@ -1,0 +1,658 @@
+2025-05-03 18:24:25,786 - youtube-crawler - ERROR - YouTube API 키가 설정되지 않았습니다. .env 파일에 YOUTUBE_API_KEY를 설정하세요.
+2025-05-03 18:24:26,145 - youtube-crawler - ERROR - YouTube API 키가 설정되지 않았습니다. .env 파일에 YOUTUBE_API_KEY를 설정하세요.
+2025-05-03 18:31:32,344 - pulse-crawler - INFO - 'kpop fancam' 검색어로 크롤링을 시작합니다.
+2025-05-03 18:31:32,345 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-05-03 18:31:32,347 - youtube-crawler - INFO - YouTube 크롤러가 초기화되었습니다.
+2025-05-03 18:31:32,347 - youtube-crawler - INFO - 'kpop fancam' 검색 시작. 최대 50개 결과
+2025-05-03 18:31:32,581 - youtube-crawler - ERROR - YouTube API 오류: <HttpError 400 when requesting https://youtube.googleapis.com/youtube/v3/search?q=kpop+fancam&part=id%2Csnippet&maxResults=50&type=video&videoEmbeddable=true&order=relevance&key=YOUR_ACTUAL_YOUTUBE_API_KEY_HERE&alt=json returned "API key not valid. Please pass a valid API key.". Details: "[{'message': 'API key not valid. Please pass a valid API key.', 'domain': 'global', 'reason': 'badRequest'}]">
+2025-05-03 18:31:32,581 - youtube-crawler - INFO - 0개의 비디오를 찾았습니다.
+2025-05-03 18:31:32,581 - pulse-crawler - WARNING - 'kpop fancam' 검색어로 비디오를 찾을 수 없습니다.
+2025-05-03 18:31:32,581 - pulse-crawler - INFO - 크롤링 완료
+2025-05-03 18:35:30,708 - pulse-crawler - INFO - 'kpop fancam' 검색어로 크롤링을 시작합니다.
+2025-05-03 18:35:30,709 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-05-03 18:35:30,711 - youtube-crawler - INFO - YouTube 크롤러가 초기화되었습니다.
+2025-05-03 18:35:30,711 - youtube-crawler - INFO - 'kpop fancam' 검색 시작. 최대 50개 결과
+2025-05-03 18:35:31,480 - youtube-crawler - INFO - 50개의 비디오를 찾았습니다.
+2025-05-03 18:35:31,480 - youtube-crawler - INFO - 50개 비디오의 세부 정보를 가져옵니다.
+2025-05-03 18:35:31,774 - youtube-crawler - INFO - 50개 비디오의 세부 정보를 가져왔습니다.
+2025-05-03 18:35:31,778 - pulse-crawler - INFO - 결과가 output/videos_20250503_183531.json에 JSON 형식으로 저장되었습니다.
+2025-05-03 18:35:31,778 - pulse-crawler - INFO - 50개 비디오를 데이터베이스에 저장합니다.
+2025-05-03 18:35:33,998 - pulse-crawler - ERROR - 데이터베이스 저장 오류: connection to server at "localhost" (::1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+2025-05-03 18:35:33,998 - pulse-crawler - INFO - 크롤링 완료
+2025-05-03 18:44:39,342 - pulse-crawler - INFO - 'kpop fancam' 검색어로 크롤링을 시작합니다.
+2025-05-03 18:44:39,343 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-05-03 18:44:39,345 - youtube-crawler - INFO - YouTube 크롤러가 초기화되었습니다.
+2025-05-03 18:44:39,345 - youtube-crawler - INFO - 'kpop fancam' 검색 시작. 최대 50개 결과
+2025-05-03 18:44:40,046 - youtube-crawler - INFO - 50개의 비디오를 찾았습니다.
+2025-05-03 18:44:40,046 - youtube-crawler - INFO - 50개 비디오의 세부 정보를 가져옵니다.
+2025-05-03 18:44:40,350 - youtube-crawler - INFO - 50개 비디오의 세부 정보를 가져왔습니다.
+2025-05-03 18:44:40,351 - pulse-crawler - INFO - 결과가 output/videos_20250503_184440.json에 JSON 형식으로 저장되었습니다.
+2025-05-03 18:44:40,351 - pulse-crawler - INFO - 50개 비디오의 썸네일을 다운로드합니다.
+2025-05-03 18:44:56,218 - pulse-crawler - INFO - 썸네일이 output/thumbnails에 저장되었습니다.
+2025-05-03 18:44:56,220 - pulse-crawler - INFO - 50개 비디오를 데이터베이스에 저장합니다.
+2025-05-03 18:44:57,655 - pulse-crawler - ERROR - Supabase API 오류: 401 - {"code":"42501","details":null,"hint":null,"message":"new row violates row-level security policy for table \"videos\""}
+2025-05-03 18:44:57,657 - pulse-crawler - INFO - 크롤링 완료
+2025-05-03 18:47:52,512 - pulse-crawler - INFO - 'kpop fancam' 검색어로 크롤링을 시작합니다.
+2025-05-03 18:47:52,513 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-05-03 18:47:52,515 - youtube-crawler - INFO - YouTube 크롤러가 초기화되었습니다.
+2025-05-03 18:47:52,515 - youtube-crawler - INFO - 'kpop fancam' 검색 시작. 최대 50개 결과
+2025-05-03 18:47:53,171 - youtube-crawler - INFO - 50개의 비디오를 찾았습니다.
+2025-05-03 18:47:53,172 - youtube-crawler - INFO - 50개 비디오의 세부 정보를 가져옵니다.
+2025-05-03 18:47:53,514 - youtube-crawler - INFO - 50개 비디오의 세부 정보를 가져왔습니다.
+2025-05-03 18:47:53,517 - pulse-crawler - INFO - 결과가 output/videos_20250503_184753.json에 JSON 형식으로 저장되었습니다.
+2025-05-03 18:47:53,517 - pulse-crawler - INFO - 50개 비디오의 썸네일을 다운로드합니다.
+2025-05-03 18:47:53,941 - pulse-crawler - INFO - 썸네일이 output/thumbnails에 저장되었습니다.
+2025-05-03 18:47:53,942 - pulse-crawler - INFO - 50개 비디오를 데이터베이스에 저장합니다.
+2025-05-03 18:47:54,398 - pulse-crawler - ERROR - Supabase API 오류: 401 - {"message":"Invalid API key","hint":"Double check your Supabase `anon` or `service_role` API key."}
+2025-05-03 18:47:54,401 - pulse-crawler - INFO - 크롤링 완료
+2025-05-03 19:11:31,194 - pulse-crawler - INFO - [크롤링 프로세스] 크롤러 스크립트 실행 시작
+2025-05-03 19:11:31,195 - pulse-crawler - INFO - [크롤링 프로세스] 명령줄 인수 파싱 완료:
+2025-05-03 19:11:31,195 - pulse-crawler - INFO - [크롤링 프로세스] - 아티스트: 지정되지 않음
+2025-05-03 19:11:31,195 - pulse-crawler - INFO - [크롤링 프로세스] - 그룹: 지정되지 않음
+2025-05-03 19:11:31,195 - pulse-crawler - INFO - [크롤링 프로세스] - 이벤트: 지정되지 않음
+2025-05-03 19:11:31,195 - pulse-crawler - INFO - [크롤링 프로세스] - 날짜 범위: 시작일 없음 ~ 종료일 없음
+2025-05-03 19:11:31,195 - pulse-crawler - INFO - [크롤링 프로세스] - 결과 수 제한: 50
+2025-05-03 19:11:31,195 - pulse-crawler - INFO - [크롤링 프로세스] - 출력 디렉토리: output
+2025-05-03 19:11:31,195 - pulse-crawler - INFO - [크롤링 프로세스] - 저장 형식: json
+2025-05-03 19:11:31,195 - pulse-crawler - INFO - [크롤링 프로세스] - DB 저장: 활성화
+2025-05-03 19:11:31,195 - pulse-crawler - INFO - [크롤링 프로세스] - DB 타입: supabase
+2025-05-03 19:11:31,195 - pulse-crawler - INFO - [크롤링 프로세스] - 썸네일 다운로드: 비활성화
+2025-05-03 19:11:31,195 - pulse-crawler - INFO - [크롤링 프로세스] 명령줄 인수: {'artist': None, 'group': None, 'event': None, 'start_date': None, 'end_date': None, 'limit': 50, 'skip_existing': False, 'output': 'output', 'format': 'json', 'save_to_db': True, 'download_thumbnails': False, 'db_type': 'supabase'}
+2025-05-03 19:11:31,195 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 확인 중...
+2025-05-03 19:11:31,195 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 확인됨 (미리보기: AIzaS...XKD_w)
+2025-05-03 19:11:31,195 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 로드 완료
+2025-05-03 19:11:31,195 - pulse-crawler - INFO - [크롤링 프로세스] 검색어 구성 중...
+2025-05-03 19:11:31,195 - pulse-crawler - INFO - [크롤링 프로세스] 검색어가 비어있어 기본 검색어 사용: 'kpop fancam'
+2025-05-03 19:11:31,195 - pulse-crawler - INFO - [크롤링 프로세스] 최종 검색어: 'kpop fancam'
+2025-05-03 19:11:31,195 - pulse-crawler - INFO - [크롤링 프로세스] 검색어 구성: 'kpop fancam'
+2025-05-03 19:11:31,195 - pulse-crawler - INFO - [크롤링 프로세스] 'kpop fancam' 검색어로 크롤링을 시작합니다.
+2025-05-03 19:11:31,196 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-05-03 19:11:31,198 - youtube-crawler - INFO - YouTube 크롤러가 초기화되었습니다.
+2025-05-03 19:11:31,198 - youtube-crawler - INFO - 'kpop fancam' 검색 시작. 최대 50개 결과
+2025-05-03 19:11:31,895 - youtube-crawler - INFO - 50개의 비디오를 찾았습니다.
+2025-05-03 19:11:31,895 - pulse-crawler - INFO - [크롤링 프로세스] 검색 결과: 50개 비디오
+2025-05-03 19:11:31,895 - pulse-crawler - INFO - [크롤링 프로세스] 50개 비디오의 세부 정보를 가져옵니다.
+2025-05-03 19:11:31,896 - youtube-crawler - INFO - 50개 비디오의 세부 정보를 가져옵니다.
+2025-05-03 19:11:32,206 - youtube-crawler - INFO - 50개 비디오의 세부 정보를 가져왔습니다.
+2025-05-03 19:11:32,207 - pulse-crawler - INFO - [크롤링 프로세스] 50개 비디오 세부 정보 획득 완료
+2025-05-03 19:11:32,207 - pulse-crawler - INFO - [크롤링 프로세스] 결과를 json 형식으로 저장합니다.
+2025-05-03 19:11:32,207 - pulse-crawler - INFO - [크롤링 프로세스] 결과 파일 저장 시작 (형식: json)
+2025-05-03 19:11:32,207 - pulse-crawler - INFO - [크롤링 프로세스] 출력 디렉토리 확인: output
+2025-05-03 19:11:32,207 - pulse-crawler - INFO - [크롤링 프로세스] JSON 파일 생성 중: output/videos_20250503_191132.json
+2025-05-03 19:11:32,210 - pulse-crawler - INFO - [크롤링 프로세스] 결과가 output/videos_20250503_191132.json에 JSON 형식으로 저장되었습니다.
+2025-05-03 19:11:32,210 - pulse-crawler - INFO - [크롤링 프로세스] 결과 파일 저장 완료
+2025-05-03 19:11:32,210 - pulse-crawler - INFO - [크롤링 프로세스] 데이터베이스 저장 시작
+2025-05-03 19:11:32,210 - pulse-crawler - INFO - [크롤링 프로세스] 50개 비디오를 데이터베이스에 저장합니다.
+2025-05-03 19:11:32,210 - pulse-crawler - INFO - [크롤링 프로세스] Supabase 서비스 키 미리보기: eyJhbGciOi...tmgQg
+2025-05-03 19:11:32,210 - pulse-crawler - INFO - [크롤링 프로세스] Supabase URL: https://mdqfbcoexjdhuweziwff.supabase.co
+2025-05-03 19:11:32,210 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 엔드포인트: https://mdqfbcoexjdhuweziwff.supabase.co/rest/v1/videos
+2025-05-03 19:11:32,210 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 헤더 설정 완료
+2025-05-03 19:11:32,210 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: K9mNU4aSCjU -> 38b68368-6e1e-4d2e-aa7c-d0a5c69b77f3 (youtube_id: K9mNU4aSCjU)
+2025-05-03 19:11:32,210 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: nIeUbkAw7aU -> dea3d775-f267-4714-b8a7-aff6d29d7f0f (youtube_id: nIeUbkAw7aU)
+2025-05-03 19:11:32,210 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: 9rorWM3Iafg -> cef0c6e4-e9a5-4cc9-82f0-0c89f15e25f0 (youtube_id: 9rorWM3Iafg)
+2025-05-03 19:11:32,211 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: 9u2FrtK6l28 -> f353e11e-6d34-4d17-907b-7ed46d931ffe (youtube_id: 9u2FrtK6l28)
+2025-05-03 19:11:32,211 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: D7Gn7HDfvnc -> 70e5eb2e-db07-483a-973d-f8de9b33b697 (youtube_id: D7Gn7HDfvnc)
+2025-05-03 19:11:32,211 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: RKn6rXp30y0 -> df7b86f7-11c4-4d18-98c6-0684dbe769b4 (youtube_id: RKn6rXp30y0)
+2025-05-03 19:11:32,211 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: lGd_IL_MOn4 -> f9cf0965-0fdc-4d39-8fe2-998483192e3c (youtube_id: lGd_IL_MOn4)
+2025-05-03 19:11:32,211 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: vi-fjDIt0bk -> 56368550-e93e-4d48-92cf-42a3ae2454a3 (youtube_id: vi-fjDIt0bk)
+2025-05-03 19:11:32,211 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: kYEdrDyQKL4 -> f8575855-10cc-4110-b73f-6f7b7ae9276d (youtube_id: kYEdrDyQKL4)
+2025-05-03 19:11:32,211 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: u_o0wEe56BU -> b66f6559-ab07-49c8-96b6-7afcd14363d3 (youtube_id: u_o0wEe56BU)
+2025-05-03 19:11:32,211 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: 6J-2s2h45v8 -> 5ac4f0cd-8354-415d-a446-a6d2f71da7e9 (youtube_id: 6J-2s2h45v8)
+2025-05-03 19:11:32,211 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: h_0yIl9sMy8 -> d7025b15-2053-46b0-a7c6-57435637dd64 (youtube_id: h_0yIl9sMy8)
+2025-05-03 19:11:32,211 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: cSXqwcLsVPc -> 86f54256-e823-4029-bcce-c2e79607f0e5 (youtube_id: cSXqwcLsVPc)
+2025-05-03 19:11:32,211 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: kko-tt26M5U -> 7c03a170-1365-44fa-ad27-13ed697559f3 (youtube_id: kko-tt26M5U)
+2025-05-03 19:11:32,211 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: AVdYRCSh4r0 -> 5db88b01-3094-4314-93b6-065de0ce93da (youtube_id: AVdYRCSh4r0)
+2025-05-03 19:11:32,211 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: yFTAYXDTjqI -> 974c0e9a-ff7c-4060-9c62-c47222fc33e6 (youtube_id: yFTAYXDTjqI)
+2025-05-03 19:11:32,211 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: sF2QxDWsjPc -> 1a3e543d-5e60-4ff0-b1ff-77626e6fb1d7 (youtube_id: sF2QxDWsjPc)
+2025-05-03 19:11:32,212 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: PXFRtqNg3yo -> b0a0840d-3a44-40b2-aa95-3b91a2b9ec3f (youtube_id: PXFRtqNg3yo)
+2025-05-03 19:11:32,212 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: Xt3iR8EKGEg -> 6a74c1dc-df19-448a-aaea-8d5bc5d1a2cb (youtube_id: Xt3iR8EKGEg)
+2025-05-03 19:11:32,212 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: AMOvOWfpZBA -> d1434d2a-232e-476f-b083-30294ca91cda (youtube_id: AMOvOWfpZBA)
+2025-05-03 19:11:32,212 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: prowHppYlsg -> f1927dd7-3ffc-4d48-b3ff-9fd6ba0c3779 (youtube_id: prowHppYlsg)
+2025-05-03 19:11:32,212 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: nCpihfC3uxQ -> 7822baa4-ca9c-4685-94d6-6579a8a44bbe (youtube_id: nCpihfC3uxQ)
+2025-05-03 19:11:32,212 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: 7e7Tsx3Fo4o -> 7bde68fd-16a5-4246-abe3-4fecc3a9e9f4 (youtube_id: 7e7Tsx3Fo4o)
+2025-05-03 19:11:32,212 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: mXc19_hkmKs -> 11017216-6460-4c1d-b2c9-b3249f73204a (youtube_id: mXc19_hkmKs)
+2025-05-03 19:11:32,212 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: PrkNZRd9G88 -> dbef6073-c62f-43ea-8444-5bd69fad6ae6 (youtube_id: PrkNZRd9G88)
+2025-05-03 19:11:32,212 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: yBSxZPYFndI -> b1d8b55f-bd90-4516-bbc1-58a4de1e6846 (youtube_id: yBSxZPYFndI)
+2025-05-03 19:11:32,212 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: hAW8Zmj3uvc -> 460d9b31-0ae7-4513-975c-e698ddcfd087 (youtube_id: hAW8Zmj3uvc)
+2025-05-03 19:11:32,212 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: FVWnRN19L3c -> bde65629-5a1d-4562-897a-d245295d483d (youtube_id: FVWnRN19L3c)
+2025-05-03 19:11:32,212 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: WltiBha0Y5I -> 84e67f63-3d8c-45ae-b7c4-14576cb74d2c (youtube_id: WltiBha0Y5I)
+2025-05-03 19:11:32,212 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: sCTcq0-FAbA -> f28db940-d1af-4712-a1a2-d4eb8521baff (youtube_id: sCTcq0-FAbA)
+2025-05-03 19:11:32,212 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: uiWuRa_8gcM -> 1147c4fb-04a6-4c1d-a11d-5f1e43b4014e (youtube_id: uiWuRa_8gcM)
+2025-05-03 19:11:32,212 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: NrfYjfy1S10 -> c34b8977-9997-4203-bf70-db961e7a2a1b (youtube_id: NrfYjfy1S10)
+2025-05-03 19:11:32,212 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: NgqJhXgFzIc -> b6cd4edd-8740-4d4c-9d07-b34d76a112d4 (youtube_id: NgqJhXgFzIc)
+2025-05-03 19:11:32,212 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: sREjDN1K-JY -> 319e0902-c27f-49d3-b626-7c013fd254be (youtube_id: sREjDN1K-JY)
+2025-05-03 19:11:32,212 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: U98_iOjqgvk -> a0d2f3a1-7fcc-4045-a2dc-2e3218530057 (youtube_id: U98_iOjqgvk)
+2025-05-03 19:11:32,212 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: vrcEexzIsyw -> d8bbd0c1-702d-4c9b-acf1-e86aa5ccaef7 (youtube_id: vrcEexzIsyw)
+2025-05-03 19:11:32,212 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: Mtqba_rdNlA -> 9c3339cd-4abe-4fd5-9036-ac5962ae0efc (youtube_id: Mtqba_rdNlA)
+2025-05-03 19:11:32,213 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: OQNPBVNEH74 -> 4acc7490-92b2-4f6d-9a00-1f8f2083c4b6 (youtube_id: OQNPBVNEH74)
+2025-05-03 19:11:32,213 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: OZytLLasceA -> 5ebc565a-ad0e-44fe-9347-2798ee8697ae (youtube_id: OZytLLasceA)
+2025-05-03 19:11:32,213 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: xwvkVKaPnfM -> daff7113-3d65-4676-a9ec-f4babf264757 (youtube_id: xwvkVKaPnfM)
+2025-05-03 19:11:32,213 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: ekQg7-rBABM -> 53be09ba-a783-4cf5-a6e4-a9aa120766e8 (youtube_id: ekQg7-rBABM)
+2025-05-03 19:11:32,213 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: uNMiKwHot0I -> a5d1bfd9-3595-45f5-a569-99962cade074 (youtube_id: uNMiKwHot0I)
+2025-05-03 19:11:32,213 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: zGo_4FM8OM8 -> 76132b24-7569-43d3-a14a-228b3a51a434 (youtube_id: zGo_4FM8OM8)
+2025-05-03 19:11:32,213 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: KOxsvJ_HCks -> 4dba9d95-9ab7-417d-8952-d138a30863a3 (youtube_id: KOxsvJ_HCks)
+2025-05-03 19:11:32,213 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: 89hCoHNJcf8 -> d7ea9f2a-a85f-445f-848d-c7235a0636d1 (youtube_id: 89hCoHNJcf8)
+2025-05-03 19:11:32,213 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: yuI3n3sOFWs -> 5bcf5589-b9b2-4975-bf75-8727b9644462 (youtube_id: yuI3n3sOFWs)
+2025-05-03 19:11:32,213 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: WT1WniLMcnw -> d5d9c638-6c56-4a34-9308-99ff9db325b7 (youtube_id: WT1WniLMcnw)
+2025-05-03 19:11:32,213 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: wy_tMUsuHsE -> 6ed9d954-1ba2-4536-b57e-ecebca81f8e7 (youtube_id: wy_tMUsuHsE)
+2025-05-03 19:11:32,213 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: X5atzRwqEQ4 -> 7ff86c96-15d0-4b1b-84e3-2d556f2fab52 (youtube_id: X5atzRwqEQ4)
+2025-05-03 19:11:32,214 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: V4PkmmajMRo -> 484dd297-ec68-4b90-87d9-1af5750b6170 (youtube_id: V4PkmmajMRo)
+2025-05-03 19:11:32,214 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 요청 시작 (배치 크기: 20)
+2025-05-03 19:11:33,350 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 응답 상태 코드: 400
+2025-05-03 19:11:33,351 - pulse-crawler - ERROR - [크롤링 프로세스] Supabase API 오류: 400 - {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'channel_id' column of 'videos' in the schema cache"}
+2025-05-03 19:11:33,351 - pulse-crawler - ERROR - [크롤링 프로세스] 응답 본문: {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'channel_id' column of 'videos' in the schema cache"}
+2025-05-03 19:11:33,351 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 요청 시작 (배치 크기: 20)
+2025-05-03 19:11:34,140 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 응답 상태 코드: 400
+2025-05-03 19:11:34,140 - pulse-crawler - ERROR - [크롤링 프로세스] Supabase API 오류: 400 - {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'channel_id' column of 'videos' in the schema cache"}
+2025-05-03 19:11:34,140 - pulse-crawler - ERROR - [크롤링 프로세스] 응답 본문: {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'channel_id' column of 'videos' in the schema cache"}
+2025-05-03 19:11:34,140 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 요청 시작 (배치 크기: 10)
+2025-05-03 19:11:34,445 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 응답 상태 코드: 400
+2025-05-03 19:11:34,445 - pulse-crawler - ERROR - [크롤링 프로세스] Supabase API 오류: 400 - {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'channel_id' column of 'videos' in the schema cache"}
+2025-05-03 19:11:34,445 - pulse-crawler - ERROR - [크롤링 프로세스] 응답 본문: {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'channel_id' column of 'videos' in the schema cache"}
+2025-05-03 19:11:34,447 - pulse-crawler - INFO - [크롤링 프로세스] 데이터베이스 저장 완료
+2025-05-03 19:11:34,447 - pulse-crawler - INFO - [크롤링 프로세스] 크롤링 완료
+2025-05-03 19:12:49,978 - pulse-crawler - INFO - [크롤링 프로세스] 크롤러 스크립트 실행 시작
+2025-05-03 19:12:49,978 - pulse-crawler - INFO - [크롤링 프로세스] 명령줄 인수 파싱 완료:
+2025-05-03 19:12:49,978 - pulse-crawler - INFO - [크롤링 프로세스] - 아티스트: 지정되지 않음
+2025-05-03 19:12:49,978 - pulse-crawler - INFO - [크롤링 프로세스] - 그룹: 지정되지 않음
+2025-05-03 19:12:49,978 - pulse-crawler - INFO - [크롤링 프로세스] - 이벤트: 지정되지 않음
+2025-05-03 19:12:49,978 - pulse-crawler - INFO - [크롤링 프로세스] - 날짜 범위: 시작일 없음 ~ 종료일 없음
+2025-05-03 19:12:49,978 - pulse-crawler - INFO - [크롤링 프로세스] - 결과 수 제한: 50
+2025-05-03 19:12:49,978 - pulse-crawler - INFO - [크롤링 프로세스] - 출력 디렉토리: output
+2025-05-03 19:12:49,978 - pulse-crawler - INFO - [크롤링 프로세스] - 저장 형식: json
+2025-05-03 19:12:49,978 - pulse-crawler - INFO - [크롤링 프로세스] - DB 저장: 활성화
+2025-05-03 19:12:49,978 - pulse-crawler - INFO - [크롤링 프로세스] - DB 타입: supabase
+2025-05-03 19:12:49,978 - pulse-crawler - INFO - [크롤링 프로세스] - 썸네일 다운로드: 활성화
+2025-05-03 19:12:49,978 - pulse-crawler - INFO - [크롤링 프로세스] 명령줄 인수: {'artist': None, 'group': None, 'event': None, 'start_date': None, 'end_date': None, 'limit': 50, 'skip_existing': True, 'output': 'output', 'format': 'json', 'save_to_db': True, 'download_thumbnails': True, 'db_type': 'supabase'}
+2025-05-03 19:12:49,978 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 확인 중...
+2025-05-03 19:12:49,978 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 확인됨 (미리보기: AIzaS...XKD_w)
+2025-05-03 19:12:49,978 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 로드 완료
+2025-05-03 19:12:49,978 - pulse-crawler - INFO - [크롤링 프로세스] 검색어 구성 중...
+2025-05-03 19:12:49,978 - pulse-crawler - INFO - [크롤링 프로세스] 검색어가 비어있어 기본 검색어 사용: 'kpop fancam'
+2025-05-03 19:12:49,978 - pulse-crawler - INFO - [크롤링 프로세스] 최종 검색어: 'kpop fancam'
+2025-05-03 19:12:49,978 - pulse-crawler - INFO - [크롤링 프로세스] 검색어 구성: 'kpop fancam'
+2025-05-03 19:12:49,979 - pulse-crawler - INFO - [크롤링 프로세스] 'kpop fancam' 검색어로 크롤링을 시작합니다.
+2025-05-03 19:12:49,979 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-05-03 19:12:49,981 - youtube-crawler - INFO - YouTube 크롤러가 초기화되었습니다.
+2025-05-03 19:12:49,981 - youtube-crawler - INFO - 'kpop fancam' 검색 시작. 최대 50개 결과
+2025-05-03 19:12:50,627 - youtube-crawler - INFO - 50개의 비디오를 찾았습니다.
+2025-05-03 19:12:50,627 - pulse-crawler - INFO - [크롤링 프로세스] 검색 결과: 50개 비디오
+2025-05-03 19:12:50,627 - pulse-crawler - INFO - [크롤링 프로세스] 50개 비디오의 세부 정보를 가져옵니다.
+2025-05-03 19:12:50,627 - youtube-crawler - INFO - 50개 비디오의 세부 정보를 가져옵니다.
+2025-05-03 19:12:51,055 - youtube-crawler - INFO - 50개 비디오의 세부 정보를 가져왔습니다.
+2025-05-03 19:12:51,056 - pulse-crawler - INFO - [크롤링 프로세스] 50개 비디오 세부 정보 획득 완료
+2025-05-03 19:12:51,056 - pulse-crawler - INFO - [크롤링 프로세스] 결과를 json 형식으로 저장합니다.
+2025-05-03 19:12:51,056 - pulse-crawler - INFO - [크롤링 프로세스] 결과 파일 저장 시작 (형식: json)
+2025-05-03 19:12:51,056 - pulse-crawler - INFO - [크롤링 프로세스] 출력 디렉토리 확인: output
+2025-05-03 19:12:51,056 - pulse-crawler - INFO - [크롤링 프로세스] JSON 파일 생성 중: output/videos_20250503_191251.json
+2025-05-03 19:12:51,059 - pulse-crawler - INFO - [크롤링 프로세스] 결과가 output/videos_20250503_191251.json에 JSON 형식으로 저장되었습니다.
+2025-05-03 19:12:51,059 - pulse-crawler - INFO - [크롤링 프로세스] 결과 파일 저장 완료
+2025-05-03 19:12:51,059 - pulse-crawler - INFO - [크롤링 프로세스] 썸네일 다운로드 시작
+2025-05-03 19:12:51,059 - pulse-crawler - INFO - [크롤링 프로세스] 50개 비디오의 썸네일을 다운로드합니다.
+2025-05-03 19:12:51,081 - pulse-crawler - INFO - [크롤링 프로세스] 썸네일 다운로드 결과: 성공 0개, 건너뜀 50개, 실패 0개
+2025-05-03 19:12:51,081 - pulse-crawler - INFO - [크롤링 프로세스] 썸네일이 output/thumbnails에 저장되었습니다.
+2025-05-03 19:12:51,081 - pulse-crawler - INFO - [크롤링 프로세스] 썸네일 다운로드 완료
+2025-05-03 19:12:51,081 - pulse-crawler - INFO - [크롤링 프로세스] 데이터베이스 저장 시작
+2025-05-03 19:12:51,081 - pulse-crawler - INFO - [크롤링 프로세스] 50개 비디오를 데이터베이스에 저장합니다.
+2025-05-03 19:12:51,081 - pulse-crawler - INFO - [크롤링 프로세스] Supabase 서비스 키 미리보기: eyJhbGciOi...tmgQg
+2025-05-03 19:12:51,081 - pulse-crawler - INFO - [크롤링 프로세스] Supabase URL: https://mdqfbcoexjdhuweziwff.supabase.co
+2025-05-03 19:12:51,081 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 엔드포인트: https://mdqfbcoexjdhuweziwff.supabase.co/rest/v1/videos
+2025-05-03 19:12:51,081 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 헤더 설정 완료
+2025-05-03 19:12:51,081 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: K9mNU4aSCjU -> 87531de5-1cc1-4a3e-8e97-9db7afdabc47 (youtube_id: K9mNU4aSCjU)
+2025-05-03 19:12:51,081 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: nIeUbkAw7aU -> 7c18b8c2-d95f-4663-b220-375d26261d2f (youtube_id: nIeUbkAw7aU)
+2025-05-03 19:12:51,081 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: 9rorWM3Iafg -> ca3db6a4-8cf7-4d6d-b4e5-658a3ed4214d (youtube_id: 9rorWM3Iafg)
+2025-05-03 19:12:51,081 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: 9u2FrtK6l28 -> d0960853-2958-40c2-b0e1-5d408ca8b308 (youtube_id: 9u2FrtK6l28)
+2025-05-03 19:12:51,081 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: D7Gn7HDfvnc -> 7fd832fa-7cff-4151-bfc3-58e310df49be (youtube_id: D7Gn7HDfvnc)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: RKn6rXp30y0 -> f9ef0871-0e8c-46db-8a80-e49ff672537e (youtube_id: RKn6rXp30y0)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: lGd_IL_MOn4 -> 9f28fb86-8167-4159-b3b4-8712ed892b3e (youtube_id: lGd_IL_MOn4)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: vi-fjDIt0bk -> 64c92460-0fff-4542-b577-52c6f76a01a4 (youtube_id: vi-fjDIt0bk)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: kYEdrDyQKL4 -> f64740fd-d4d1-4ce2-8542-02532ed7483d (youtube_id: kYEdrDyQKL4)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: u_o0wEe56BU -> 1103fd2c-54b1-4d4c-8aa4-49e69dda67df (youtube_id: u_o0wEe56BU)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: 6J-2s2h45v8 -> 34bbd03e-c1cf-4bff-88a0-cd679cd25641 (youtube_id: 6J-2s2h45v8)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: h_0yIl9sMy8 -> c4962c8f-950b-414f-b445-178bd174869d (youtube_id: h_0yIl9sMy8)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: cSXqwcLsVPc -> 1c6d59e6-ce19-49fd-9185-96704bbde1a3 (youtube_id: cSXqwcLsVPc)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: kko-tt26M5U -> ebdefe07-07b7-4e87-8187-bbb071bcbf42 (youtube_id: kko-tt26M5U)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: AVdYRCSh4r0 -> ea7f4fbf-830d-4566-ba7a-c130633c3c85 (youtube_id: AVdYRCSh4r0)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: yFTAYXDTjqI -> ebc68bc8-4efe-4725-8381-eaba2bf1639a (youtube_id: yFTAYXDTjqI)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: sF2QxDWsjPc -> c9123d61-81fe-451a-9b2c-0bbdca5a9dc4 (youtube_id: sF2QxDWsjPc)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: PXFRtqNg3yo -> 08698dd7-240e-473e-b434-c4b487902a3a (youtube_id: PXFRtqNg3yo)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: Xt3iR8EKGEg -> fb11ac72-e817-413c-bf2a-dff154a488a1 (youtube_id: Xt3iR8EKGEg)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: AMOvOWfpZBA -> 98f406a4-8749-49ec-9e42-7d63a1abd755 (youtube_id: AMOvOWfpZBA)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: prowHppYlsg -> 7218d0d1-e03a-4f3a-ab8d-bcef4d1a1c33 (youtube_id: prowHppYlsg)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: nCpihfC3uxQ -> f4a61828-992f-4905-8743-4f98ce18efca (youtube_id: nCpihfC3uxQ)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: 7e7Tsx3Fo4o -> c66ad240-10f0-459f-88cb-1746a61d6a37 (youtube_id: 7e7Tsx3Fo4o)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: mXc19_hkmKs -> 73b85c15-c93a-43da-a0de-b817ee4d4e9d (youtube_id: mXc19_hkmKs)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: PrkNZRd9G88 -> 6eba8f7e-0f04-40cf-a101-7b36ee365d3c (youtube_id: PrkNZRd9G88)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: yBSxZPYFndI -> 1ab12d6b-3453-4f04-b4b5-b261e2c663f3 (youtube_id: yBSxZPYFndI)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: hAW8Zmj3uvc -> 17c15617-b656-49ae-869e-8aab1950323d (youtube_id: hAW8Zmj3uvc)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: FVWnRN19L3c -> 021de176-f230-469d-8b3c-0303f8428d45 (youtube_id: FVWnRN19L3c)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: WltiBha0Y5I -> dc3cf66d-1fa9-4fea-ba3b-6422a980130b (youtube_id: WltiBha0Y5I)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: sCTcq0-FAbA -> 65441f9c-0621-4069-a2c7-3077142b799f (youtube_id: sCTcq0-FAbA)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: uiWuRa_8gcM -> 9ff6882f-595e-46ea-b0a7-9f041378087a (youtube_id: uiWuRa_8gcM)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: NrfYjfy1S10 -> ca737a92-0d7e-403f-b042-1cec81d0bf9c (youtube_id: NrfYjfy1S10)
+2025-05-03 19:12:51,082 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: NgqJhXgFzIc -> d37271e0-273c-44a4-bf0f-4728f7b4f1bb (youtube_id: NgqJhXgFzIc)
+2025-05-03 19:12:51,083 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: sREjDN1K-JY -> a248e388-f200-4c62-8d4a-4bcfd02b4ea0 (youtube_id: sREjDN1K-JY)
+2025-05-03 19:12:51,083 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: U98_iOjqgvk -> f6e08c14-9ff5-4ae3-a73b-6085b6ae41d7 (youtube_id: U98_iOjqgvk)
+2025-05-03 19:12:51,083 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: vrcEexzIsyw -> af5a0a52-9751-439e-bcea-7768903e4e51 (youtube_id: vrcEexzIsyw)
+2025-05-03 19:12:51,083 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: Mtqba_rdNlA -> 1176d5f4-171d-4a8e-bb41-1163f16aa90a (youtube_id: Mtqba_rdNlA)
+2025-05-03 19:12:51,083 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: OQNPBVNEH74 -> cd82246d-539e-4784-a680-f6d5c95aa8ba (youtube_id: OQNPBVNEH74)
+2025-05-03 19:12:51,083 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: OZytLLasceA -> 7c5e1329-05e7-4dea-ba64-1cb68de61c93 (youtube_id: OZytLLasceA)
+2025-05-03 19:12:51,083 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: xwvkVKaPnfM -> 53393149-c0ad-4267-975d-b2851d469146 (youtube_id: xwvkVKaPnfM)
+2025-05-03 19:12:51,083 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: ekQg7-rBABM -> d5ccfec8-0876-4aca-b7a0-d970785ce912 (youtube_id: ekQg7-rBABM)
+2025-05-03 19:12:51,083 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: uNMiKwHot0I -> 2772df8b-3ae6-4640-9573-129a8384ab36 (youtube_id: uNMiKwHot0I)
+2025-05-03 19:12:51,083 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: zGo_4FM8OM8 -> ef8d745e-41b0-4168-901c-60fd02b56b84 (youtube_id: zGo_4FM8OM8)
+2025-05-03 19:12:51,083 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: KOxsvJ_HCks -> 54d5495b-41fb-44c2-8683-392c829bb890 (youtube_id: KOxsvJ_HCks)
+2025-05-03 19:12:51,083 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: 89hCoHNJcf8 -> cff77fdc-7b0d-4504-bd30-2139ab79d6fc (youtube_id: 89hCoHNJcf8)
+2025-05-03 19:12:51,083 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: yuI3n3sOFWs -> 4686823d-18bb-4304-8c30-bb6e40dcf7ef (youtube_id: yuI3n3sOFWs)
+2025-05-03 19:12:51,083 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: WT1WniLMcnw -> efd232c9-a5f6-446f-a7f7-66d19e812176 (youtube_id: WT1WniLMcnw)
+2025-05-03 19:12:51,083 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: wy_tMUsuHsE -> 34116f48-e305-45d6-8a37-887720b6404d (youtube_id: wy_tMUsuHsE)
+2025-05-03 19:12:51,083 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: V4PkmmajMRo -> 691829fd-8374-4474-8bf4-b6d6461556d5 (youtube_id: V4PkmmajMRo)
+2025-05-03 19:12:51,083 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: X5atzRwqEQ4 -> 8aed3098-2975-463d-b996-3624e5af2f33 (youtube_id: X5atzRwqEQ4)
+2025-05-03 19:12:51,083 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 요청 시작 (배치 크기: 20)
+2025-05-03 19:12:51,760 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 응답 상태 코드: 400
+2025-05-03 19:12:51,760 - pulse-crawler - ERROR - [크롤링 프로세스] Supabase API 오류: 400 - {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'channel_id' column of 'videos' in the schema cache"}
+2025-05-03 19:12:51,760 - pulse-crawler - ERROR - [크롤링 프로세스] 응답 본문: {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'channel_id' column of 'videos' in the schema cache"}
+2025-05-03 19:12:51,760 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 요청 시작 (배치 크기: 20)
+2025-05-03 19:12:52,440 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 응답 상태 코드: 400
+2025-05-03 19:12:52,440 - pulse-crawler - ERROR - [크롤링 프로세스] Supabase API 오류: 400 - {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'channel_id' column of 'videos' in the schema cache"}
+2025-05-03 19:12:52,440 - pulse-crawler - ERROR - [크롤링 프로세스] 응답 본문: {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'channel_id' column of 'videos' in the schema cache"}
+2025-05-03 19:12:52,440 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 요청 시작 (배치 크기: 10)
+2025-05-03 19:12:53,189 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 응답 상태 코드: 400
+2025-05-03 19:12:53,189 - pulse-crawler - ERROR - [크롤링 프로세스] Supabase API 오류: 400 - {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'channel_id' column of 'videos' in the schema cache"}
+2025-05-03 19:12:53,189 - pulse-crawler - ERROR - [크롤링 프로세스] 응답 본문: {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'channel_id' column of 'videos' in the schema cache"}
+2025-05-03 19:12:53,192 - pulse-crawler - INFO - [크롤링 프로세스] 데이터베이스 저장 완료
+2025-05-03 19:12:53,192 - pulse-crawler - INFO - [크롤링 프로세스] 크롤링 완료
+2025-05-03 19:17:19,203 - pulse-crawler - INFO - [크롤링 프로세스] 크롤러 스크립트 실행 시작
+2025-05-03 19:17:19,203 - pulse-crawler - INFO - [크롤링 프로세스] 명령줄 인수 파싱 완료:
+2025-05-03 19:17:19,203 - pulse-crawler - INFO - [크롤링 프로세스] - 아티스트: 지정되지 않음
+2025-05-03 19:17:19,203 - pulse-crawler - INFO - [크롤링 프로세스] - 그룹: 지정되지 않음
+2025-05-03 19:17:19,203 - pulse-crawler - INFO - [크롤링 프로세스] - 이벤트: 지정되지 않음
+2025-05-03 19:17:19,203 - pulse-crawler - INFO - [크롤링 프로세스] - 날짜 범위: 시작일 없음 ~ 종료일 없음
+2025-05-03 19:17:19,203 - pulse-crawler - INFO - [크롤링 프로세스] - 결과 수 제한: 50
+2025-05-03 19:17:19,203 - pulse-crawler - INFO - [크롤링 프로세스] - 출력 디렉토리: output
+2025-05-03 19:17:19,203 - pulse-crawler - INFO - [크롤링 프로세스] - 저장 형식: json
+2025-05-03 19:17:19,203 - pulse-crawler - INFO - [크롤링 프로세스] - DB 저장: 활성화
+2025-05-03 19:17:19,203 - pulse-crawler - INFO - [크롤링 프로세스] - DB 타입: supabase
+2025-05-03 19:17:19,203 - pulse-crawler - INFO - [크롤링 프로세스] - 썸네일 다운로드: 활성화
+2025-05-03 19:17:19,203 - pulse-crawler - INFO - [크롤링 프로세스] 명령줄 인수: {'artist': None, 'group': None, 'event': None, 'start_date': None, 'end_date': None, 'limit': 50, 'skip_existing': True, 'output': 'output', 'format': 'json', 'save_to_db': True, 'download_thumbnails': True, 'db_type': 'supabase'}
+2025-05-03 19:17:19,203 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 확인 중...
+2025-05-03 19:17:19,203 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 확인됨 (미리보기: AIzaS...XKD_w)
+2025-05-03 19:17:19,203 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 로드 완료
+2025-05-03 19:17:19,203 - pulse-crawler - INFO - [크롤링 프로세스] 검색어 구성 중...
+2025-05-03 19:17:19,203 - pulse-crawler - INFO - [크롤링 프로세스] 검색어가 비어있어 기본 검색어 사용: 'kpop fancam'
+2025-05-03 19:17:19,203 - pulse-crawler - INFO - [크롤링 프로세스] 최종 검색어: 'kpop fancam'
+2025-05-03 19:17:19,203 - pulse-crawler - INFO - [크롤링 프로세스] 검색어 구성: 'kpop fancam'
+2025-05-03 19:17:19,203 - pulse-crawler - INFO - [크롤링 프로세스] 'kpop fancam' 검색어로 크롤링을 시작합니다.
+2025-05-03 19:17:19,204 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-05-03 19:17:19,206 - youtube-crawler - INFO - YouTube 크롤러가 초기화되었습니다.
+2025-05-03 19:17:19,206 - youtube-crawler - INFO - 'kpop fancam' 검색 시작. 최대 50개 결과
+2025-05-03 19:17:19,817 - youtube-crawler - INFO - 50개의 비디오를 찾았습니다.
+2025-05-03 19:17:19,818 - pulse-crawler - INFO - [크롤링 프로세스] 검색 결과: 50개 비디오
+2025-05-03 19:17:19,818 - pulse-crawler - INFO - [크롤링 프로세스] 50개 비디오의 세부 정보를 가져옵니다.
+2025-05-03 19:17:19,818 - youtube-crawler - INFO - 50개 비디오의 세부 정보를 가져옵니다.
+2025-05-03 19:17:20,107 - youtube-crawler - INFO - 50개 비디오의 세부 정보를 가져왔습니다.
+2025-05-03 19:17:20,107 - pulse-crawler - INFO - [크롤링 프로세스] 50개 비디오 세부 정보 획득 완료
+2025-05-03 19:17:20,107 - pulse-crawler - INFO - [크롤링 프로세스] 결과를 json 형식으로 저장합니다.
+2025-05-03 19:17:20,108 - pulse-crawler - INFO - [크롤링 프로세스] 결과 파일 저장 시작 (형식: json)
+2025-05-03 19:17:20,108 - pulse-crawler - INFO - [크롤링 프로세스] 출력 디렉토리 확인: output
+2025-05-03 19:17:20,108 - pulse-crawler - INFO - [크롤링 프로세스] JSON 파일 생성 중: output/videos_20250503_191720.json
+2025-05-03 19:17:20,111 - pulse-crawler - INFO - [크롤링 프로세스] 결과가 output/videos_20250503_191720.json에 JSON 형식으로 저장되었습니다.
+2025-05-03 19:17:20,111 - pulse-crawler - INFO - [크롤링 프로세스] 결과 파일 저장 완료
+2025-05-03 19:17:20,111 - pulse-crawler - INFO - [크롤링 프로세스] 썸네일 다운로드 시작
+2025-05-03 19:17:20,111 - pulse-crawler - INFO - [크롤링 프로세스] 50개 비디오의 썸네일을 다운로드합니다.
+2025-05-03 19:17:20,418 - pulse-crawler - INFO - [크롤링 프로세스] 썸네일 다운로드 결과: 성공 1개, 건너뜀 49개, 실패 0개
+2025-05-03 19:17:20,418 - pulse-crawler - INFO - [크롤링 프로세스] 썸네일이 output/thumbnails에 저장되었습니다.
+2025-05-03 19:17:20,420 - pulse-crawler - INFO - [크롤링 프로세스] 썸네일 다운로드 완료
+2025-05-03 19:17:20,420 - pulse-crawler - INFO - [크롤링 프로세스] 데이터베이스 저장 시작
+2025-05-03 19:17:20,421 - pulse-crawler - INFO - [크롤링 프로세스] 50개 비디오를 데이터베이스에 저장합니다.
+2025-05-03 19:17:20,421 - pulse-crawler - INFO - [크롤링 프로세스] Supabase 서비스 키 미리보기: eyJhbGciOi...tmgQg
+2025-05-03 19:17:20,421 - pulse-crawler - INFO - [크롤링 프로세스] Supabase URL: https://mdqfbcoexjdhuweziwff.supabase.co
+2025-05-03 19:17:20,421 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 엔드포인트: https://mdqfbcoexjdhuweziwff.supabase.co/rest/v1/videos
+2025-05-03 19:17:20,421 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 헤더 설정 완료
+2025-05-03 19:17:20,421 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: K9mNU4aSCjU -> 749ab0e1-3bf8-4f8b-8dfd-104761112b02 (platform_id: K9mNU4aSCjU)
+2025-05-03 19:17:20,421 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: nIeUbkAw7aU -> 168398d4-164f-401e-909d-67ad7387e28f (platform_id: nIeUbkAw7aU)
+2025-05-03 19:17:20,421 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: 9rorWM3Iafg -> e136f8b8-973b-4f4b-a5eb-3f98cb839a03 (platform_id: 9rorWM3Iafg)
+2025-05-03 19:17:20,421 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: 9u2FrtK6l28 -> 3de0979d-2e8d-4090-bbb2-8e49d7d7729b (platform_id: 9u2FrtK6l28)
+2025-05-03 19:17:20,421 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: D7Gn7HDfvnc -> afed3dcc-b24e-4f6c-b0b4-680cc83051db (platform_id: D7Gn7HDfvnc)
+2025-05-03 19:17:20,422 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: RKn6rXp30y0 -> 978a8207-1228-4f63-bee3-bc3e4019cfd5 (platform_id: RKn6rXp30y0)
+2025-05-03 19:17:20,422 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: lGd_IL_MOn4 -> 937b3caf-5b75-46e9-85ef-852c82861b6d (platform_id: lGd_IL_MOn4)
+2025-05-03 19:17:20,422 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: vi-fjDIt0bk -> b2b1d93f-9432-4bb3-846d-c482a02098b3 (platform_id: vi-fjDIt0bk)
+2025-05-03 19:17:20,422 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: kYEdrDyQKL4 -> 6a03ed17-1217-4ca2-be88-43e989a994d9 (platform_id: kYEdrDyQKL4)
+2025-05-03 19:17:20,422 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: u_o0wEe56BU -> 6d8dadf0-28b2-41e0-ac0f-de05ea4f84eb (platform_id: u_o0wEe56BU)
+2025-05-03 19:17:20,422 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: 6J-2s2h45v8 -> c355e49a-c894-442c-972e-274d27550a1a (platform_id: 6J-2s2h45v8)
+2025-05-03 19:17:20,422 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: h_0yIl9sMy8 -> 79b6a4dc-321a-43ae-9843-39a54073b6cc (platform_id: h_0yIl9sMy8)
+2025-05-03 19:17:20,422 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: cSXqwcLsVPc -> de255f3e-0e16-4f90-ab7d-e6ebf2db41a4 (platform_id: cSXqwcLsVPc)
+2025-05-03 19:17:20,422 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: kko-tt26M5U -> ad65c92c-88bf-43c9-aa5a-bf4b72ced6b0 (platform_id: kko-tt26M5U)
+2025-05-03 19:17:20,422 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: AVdYRCSh4r0 -> ca22dbe5-3103-4590-8a43-369da8266ad1 (platform_id: AVdYRCSh4r0)
+2025-05-03 19:17:20,422 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: yFTAYXDTjqI -> 84bf19e9-19f3-4406-ada9-8721c52af74c (platform_id: yFTAYXDTjqI)
+2025-05-03 19:17:20,422 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: sF2QxDWsjPc -> 095313fa-73e9-4110-bcad-3d16f1062b00 (platform_id: sF2QxDWsjPc)
+2025-05-03 19:17:20,423 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: PXFRtqNg3yo -> 9e54a604-3626-42ea-9e14-01eb485ab4bb (platform_id: PXFRtqNg3yo)
+2025-05-03 19:17:20,423 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: Xt3iR8EKGEg -> 9ccdc77e-7a48-4858-8fb2-3c33ed846e1d (platform_id: Xt3iR8EKGEg)
+2025-05-03 19:17:20,423 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: AMOvOWfpZBA -> f3fe799a-7841-4840-979e-c56ab1246af5 (platform_id: AMOvOWfpZBA)
+2025-05-03 19:17:20,423 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: prowHppYlsg -> b0df3f31-bc1e-4cae-87b5-9859773808ff (platform_id: prowHppYlsg)
+2025-05-03 19:17:20,423 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: IA-gMDtYgI0 -> ea6f95ac-6f82-4899-af90-961abea83a17 (platform_id: IA-gMDtYgI0)
+2025-05-03 19:17:20,423 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: nCpihfC3uxQ -> 03c54718-66e2-4bdd-8d66-336155330bbd (platform_id: nCpihfC3uxQ)
+2025-05-03 19:17:20,423 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: mXc19_hkmKs -> 8fdb190c-8d6a-468a-ba3e-72cb59f38efb (platform_id: mXc19_hkmKs)
+2025-05-03 19:17:20,423 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: PrkNZRd9G88 -> 34732ae5-20cb-4c8c-8da9-dab4bd05b261 (platform_id: PrkNZRd9G88)
+2025-05-03 19:17:20,423 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: yBSxZPYFndI -> 5cb05f2d-ec8f-4385-837f-fbe172b4a474 (platform_id: yBSxZPYFndI)
+2025-05-03 19:17:20,423 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: hAW8Zmj3uvc -> 4a1eae39-2946-4200-9d3d-e886dc0449cb (platform_id: hAW8Zmj3uvc)
+2025-05-03 19:17:20,423 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: FVWnRN19L3c -> 73f9e2cf-3b1a-4b60-8975-8006c9794930 (platform_id: FVWnRN19L3c)
+2025-05-03 19:17:20,423 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: WltiBha0Y5I -> 42b91ea4-d112-4747-a78a-36559521cf97 (platform_id: WltiBha0Y5I)
+2025-05-03 19:17:20,423 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: sCTcq0-FAbA -> eaebf901-2feb-467a-87ec-e69df8b53fb9 (platform_id: sCTcq0-FAbA)
+2025-05-03 19:17:20,423 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: uiWuRa_8gcM -> 60b91077-982b-49b2-a362-82417ca9038f (platform_id: uiWuRa_8gcM)
+2025-05-03 19:17:20,424 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: NrfYjfy1S10 -> a1cbb9ba-656a-4cef-9770-6ea663ba1eb5 (platform_id: NrfYjfy1S10)
+2025-05-03 19:17:20,424 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: NgqJhXgFzIc -> a30bd2c2-e12e-44fc-9563-f30204b070a9 (platform_id: NgqJhXgFzIc)
+2025-05-03 19:17:20,424 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: sREjDN1K-JY -> 7c75ea43-53a8-4ee0-8049-e66dc6daa36b (platform_id: sREjDN1K-JY)
+2025-05-03 19:17:20,424 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: vrcEexzIsyw -> 53334bcd-8795-42d6-bff6-939cd895ff9d (platform_id: vrcEexzIsyw)
+2025-05-03 19:17:20,424 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: U98_iOjqgvk -> b179a15e-06f2-4232-a759-509b2f710572 (platform_id: U98_iOjqgvk)
+2025-05-03 19:17:20,424 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: Mtqba_rdNlA -> 31555a4f-1158-482e-81cb-e40d75b02376 (platform_id: Mtqba_rdNlA)
+2025-05-03 19:17:20,424 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: OQNPBVNEH74 -> 062ab00c-5a46-4da8-8922-da91fa36aeca (platform_id: OQNPBVNEH74)
+2025-05-03 19:17:20,424 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: OZytLLasceA -> d7f1f28f-17b0-4233-be83-ec02f5dbaf9a (platform_id: OZytLLasceA)
+2025-05-03 19:17:20,424 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: ekQg7-rBABM -> 0c90a49b-f64e-4a62-b741-774e0389e86d (platform_id: ekQg7-rBABM)
+2025-05-03 19:17:20,424 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: xwvkVKaPnfM -> 39b82376-3da9-419a-84c4-38f476b8fefa (platform_id: xwvkVKaPnfM)
+2025-05-03 19:17:20,424 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: uNMiKwHot0I -> 29683ff2-b665-490a-af8a-d6740a1e55d5 (platform_id: uNMiKwHot0I)
+2025-05-03 19:17:20,424 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: zGo_4FM8OM8 -> 2d4c6a31-622c-4a57-bee9-5b2706309d28 (platform_id: zGo_4FM8OM8)
+2025-05-03 19:17:20,424 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: KOxsvJ_HCks -> 11058bb1-96bb-49d7-a810-53f364cd04d3 (platform_id: KOxsvJ_HCks)
+2025-05-03 19:17:20,424 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: 89hCoHNJcf8 -> acf1eaf4-31c3-45d9-98ca-bf21883a3f5f (platform_id: 89hCoHNJcf8)
+2025-05-03 19:17:20,425 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: yuI3n3sOFWs -> 7c57488f-3fd3-4ac1-aac0-3c1767f01b42 (platform_id: yuI3n3sOFWs)
+2025-05-03 19:17:20,425 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: WT1WniLMcnw -> 7b78f146-9f87-4a45-9b1e-463e98a205ad (platform_id: WT1WniLMcnw)
+2025-05-03 19:17:20,425 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: wy_tMUsuHsE -> 16bd19b6-eba7-487a-bf31-57cf643d1d8f (platform_id: wy_tMUsuHsE)
+2025-05-03 19:17:20,425 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: V4PkmmajMRo -> 3c4eb37f-ff2a-4e31-ac51-d335207980e6 (platform_id: V4PkmmajMRo)
+2025-05-03 19:17:20,425 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: Hh3StE8yhBQ -> 8ee00992-be57-4a36-8630-1db57175836e (platform_id: Hh3StE8yhBQ)
+2025-05-03 19:17:20,425 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 요청 시작 (배치 크기: 20)
+2025-05-03 19:17:21,570 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 응답 상태 코드: 400
+2025-05-03 19:17:21,570 - pulse-crawler - ERROR - [크롤링 프로세스] Supabase API 오류: 400 - {"code":"22P02","details":"\"[\" must introduce explicitly-specified array dimensions.","hint":null,"message":"malformed array literal: \"[\"KBS\", \"KPOP\", \"\\ubba4\\uc9c1\", \"KBSKPOP\", \"K-POP\", \"\\ucf00\\uc774\\ud31d\", \"kpop\", \"KBSKpop\", \"\\uc74c\\uc545\", \"kbs kpop\"]\""}
+2025-05-03 19:17:21,571 - pulse-crawler - ERROR - [크롤링 프로세스] 응답 본문: {"code":"22P02","details":"\"[\" must introduce explicitly-specified array dimensions.","hint":null,"message":"malformed array literal: \"[\"KBS\", \"KPOP\", \"\\ubba4\\uc9c1\", \"KBSKPOP\", \"K-POP\", \"\\ucf00\\uc774\\ud31d\", \"kpop\", \"KBSKpop\", \"\\uc74c\\uc545\", \"kbs kpop\"]\""}
+2025-05-03 19:17:21,571 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 요청 시작 (배치 크기: 20)
+2025-05-03 19:17:22,343 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 응답 상태 코드: 400
+2025-05-03 19:17:22,343 - pulse-crawler - ERROR - [크롤링 프로세스] Supabase API 오류: 400 - {"code":"22P02","details":"\"[\" must introduce explicitly-specified array dimensions.","hint":null,"message":"malformed array literal: \"[\"Inkigayo\", \"\\uc778\\uae30\\uac00\\uc694\\uc9c1\\ucea0\", \"\\uc548\\ubc291\\uc5f4\\uc9c1\\ucea0\", \"\\uc2a4\\ube0c\\uc2a4\\ucf00\\uc774\\ud31d\", \"\\uc2a4\\ube0c\\uc2a4 \\uc9c1\\ucea0\", \"\\uc778\\uae30\\uac00\\uc694\", \"\\uc778\\uac00\", \"\\uc74c\\ubc29\", \"\\uc74c\\uc545\\ubc29\\uc1a1\", \"\\ubca0\\uc774\\ube44\\ubaac\\uc2a4\\ud130\", \"BABYMONSTER\", \"DRIP\", \"\\ub4dc\\ub9bd\", \"\\ubca0\\uc774\\ube44\\ubaac\\uc2a4\\ud130 \\ucef4\\ubc31\", \"\\ubca0\\uc774\\ube44\\ubaac\\uc2a4\\ud130 \\uc2e0\\uace1\", \"\\ubca0\\uc774\\ube44\\ubaac\\uc2a4\\ud130 \\uc9c1\\ucea0\", \"\\ubca0\\uc774\\ube44\\ubaac\\uc2a4\\ud130 \\ud398\\uc774\\uc2a4\\ucea0\", \"\\ubca0\\uc774\\ube44\\ubaac\\uc2a4\\ud130 \\ub178\\ub798\", \"\\ubca0\\uc774\\ube44\\ubaac\\uc2a4\\ud130 \\uc74c\\ubc29\", \"\\ubca0\\uc774\\ube44\\ubaac\\uc2a4\\ud130 \\uc74c\\uc545\\ubc29\\uc1a1\", \"\\ubca0\\uc774\\ube44\\ubaac\\uc2a4\\ud130 \\uc778\\uac00\", \"\\ubca0\\uc774\\ube44\\ubaac\\uc2a4\\ud130 \\uc778\\uae30\\uac00\\uc694\", \"\\ubca0\\uc774\\ube44\\ubaac\\uc2a4\\ud130 \\ubb34\\ub300\", \"\\ubca0\\uc774\\ube44\\ubaac\\uc2a4\\ud130 \\uc548\\ubb34\", \"\\ub8e8\\uce74\"]\""}
+2025-05-03 19:17:22,343 - pulse-crawler - ERROR - [크롤링 프로세스] 응답 본문: {"code":"22P02","details":"\"[\" must introduce explicitly-specified array dimensions.","hint":null,"message":"malformed array literal: \"[\"Inkigayo\", \"\\uc778\\uae30\\uac00\\uc694\\uc9c1\\ucea0\", \"\\uc548\\ubc291\\uc5f4\\uc9c1\\ucea0\", \"\\uc2a4\\ube0c\\uc2a4\\ucf00\\uc774\\ud31d\", \"\\uc2a4\\ube0c\\uc2a4 \\uc9c1\\ucea0\", \"\\uc778\\uae30\\uac00\\uc694\", \"\\uc778\\uac00\", \"\\uc74c\\ubc29\", \"\\uc74c\\uc545\\ubc29\\uc1a1\", \"\\ubca0\\uc774\\ube44\\ubaac\\uc2a4\\ud130\", \"BABYMONSTER\", \"DRIP\", \"\\ub4dc\\ub9bd\", \"\\ubca0\\uc774\\ube44\\ubaac\\uc2a4\\ud130 \\ucef4\\ubc31\", \"\\ubca0\\uc774\\ube44\\ubaac\\uc2a4\\ud130 \\uc2e0\\uace1\", \"\\ubca0\\uc774\\ube44\\ubaac\\uc2a4\\ud130 \\uc9c1\\ucea0\", \"\\ubca0\\uc774\\ube44\\ubaac\\uc2a4\\ud130 \\ud398\\uc774\\uc2a4\\ucea0\", \"\\ubca0\\uc774\\ube44\\ubaac\\uc2a4\\ud130 \\ub178\\ub798\", \"\\ubca0\\uc774\\ube44\\ubaac\\uc2a4\\ud130 \\uc74c\\ubc29\", \"\\ubca0\\uc774\\ube44\\ubaac\\uc2a4\\ud130 \\uc74c\\uc545\\ubc29\\uc1a1\", \"\\ubca0\\uc774\\ube44\\ubaac\\uc2a4\\ud130 \\uc778\\uac00\", \"\\ubca0\\uc774\\ube44\\ubaac\\uc2a4\\ud130 \\uc778\\uae30\\uac00\\uc694\", \"\\ubca0\\uc774\\ube44\\ubaac\\uc2a4\\ud130 \\ubb34\\ub300\", \"\\ubca0\\uc774\\ube44\\ubaac\\uc2a4\\ud130 \\uc548\\ubb34\", \"\\ub8e8\\uce74\"]\""}
+2025-05-03 19:17:22,343 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 요청 시작 (배치 크기: 10)
+2025-05-03 19:17:22,635 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 응답 상태 코드: 400
+2025-05-03 19:17:22,635 - pulse-crawler - ERROR - [크롤링 프로세스] Supabase API 오류: 400 - {"code":"22P02","details":"\"[\" must introduce explicitly-specified array dimensions.","hint":null,"message":"malformed array literal: \"[\"Inkigayo\", \"\\uc778\\uae30\\uac00\\uc694\\uc9c1\\ucea0\", \"\\uc548\\ubc291\\uc5f4\\uc9c1\\ucea0\", \"\\uc2a4\\ube0c\\uc2a4\\ucf00\\uc774\\ud31d\", \"\\uc2a4\\ube0c\\uc2a4\", \"\\uc9c1\\ucea0\", \"\\uc778\\uae30\\uac00\\uc694\", \"\\uc778\\uac00\", \"\\uc74c\\ubc29\", \"\\uc74c\\uc545\\ubc29\\uc1a1\", \"\\uc2a4\\ube0c\\uc2a4\\ucf00\\uc774\\ud31d \\uc90c\", \"\\ubbf8\\uc57c\\uc624\", \"MEOVV\", \"BODY\", \"\\ubbf8\\uc57c\\uc624 \\ub178\\ub798\", \"\\ubbf8\\uc57c\\uc624 \\uc2e0\\uace1\", \"\\ubbf8\\uc57c\\uc624 \\uc548\\ubb34\", \"\\ubbf8\\uc57c\\uc624 \\ubb34\\ub300\", \"\\ubbf8\\uc57c\\uc624 \\uc9c1\\ucea0\", \"\\ubbf8\\uc57c\\uc624 \\ud398\\uc774\\uc2a4\\ucea0\", \"\\ubbf8\\uc57c\\uc624 \\uc778\\uae30\\uac00\\uc694\", \"\\ubbf8\\uc57c\\uc624 \\uc778\\uac00\", \"\\ubbf8\\uc57c\\uc624 \\uc74c\\ubc29\", \"\\ubbf8\\uc57c\\uc624 \\uc74c\\uc545\\ubc29\\uc1a1\", \"ELLA\", \"GAWON\", \"SOOIN\", \"ANNA\", \"NARIN\", \"\\uc5d8\\ub77c\", \"\\uac00\\uc6d0\", \"\\uc218\\uc778\", \"\\uc548\\ub098\", \"\\ub098\\ub9b0\", \"\\ub354\\ube14\\ub799\\ub808\\uc774\\ube14\"]\""}
+2025-05-03 19:17:22,635 - pulse-crawler - ERROR - [크롤링 프로세스] 응답 본문: {"code":"22P02","details":"\"[\" must introduce explicitly-specified array dimensions.","hint":null,"message":"malformed array literal: \"[\"Inkigayo\", \"\\uc778\\uae30\\uac00\\uc694\\uc9c1\\ucea0\", \"\\uc548\\ubc291\\uc5f4\\uc9c1\\ucea0\", \"\\uc2a4\\ube0c\\uc2a4\\ucf00\\uc774\\ud31d\", \"\\uc2a4\\ube0c\\uc2a4\", \"\\uc9c1\\ucea0\", \"\\uc778\\uae30\\uac00\\uc694\", \"\\uc778\\uac00\", \"\\uc74c\\ubc29\", \"\\uc74c\\uc545\\ubc29\\uc1a1\", \"\\uc2a4\\ube0c\\uc2a4\\ucf00\\uc774\\ud31d \\uc90c\", \"\\ubbf8\\uc57c\\uc624\", \"MEOVV\", \"BODY\", \"\\ubbf8\\uc57c\\uc624 \\ub178\\ub798\", \"\\ubbf8\\uc57c\\uc624 \\uc2e0\\uace1\", \"\\ubbf8\\uc57c\\uc624 \\uc548\\ubb34\", \"\\ubbf8\\uc57c\\uc624 \\ubb34\\ub300\", \"\\ubbf8\\uc57c\\uc624 \\uc9c1\\ucea0\", \"\\ubbf8\\uc57c\\uc624 \\ud398\\uc774\\uc2a4\\ucea0\", \"\\ubbf8\\uc57c\\uc624 \\uc778\\uae30\\uac00\\uc694\", \"\\ubbf8\\uc57c\\uc624 \\uc778\\uac00\", \"\\ubbf8\\uc57c\\uc624 \\uc74c\\ubc29\", \"\\ubbf8\\uc57c\\uc624 \\uc74c\\uc545\\ubc29\\uc1a1\", \"ELLA\", \"GAWON\", \"SOOIN\", \"ANNA\", \"NARIN\", \"\\uc5d8\\ub77c\", \"\\uac00\\uc6d0\", \"\\uc218\\uc778\", \"\\uc548\\ub098\", \"\\ub098\\ub9b0\", \"\\ub354\\ube14\\ub799\\ub808\\uc774\\ube14\"]\""}
+2025-05-03 19:17:22,637 - pulse-crawler - INFO - [크롤링 프로세스] 데이터베이스 저장 완료
+2025-05-03 19:17:22,637 - pulse-crawler - INFO - [크롤링 프로세스] 크롤링 완료
+2025-05-03 19:20:02,914 - pulse-crawler - INFO - [크롤링 프로세스] 크롤러 스크립트 실행 시작
+2025-05-03 19:20:02,915 - pulse-crawler - INFO - [크롤링 프로세스] 명령줄 인수 파싱 완료:
+2025-05-03 19:20:02,915 - pulse-crawler - INFO - [크롤링 프로세스] - 아티스트: 지정되지 않음
+2025-05-03 19:20:02,915 - pulse-crawler - INFO - [크롤링 프로세스] - 그룹: 지정되지 않음
+2025-05-03 19:20:02,915 - pulse-crawler - INFO - [크롤링 프로세스] - 이벤트: 지정되지 않음
+2025-05-03 19:20:02,915 - pulse-crawler - INFO - [크롤링 프로세스] - 날짜 범위: 시작일 없음 ~ 종료일 없음
+2025-05-03 19:20:02,915 - pulse-crawler - INFO - [크롤링 프로세스] - 결과 수 제한: 50
+2025-05-03 19:20:02,915 - pulse-crawler - INFO - [크롤링 프로세스] - 출력 디렉토리: output
+2025-05-03 19:20:02,915 - pulse-crawler - INFO - [크롤링 프로세스] - 저장 형식: json
+2025-05-03 19:20:02,915 - pulse-crawler - INFO - [크롤링 프로세스] - DB 저장: 활성화
+2025-05-03 19:20:02,915 - pulse-crawler - INFO - [크롤링 프로세스] - DB 타입: supabase
+2025-05-03 19:20:02,915 - pulse-crawler - INFO - [크롤링 프로세스] - 썸네일 다운로드: 활성화
+2025-05-03 19:20:02,915 - pulse-crawler - INFO - [크롤링 프로세스] 명령줄 인수: {'artist': None, 'group': None, 'event': None, 'start_date': None, 'end_date': None, 'limit': 50, 'skip_existing': True, 'output': 'output', 'format': 'json', 'save_to_db': True, 'download_thumbnails': True, 'db_type': 'supabase'}
+2025-05-03 19:20:02,915 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 확인 중...
+2025-05-03 19:20:02,915 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 확인됨 (미리보기: AIzaS...XKD_w)
+2025-05-03 19:20:02,915 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 로드 완료
+2025-05-03 19:20:02,915 - pulse-crawler - INFO - [크롤링 프로세스] 검색어 구성 중...
+2025-05-03 19:20:02,915 - pulse-crawler - INFO - [크롤링 프로세스] 검색어가 비어있어 기본 검색어 사용: 'kpop fancam'
+2025-05-03 19:20:02,915 - pulse-crawler - INFO - [크롤링 프로세스] 최종 검색어: 'kpop fancam'
+2025-05-03 19:20:02,915 - pulse-crawler - INFO - [크롤링 프로세스] 검색어 구성: 'kpop fancam'
+2025-05-03 19:20:02,915 - pulse-crawler - INFO - [크롤링 프로세스] 'kpop fancam' 검색어로 크롤링을 시작합니다.
+2025-05-03 19:20:02,916 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-05-03 19:20:02,918 - youtube-crawler - INFO - YouTube 크롤러가 초기화되었습니다.
+2025-05-03 19:20:02,918 - youtube-crawler - INFO - 'kpop fancam' 검색 시작. 최대 50개 결과
+2025-05-03 19:20:03,601 - youtube-crawler - INFO - 50개의 비디오를 찾았습니다.
+2025-05-03 19:20:03,601 - pulse-crawler - INFO - [크롤링 프로세스] 검색 결과: 50개 비디오
+2025-05-03 19:20:03,601 - pulse-crawler - INFO - [크롤링 프로세스] 50개 비디오의 세부 정보를 가져옵니다.
+2025-05-03 19:20:03,601 - youtube-crawler - INFO - 50개 비디오의 세부 정보를 가져옵니다.
+2025-05-03 19:20:03,880 - youtube-crawler - INFO - 50개 비디오의 세부 정보를 가져왔습니다.
+2025-05-03 19:20:03,881 - pulse-crawler - INFO - [크롤링 프로세스] 50개 비디오 세부 정보 획득 완료
+2025-05-03 19:20:03,881 - pulse-crawler - INFO - [크롤링 프로세스] 결과를 json 형식으로 저장합니다.
+2025-05-03 19:20:03,881 - pulse-crawler - INFO - [크롤링 프로세스] 결과 파일 저장 시작 (형식: json)
+2025-05-03 19:20:03,881 - pulse-crawler - INFO - [크롤링 프로세스] 출력 디렉토리 확인: output
+2025-05-03 19:20:03,881 - pulse-crawler - INFO - [크롤링 프로세스] JSON 파일 생성 중: output/videos_20250503_192003.json
+2025-05-03 19:20:03,884 - pulse-crawler - INFO - [크롤링 프로세스] 결과가 output/videos_20250503_192003.json에 JSON 형식으로 저장되었습니다.
+2025-05-03 19:20:03,884 - pulse-crawler - INFO - [크롤링 프로세스] 결과 파일 저장 완료
+2025-05-03 19:20:03,884 - pulse-crawler - INFO - [크롤링 프로세스] 썸네일 다운로드 시작
+2025-05-03 19:20:03,885 - pulse-crawler - INFO - [크롤링 프로세스] 50개 비디오의 썸네일을 다운로드합니다.
+2025-05-03 19:20:03,908 - pulse-crawler - INFO - [크롤링 프로세스] 썸네일 다운로드 결과: 성공 0개, 건너뜀 50개, 실패 0개
+2025-05-03 19:20:03,909 - pulse-crawler - INFO - [크롤링 프로세스] 썸네일이 output/thumbnails에 저장되었습니다.
+2025-05-03 19:20:03,909 - pulse-crawler - INFO - [크롤링 프로세스] 썸네일 다운로드 완료
+2025-05-03 19:20:03,909 - pulse-crawler - INFO - [크롤링 프로세스] 데이터베이스 저장 시작
+2025-05-03 19:20:03,909 - pulse-crawler - INFO - [크롤링 프로세스] 50개 비디오를 데이터베이스에 저장합니다.
+2025-05-03 19:20:03,909 - pulse-crawler - INFO - [크롤링 프로세스] Supabase 서비스 키 미리보기: eyJhbGciOi...tmgQg
+2025-05-03 19:20:03,909 - pulse-crawler - INFO - [크롤링 프로세스] Supabase URL: https://mdqfbcoexjdhuweziwff.supabase.co
+2025-05-03 19:20:03,909 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 엔드포인트: https://mdqfbcoexjdhuweziwff.supabase.co/rest/v1/videos
+2025-05-03 19:20:03,909 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 헤더 설정 완료
+2025-05-03 19:20:03,909 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: K9mNU4aSCjU -> 45e2c366-3f33-47bf-ac59-fb9f2bda443c (platform_id: K9mNU4aSCjU)
+2025-05-03 19:20:03,909 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: nIeUbkAw7aU -> 6fb23210-d5c6-41fe-8a0e-e19994d784fa (platform_id: nIeUbkAw7aU)
+2025-05-03 19:20:03,909 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: 9rorWM3Iafg -> 64595009-881d-4f83-aaf2-aeacc7c5c169 (platform_id: 9rorWM3Iafg)
+2025-05-03 19:20:03,909 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: 9u2FrtK6l28 -> e27b3552-85a8-41ca-84a8-295a4726b95b (platform_id: 9u2FrtK6l28)
+2025-05-03 19:20:03,909 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: D7Gn7HDfvnc -> e2355175-618c-4378-bc6c-926eb3fc0b88 (platform_id: D7Gn7HDfvnc)
+2025-05-03 19:20:03,909 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: RKn6rXp30y0 -> dd19b1d9-472c-43af-9707-40f93fd9df68 (platform_id: RKn6rXp30y0)
+2025-05-03 19:20:03,909 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: lGd_IL_MOn4 -> a9cde0aa-d0c7-43f9-aa27-9f9871027f54 (platform_id: lGd_IL_MOn4)
+2025-05-03 19:20:03,909 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: vi-fjDIt0bk -> df0b0773-68a5-4556-99b5-4e4244a050b9 (platform_id: vi-fjDIt0bk)
+2025-05-03 19:20:03,909 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: kYEdrDyQKL4 -> 3d8c9be2-f444-4091-872c-50c8f2ec77bb (platform_id: kYEdrDyQKL4)
+2025-05-03 19:20:03,909 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: 6J-2s2h45v8 -> bfa657a5-cff6-4588-9451-7eed9d30e234 (platform_id: 6J-2s2h45v8)
+2025-05-03 19:20:03,909 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: u_o0wEe56BU -> 974033fc-0f41-452f-8f18-ace1e95c19c7 (platform_id: u_o0wEe56BU)
+2025-05-03 19:20:03,909 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: h_0yIl9sMy8 -> df2933ec-89ef-469f-89da-437ca49592e6 (platform_id: h_0yIl9sMy8)
+2025-05-03 19:20:03,909 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: cSXqwcLsVPc -> b5b2d531-81bb-4afe-9d95-4fa03d8c1f97 (platform_id: cSXqwcLsVPc)
+2025-05-03 19:20:03,909 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: kko-tt26M5U -> b64589b8-d956-4c0c-959a-e2eba88836c1 (platform_id: kko-tt26M5U)
+2025-05-03 19:20:03,909 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: yFTAYXDTjqI -> 9b0b407a-028a-4397-aac8-c5dd9394492c (platform_id: yFTAYXDTjqI)
+2025-05-03 19:20:03,909 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: AVdYRCSh4r0 -> 1af55138-afa7-48d5-b3e1-ca1954d99397 (platform_id: AVdYRCSh4r0)
+2025-05-03 19:20:03,909 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: sF2QxDWsjPc -> b3e7be49-5fd9-452b-8cc1-2457135d73a8 (platform_id: sF2QxDWsjPc)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: PXFRtqNg3yo -> c6ae973f-a900-4815-b799-84737ed70498 (platform_id: PXFRtqNg3yo)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: Xt3iR8EKGEg -> 65776aa0-cc97-40ef-9c6f-15d426cf38c2 (platform_id: Xt3iR8EKGEg)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: AMOvOWfpZBA -> df594a12-2bb0-4cd4-bffe-ed040a33f75a (platform_id: AMOvOWfpZBA)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: prowHppYlsg -> 8c1aa34e-10cf-43dc-bcce-1e3b6c71b291 (platform_id: prowHppYlsg)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: nCpihfC3uxQ -> 56a15069-3661-49fa-9c27-10874068030a (platform_id: nCpihfC3uxQ)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: PrkNZRd9G88 -> cdc7723d-9fc7-438a-b1ac-599401121020 (platform_id: PrkNZRd9G88)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: mXc19_hkmKs -> 387aa00b-2ace-402e-a9dc-9849c7884720 (platform_id: mXc19_hkmKs)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: yBSxZPYFndI -> 480e3fc9-1379-4dfd-b946-7107cca53544 (platform_id: yBSxZPYFndI)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: hAW8Zmj3uvc -> d0aa8919-e058-4346-8a7f-371c77609d55 (platform_id: hAW8Zmj3uvc)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: FVWnRN19L3c -> 2e50ef71-d8c2-4e3b-b81b-8ba8b9da3393 (platform_id: FVWnRN19L3c)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: sCTcq0-FAbA -> 83061836-b443-4b19-8e2a-416f204dc3b2 (platform_id: sCTcq0-FAbA)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: WltiBha0Y5I -> 74167942-8b7b-47f8-86e3-dac36d72db2b (platform_id: WltiBha0Y5I)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: uiWuRa_8gcM -> b3a99a54-1192-4f91-baad-0b8f87073834 (platform_id: uiWuRa_8gcM)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: NrfYjfy1S10 -> 6d20b07a-7008-420a-961f-17bff2b5b4f3 (platform_id: NrfYjfy1S10)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: NgqJhXgFzIc -> b58b0704-7c7b-4d2a-9641-a084a2df3fae (platform_id: NgqJhXgFzIc)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: sREjDN1K-JY -> 1630fbd0-cfb4-4ccc-b7f6-4e69ee6ecb65 (platform_id: sREjDN1K-JY)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: vrcEexzIsyw -> 73e35a0c-1c57-408b-985b-690aadab95bb (platform_id: vrcEexzIsyw)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: U98_iOjqgvk -> 17f97ea1-7352-4ecb-b652-ac31d27c9d4c (platform_id: U98_iOjqgvk)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: Mtqba_rdNlA -> 6eeecbb6-6ad2-411c-a4f9-d289786c4595 (platform_id: Mtqba_rdNlA)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: OQNPBVNEH74 -> a7636513-d091-401c-af68-af8cf0a14615 (platform_id: OQNPBVNEH74)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: OZytLLasceA -> 569b780d-df5d-4744-bd9e-904e475c1dc4 (platform_id: OZytLLasceA)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: ekQg7-rBABM -> e976dea7-0a5d-4e12-9e4e-692c19f19a51 (platform_id: ekQg7-rBABM)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: xwvkVKaPnfM -> 559006a8-d879-4a65-bf08-3641a50010da (platform_id: xwvkVKaPnfM)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: uNMiKwHot0I -> c4ad7d63-cdde-48ef-a17a-fee490a35eba (platform_id: uNMiKwHot0I)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: zGo_4FM8OM8 -> b9696596-15b5-4eb2-ba03-618a16b7e259 (platform_id: zGo_4FM8OM8)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: KOxsvJ_HCks -> 8f03095e-2b01-48da-80ce-62496c9b469b (platform_id: KOxsvJ_HCks)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: 89hCoHNJcf8 -> 5ceca263-455f-4e30-bc90-0cdf80cc9976 (platform_id: 89hCoHNJcf8)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: yuI3n3sOFWs -> 56377b1f-6df9-428a-a91e-1cb9ddf45c18 (platform_id: yuI3n3sOFWs)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: WT1WniLMcnw -> 0e7fe9ec-4518-4397-b982-546299615c36 (platform_id: WT1WniLMcnw)
+2025-05-03 19:20:03,910 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: wy_tMUsuHsE -> fcbe832e-5161-405e-ae44-9a56528406c2 (platform_id: wy_tMUsuHsE)
+2025-05-03 19:20:03,911 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: V4PkmmajMRo -> ffc7b105-fd1c-4a88-bbb7-2d1570cb3caa (platform_id: V4PkmmajMRo)
+2025-05-03 19:20:03,911 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: Hh3StE8yhBQ -> f328027d-d666-4b76-885e-388cb02b8c12 (platform_id: Hh3StE8yhBQ)
+2025-05-03 19:20:03,911 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: X5atzRwqEQ4 -> 3fbb477f-32af-4c2d-9b78-fc31e22fb560 (platform_id: X5atzRwqEQ4)
+2025-05-03 19:20:03,911 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 요청 시작 (배치 크기: 20)
+2025-05-03 19:20:03,911 - pulse-crawler - INFO - [크롤링 프로세스] 샘플 데이터 형식 - tags 타입: list
+2025-05-03 19:20:03,911 - pulse-crawler - INFO - [크롤링 프로세스] tags 샘플 내용(최대 3개): ['KBS', 'KPOP', '뮤직']
+2025-05-03 19:20:04,685 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 응답 상태 코드: 201
+2025-05-03 19:20:04,686 - pulse-crawler - INFO - [크롤링 프로세스] Supabase에 20개의 비디오 데이터를 성공적으로 저장했습니다. (상태 코드: 201)
+2025-05-03 19:20:04,686 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 요청 시작 (배치 크기: 20)
+2025-05-03 19:20:04,686 - pulse-crawler - INFO - [크롤링 프로세스] 샘플 데이터 형식 - tags 타입: list
+2025-05-03 19:20:04,686 - pulse-crawler - INFO - [크롤링 프로세스] tags 샘플 내용(최대 3개): ['Inkigayo', '인기가요직캠', '안방1열직캠']
+2025-05-03 19:20:05,035 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 응답 상태 코드: 201
+2025-05-03 19:20:05,036 - pulse-crawler - INFO - [크롤링 프로세스] Supabase에 20개의 비디오 데이터를 성공적으로 저장했습니다. (상태 코드: 201)
+2025-05-03 19:20:05,036 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 요청 시작 (배치 크기: 10)
+2025-05-03 19:20:05,036 - pulse-crawler - INFO - [크롤링 프로세스] 샘플 데이터 형식 - tags 타입: list
+2025-05-03 19:20:05,036 - pulse-crawler - INFO - [크롤링 프로세스] tags 샘플 내용(최대 3개): ['KBS', 'KPOP', '뮤직']
+2025-05-03 19:20:05,404 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 응답 상태 코드: 201
+2025-05-03 19:20:05,404 - pulse-crawler - INFO - [크롤링 프로세스] Supabase에 10개의 비디오 데이터를 성공적으로 저장했습니다. (상태 코드: 201)
+2025-05-03 19:20:05,406 - pulse-crawler - INFO - [크롤링 프로세스] 데이터베이스 저장 완료
+2025-05-03 19:20:05,406 - pulse-crawler - INFO - [크롤링 프로세스] 크롤링 완료
+2025-05-04 21:36:00,078 - pulse-crawler - INFO - [크롤링 프로세스] 크롤러 스크립트 실행 시작
+2025-05-04 21:36:00,079 - pulse-crawler - INFO - [크롤링 프로세스] 명령줄 인수 파싱 완료:
+2025-05-04 21:36:00,079 - pulse-crawler - INFO - [크롤링 프로세스] - 아티스트: 지정되지 않음
+2025-05-04 21:36:00,079 - pulse-crawler - INFO - [크롤링 프로세스] - 그룹: 지정되지 않음
+2025-05-04 21:36:00,079 - pulse-crawler - INFO - [크롤링 프로세스] - 이벤트: 지정되지 않음
+2025-05-04 21:36:00,079 - pulse-crawler - INFO - [크롤링 프로세스] - 날짜 범위: 시작일 없음 ~ 종료일 없음
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] - 결과 수 제한: 5
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] - 출력 디렉토리: output
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] - 저장 형식: both
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] - DB 저장: 활성화
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] - DB 타입: supabase
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] - 썸네일 다운로드: 비활성화
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] 명령줄 인수: {'artist': None, 'group': None, 'event': None, 'start_date': None, 'end_date': None, 'limit': 5, 'skip_existing': False, 'output': 'output', 'format': 'both', 'save_to_db': True, 'download_thumbnails': False, 'db_type': 'supabase'}
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 확인 중...
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 확인됨 (미리보기: AIzaS...XKD_w)
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 로드 완료
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] 검색어 구성 중...
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] 검색어가 비어있어 기본 검색어 사용: 'kpop fancam'
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] 최종 검색어: 'kpop fancam'
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] 검색어 구성: 'kpop fancam'
+2025-05-04 21:36:00,080 - pulse-crawler - INFO - [크롤링 프로세스] 'kpop fancam' 검색어로 크롤링을 시작합니다.
+2025-05-04 21:36:00,081 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-05-04 21:36:00,083 - youtube-crawler - INFO - YouTube 크롤러가 초기화되었습니다.
+2025-05-04 21:36:00,083 - youtube-crawler - INFO - 'kpop fancam' 검색 시작. 최대 5개 결과
+2025-05-04 21:36:00,775 - youtube-crawler - INFO - 5개의 비디오를 찾았습니다.
+2025-05-04 21:36:00,775 - pulse-crawler - INFO - [크롤링 프로세스] 검색 결과: 5개 비디오
+2025-05-04 21:36:00,775 - pulse-crawler - INFO - [크롤링 프로세스] 5개 비디오의 세부 정보를 가져옵니다.
+2025-05-04 21:36:00,775 - youtube-crawler - INFO - 5개 비디오의 세부 정보를 가져옵니다.
+2025-05-04 21:36:00,893 - youtube-crawler - INFO - 5개 비디오의 세부 정보를 가져왔습니다.
+2025-05-04 21:36:00,893 - pulse-crawler - INFO - [크롤링 프로세스] 5개 비디오 세부 정보 획득 완료
+2025-05-04 21:36:00,893 - pulse-crawler - INFO - [크롤링 프로세스] 결과를 both 형식으로 저장합니다.
+2025-05-04 21:36:00,893 - pulse-crawler - INFO - [크롤링 프로세스] 결과 파일 저장 시작 (형식: both)
+2025-05-04 21:36:00,893 - pulse-crawler - INFO - [크롤링 프로세스] 출력 디렉토리 확인: output
+2025-05-04 21:36:00,894 - pulse-crawler - INFO - [크롤링 프로세스] CSV 파일 생성 중: output/videos_20250504_213600.csv
+2025-05-04 21:36:00,905 - pulse-crawler - INFO - [크롤링 프로세스] 결과가 output/videos_20250504_213600.csv에 CSV 형식으로 저장되었습니다.
+2025-05-04 21:36:00,905 - pulse-crawler - INFO - [크롤링 프로세스] JSON 파일 생성 중: output/videos_20250504_213600.json
+2025-05-04 21:36:00,906 - pulse-crawler - INFO - [크롤링 프로세스] 결과가 output/videos_20250504_213600.json에 JSON 형식으로 저장되었습니다.
+2025-05-04 21:36:00,906 - pulse-crawler - INFO - [크롤링 프로세스] 결과 파일 저장 완료
+2025-05-04 21:36:00,906 - pulse-crawler - INFO - [크롤링 프로세스] 데이터베이스 저장 시작
+2025-05-04 21:36:00,906 - pulse-crawler - INFO - [크롤링 프로세스] 5개 비디오를 데이터베이스에 저장합니다.
+2025-05-04 21:36:00,906 - pulse-crawler - INFO - [크롤링 프로세스] Supabase 서비스 키 미리보기: eyJhbGciOi...tmgQg
+2025-05-04 21:36:00,906 - pulse-crawler - INFO - [크롤링 프로세스] Supabase URL: https://mdqfbcoexjdhuweziwff.supabase.co
+2025-05-04 21:36:00,906 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 엔드포인트: https://mdqfbcoexjdhuweziwff.supabase.co/rest/v1/videos
+2025-05-04 21:36:00,906 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 헤더 설정 완료
+2025-05-04 21:36:00,906 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: nIeUbkAw7aU -> 463ffae7-503a-4c24-9a72-5b0f1e19ac6e (platform_id: nIeUbkAw7aU)
+2025-05-04 21:36:00,907 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: uiWuRa_8gcM -> fd727263-eb58-43aa-8880-0b4375265486 (platform_id: uiWuRa_8gcM)
+2025-05-04 21:36:00,907 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: K9mNU4aSCjU -> d9c74a5d-1812-4125-bda4-b1f65db82702 (platform_id: K9mNU4aSCjU)
+2025-05-04 21:36:00,907 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: lGd_IL_MOn4 -> 44184113-19f1-41f3-915f-169420cbc932 (platform_id: lGd_IL_MOn4)
+2025-05-04 21:36:00,907 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: D7Gn7HDfvnc -> e4f7644f-7474-4a76-be8f-088aad2844bc (platform_id: D7Gn7HDfvnc)
+2025-05-04 21:36:00,907 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 요청 시작 (배치 크기: 5)
+2025-05-04 21:36:00,907 - pulse-crawler - INFO - [크롤링 프로세스] 샘플 데이터 형식 - tags 타입: list
+2025-05-04 21:36:01,688 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 응답 상태 코드: 201
+2025-05-04 21:36:01,688 - pulse-crawler - INFO - [크롤링 프로세스] Supabase에 5개의 비디오 데이터를 성공적으로 저장했습니다. (상태 코드: 201)
+2025-05-04 21:36:01,690 - pulse-crawler - INFO - [크롤링 프로세스] 데이터베이스 저장 완료
+2025-05-04 21:36:01,690 - pulse-crawler - INFO - [크롤링 프로세스] 크롤링 완료
+2025-05-05 08:14:04,378 - pulse-crawler - INFO - [크롤링 프로세스] 크롤러 스크립트 실행 시작
+2025-05-05 08:14:04,379 - pulse-crawler - INFO - [크롤링 프로세스] 명령줄 인수 파싱 완료:
+2025-05-05 08:14:04,379 - pulse-crawler - INFO - [크롤링 프로세스] - 아티스트: 지정되지 않음
+2025-05-05 08:14:04,379 - pulse-crawler - INFO - [크롤링 프로세스] - 그룹: 지정되지 않음
+2025-05-05 08:14:04,379 - pulse-crawler - INFO - [크롤링 프로세스] - 이벤트: 지정되지 않음
+2025-05-05 08:14:04,379 - pulse-crawler - INFO - [크롤링 프로세스] - 날짜 범위: 시작일 없음 ~ 종료일 없음
+2025-05-05 08:14:04,379 - pulse-crawler - INFO - [크롤링 프로세스] - 결과 수 제한: 5
+2025-05-05 08:14:04,379 - pulse-crawler - INFO - [크롤링 프로세스] - 출력 디렉토리: output
+2025-05-05 08:14:04,379 - pulse-crawler - INFO - [크롤링 프로세스] - 저장 형식: both
+2025-05-05 08:14:04,379 - pulse-crawler - INFO - [크롤링 프로세스] - DB 저장: 활성화
+2025-05-05 08:14:04,379 - pulse-crawler - INFO - [크롤링 프로세스] - DB 타입: supabase
+2025-05-05 08:14:04,379 - pulse-crawler - INFO - [크롤링 프로세스] - 썸네일 다운로드: 비활성화
+2025-05-05 08:14:04,379 - pulse-crawler - INFO - [크롤링 프로세스] 명령줄 인수: {'artist': None, 'group': None, 'event': None, 'start_date': None, 'end_date': None, 'limit': 5, 'skip_existing': False, 'output': 'output', 'format': 'both', 'save_to_db': True, 'download_thumbnails': False, 'db_type': 'supabase'}
+2025-05-05 08:14:04,379 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 확인 중...
+2025-05-05 08:14:04,379 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 확인됨 (미리보기: AIzaS...XKD_w)
+2025-05-05 08:14:04,379 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 로드 완료
+2025-05-05 08:14:04,379 - pulse-crawler - INFO - [크롤링 프로세스] 검색어 구성 중...
+2025-05-05 08:14:04,379 - pulse-crawler - INFO - [크롤링 프로세스] 검색어가 비어있어 기본 검색어 사용: 'kpop fancam'
+2025-05-05 08:14:04,379 - pulse-crawler - INFO - [크롤링 프로세스] 최종 검색어: 'kpop fancam'
+2025-05-05 08:14:04,379 - pulse-crawler - INFO - [크롤링 프로세스] 검색어 구성: 'kpop fancam'
+2025-05-05 08:14:04,379 - pulse-crawler - INFO - [크롤링 프로세스] 'kpop fancam' 검색어로 크롤링을 시작합니다.
+2025-05-05 08:14:04,380 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-05-05 08:14:04,382 - youtube-crawler - INFO - YouTube 크롤러가 초기화되었습니다.
+2025-05-05 08:14:04,382 - youtube-crawler - INFO - 'kpop fancam' 검색 시작. 최대 5개 결과
+2025-05-05 08:14:04,942 - youtube-crawler - INFO - 5개의 비디오를 찾았습니다.
+2025-05-05 08:14:04,942 - pulse-crawler - INFO - [크롤링 프로세스] 검색 결과: 5개 비디오
+2025-05-05 08:14:04,943 - pulse-crawler - INFO - [크롤링 프로세스] 5개 비디오의 세부 정보를 가져옵니다.
+2025-05-05 08:14:04,943 - youtube-crawler - INFO - 5개 비디오의 세부 정보를 가져옵니다.
+2025-05-05 08:14:05,060 - youtube-crawler - INFO - 5개 비디오의 세부 정보를 가져왔습니다.
+2025-05-05 08:14:05,060 - pulse-crawler - INFO - [크롤링 프로세스] 5개 비디오 세부 정보 획득 완료
+2025-05-05 08:14:05,060 - pulse-crawler - INFO - [크롤링 프로세스] 결과를 both 형식으로 저장합니다.
+2025-05-05 08:14:05,060 - pulse-crawler - INFO - [크롤링 프로세스] 결과 파일 저장 시작 (형식: both)
+2025-05-05 08:14:05,060 - pulse-crawler - INFO - [크롤링 프로세스] 출력 디렉토리 확인: output
+2025-05-05 08:14:05,060 - pulse-crawler - INFO - [크롤링 프로세스] CSV 파일 생성 중: output/videos_20250505_081405.csv
+2025-05-05 08:14:05,064 - pulse-crawler - INFO - [크롤링 프로세스] 결과가 output/videos_20250505_081405.csv에 CSV 형식으로 저장되었습니다.
+2025-05-05 08:14:05,064 - pulse-crawler - INFO - [크롤링 프로세스] JSON 파일 생성 중: output/videos_20250505_081405.json
+2025-05-05 08:14:05,064 - pulse-crawler - INFO - [크롤링 프로세스] 결과가 output/videos_20250505_081405.json에 JSON 형식으로 저장되었습니다.
+2025-05-05 08:14:05,064 - pulse-crawler - INFO - [크롤링 프로세스] 결과 파일 저장 완료
+2025-05-05 08:14:05,064 - pulse-crawler - INFO - [크롤링 프로세스] 데이터베이스 저장 시작
+2025-05-05 08:14:05,064 - pulse-crawler - INFO - [크롤링 프로세스] 5개 비디오를 데이터베이스에 저장합니다.
+2025-05-05 08:14:05,064 - pulse-crawler - INFO - [크롤링 프로세스] Supabase 서비스 키 미리보기: eyJhbGciOi...tmgQg
+2025-05-05 08:14:05,064 - pulse-crawler - INFO - [크롤링 프로세스] Supabase URL: https://mdqfbcoexjdhuweziwff.supabase.co
+2025-05-05 08:14:05,064 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 엔드포인트: https://mdqfbcoexjdhuweziwff.supabase.co/rest/v1/videos
+2025-05-05 08:14:05,064 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 헤더 설정 완료
+2025-05-05 08:14:05,064 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: nIeUbkAw7aU -> 37eaaf7f-ec73-4a61-b286-8394904b0af8 (platform_id: nIeUbkAw7aU)
+2025-05-05 08:14:05,064 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: K9mNU4aSCjU -> 89a84a2d-b1c5-4dd9-be16-01b8fd759f32 (platform_id: K9mNU4aSCjU)
+2025-05-05 08:14:05,064 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: lGd_IL_MOn4 -> 9799689a-8d10-45bc-82e5-6a41939c60cb (platform_id: lGd_IL_MOn4)
+2025-05-05 08:14:05,064 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: Cta2y5PyGR0 -> 25a735a7-5895-430d-b87a-2641f6fbb67a (platform_id: Cta2y5PyGR0)
+2025-05-05 08:14:05,064 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: D7Gn7HDfvnc -> cc1271ed-db1f-48fd-9b30-144db81632fc (platform_id: D7Gn7HDfvnc)
+2025-05-05 08:14:05,064 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 요청 시작 (배치 크기: 5)
+2025-05-05 08:14:05,064 - pulse-crawler - INFO - [크롤링 프로세스] 샘플 데이터 형식 - tags 타입: list
+2025-05-05 08:14:06,288 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 응답 상태 코드: 201
+2025-05-05 08:14:06,288 - pulse-crawler - INFO - [크롤링 프로세스] Supabase에 5개의 비디오 데이터를 성공적으로 저장했습니다. (상태 코드: 201)
+2025-05-05 08:14:06,289 - pulse-crawler - INFO - [크롤링 프로세스] 데이터베이스 저장 완료
+2025-05-05 08:14:06,289 - pulse-crawler - INFO - [크롤링 프로세스] 크롤링 완료
+2025-05-05 08:15:45,027 - pulse-crawler - INFO - [크롤링 프로세스] 크롤러 스크립트 실행 시작
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] 명령줄 인수 파싱 완료:
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] - 아티스트: 지정되지 않음
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] - 그룹: 지정되지 않음
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] - 이벤트: 지정되지 않음
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] - 날짜 범위: 시작일 없음 ~ 종료일 없음
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] - 결과 수 제한: 5
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] - 출력 디렉토리: output
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] - 저장 형식: both
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] - DB 저장: 활성화
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] - DB 타입: supabase
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] - 썸네일 다운로드: 비활성화
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] 명령줄 인수: {'artist': None, 'group': None, 'event': None, 'start_date': None, 'end_date': None, 'limit': 5, 'skip_existing': False, 'output': 'output', 'format': 'both', 'save_to_db': True, 'download_thumbnails': False, 'db_type': 'supabase'}
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 확인 중...
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 확인됨 (미리보기: AIzaS...XKD_w)
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] YouTube API 키 로드 완료
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] 검색어 구성 중...
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] 검색어가 비어있어 기본 검색어 사용: 'kpop fancam'
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] 최종 검색어: 'kpop fancam'
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] 검색어 구성: 'kpop fancam'
+2025-05-05 08:15:45,028 - pulse-crawler - INFO - [크롤링 프로세스] 'kpop fancam' 검색어로 크롤링을 시작합니다.
+2025-05-05 08:15:45,029 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0
+2025-05-05 08:15:45,031 - youtube-crawler - INFO - YouTube 크롤러가 초기화되었습니다.
+2025-05-05 08:15:45,031 - youtube-crawler - INFO - 'kpop fancam' 검색 시작. 최대 5개 결과
+2025-05-05 08:15:45,524 - youtube-crawler - INFO - 5개의 비디오를 찾았습니다.
+2025-05-05 08:15:45,524 - pulse-crawler - INFO - [크롤링 프로세스] 검색 결과: 5개 비디오
+2025-05-05 08:15:45,524 - pulse-crawler - INFO - [크롤링 프로세스] 5개 비디오의 세부 정보를 가져옵니다.
+2025-05-05 08:15:45,524 - youtube-crawler - INFO - 5개 비디오의 세부 정보를 가져옵니다.
+2025-05-05 08:15:45,631 - youtube-crawler - INFO - 5개 비디오의 세부 정보를 가져왔습니다.
+2025-05-05 08:15:45,631 - pulse-crawler - INFO - [크롤링 프로세스] 5개 비디오 세부 정보 획득 완료
+2025-05-05 08:15:45,631 - pulse-crawler - INFO - [크롤링 프로세스] 결과를 both 형식으로 저장합니다.
+2025-05-05 08:15:45,631 - pulse-crawler - INFO - [크롤링 프로세스] 결과 파일 저장 시작 (형식: both)
+2025-05-05 08:15:45,631 - pulse-crawler - INFO - [크롤링 프로세스] 출력 디렉토리 확인: output
+2025-05-05 08:15:45,631 - pulse-crawler - INFO - [크롤링 프로세스] CSV 파일 생성 중: output/videos_20250505_081545.csv
+2025-05-05 08:15:45,634 - pulse-crawler - INFO - [크롤링 프로세스] 결과가 output/videos_20250505_081545.csv에 CSV 형식으로 저장되었습니다.
+2025-05-05 08:15:45,634 - pulse-crawler - INFO - [크롤링 프로세스] JSON 파일 생성 중: output/videos_20250505_081545.json
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] 결과가 output/videos_20250505_081545.json에 JSON 형식으로 저장되었습니다.
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] 결과 파일 저장 완료
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] 데이터베이스 저장 시작
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] 5개 비디오를 데이터베이스에 저장합니다.
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] Supabase 서비스 키 미리보기: eyJhbGciOi...tmgQg
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] Supabase URL: https://mdqfbcoexjdhuweziwff.supabase.co
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 엔드포인트: https://mdqfbcoexjdhuweziwff.supabase.co/rest/v1/videos
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 헤더 설정 완료
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: nIeUbkAw7aU -> 8a594b98-6f0d-45c9-994d-b1db08a90f66 (platform_id: nIeUbkAw7aU)
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: K9mNU4aSCjU -> aa11d8a2-780a-4885-8682-f4f15041785e (platform_id: K9mNU4aSCjU)
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: lGd_IL_MOn4 -> d75823ed-b0fe-4d31-921d-ebe6a781b3e4 (platform_id: lGd_IL_MOn4)
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: Cta2y5PyGR0 -> 16774f40-8774-4510-a0ae-6d1eecda4bfb (platform_id: Cta2y5PyGR0)
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] 비디오 변환: D7Gn7HDfvnc -> 04c79d0a-5e63-46a7-a8a9-5a1f3060cdb1 (platform_id: D7Gn7HDfvnc)
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 요청 시작 (배치 크기: 5)
+2025-05-05 08:15:45,635 - pulse-crawler - INFO - [크롤링 프로세스] 샘플 데이터 형식 - tags 타입: list
+2025-05-05 08:15:46,331 - pulse-crawler - INFO - [크롤링 프로세스] Supabase API 응답 상태 코드: 201
+2025-05-05 08:15:46,331 - pulse-crawler - INFO - [크롤링 프로세스] Supabase에 5개의 비디오 데이터를 성공적으로 저장했습니다. (상태 코드: 201)
+2025-05-05 08:15:46,332 - pulse-crawler - INFO - [크롤링 프로세스] 데이터베이스 저장 완료
+2025-05-05 08:15:46,332 - pulse-crawler - INFO - [크롤링 프로세스] 크롤링 완료

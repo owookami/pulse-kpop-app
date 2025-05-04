@@ -1,0 +1,29 @@
+2025-05-03 18:20:03,358 - admin-api - ERROR - Error running crawler for job 88cdf96d-41e4-4901-acdf-764cfad32f36: [Errno 2] No such file or directory: 'python'
+2025-05-03 19:11:30,723 - admin-api - INFO - macOS/Linux 환경 감지: python3 명령 사용
+2025-05-03 19:11:30,724 - admin-api - INFO - 환경 변수 설정: SUPABASE_URL=https://mdqfbcoexjdhuweziwff.supabase.co
+2025-05-03 19:11:30,725 - admin-api - INFO - 환경 변수 설정: SUPABASE_KEY=eyJhb...tmgQg
+2025-05-03 19:11:30,725 - admin-api - INFO - 환경 변수 설정: SUPABASE_SERVICE_KEY=eyJhb...tmgQg
+2025-05-03 19:11:30,725 - admin-api - INFO - 환경 변수 설정: DB_TYPE=supabase (명시적으로 설정됨)
+2025-05-03 19:11:30,725 - admin-api - INFO - 실행 명령: python3 /Volumes/lbh_project/proj/pulse/apps/crawler_api/run_crawler.py --limit 50 --format json --output output --save-to-db
+2025-05-03 19:12:49,562 - admin-api - INFO - macOS/Linux 환경 감지: python3 명령 사용
+2025-05-03 19:12:49,563 - admin-api - INFO - 환경 변수 설정: SUPABASE_URL=https://mdqfbcoexjdhuweziwff.supabase.co
+2025-05-03 19:12:49,563 - admin-api - INFO - 환경 변수 설정: SUPABASE_KEY=eyJhb...tmgQg
+2025-05-03 19:12:49,563 - admin-api - INFO - 환경 변수 설정: SUPABASE_SERVICE_KEY=eyJhb...tmgQg
+2025-05-03 19:12:49,563 - admin-api - INFO - 환경 변수 설정: DB_TYPE=supabase (명시적으로 설정됨)
+2025-05-03 19:12:49,563 - admin-api - INFO - 실행 명령: python3 /Volumes/lbh_project/proj/pulse/apps/crawler_api/run_crawler.py --limit 50 --format json --output output --save-to-db --download-thumbnails --skip-existing
+2025-05-03 19:17:18,865 - admin-api - INFO - macOS/Linux 환경 감지: python3 명령 사용
+2025-05-03 19:17:18,866 - admin-api - INFO - 환경 변수 설정: SUPABASE_URL=https://mdqfbcoexjdhuweziwff.supabase.co
+2025-05-03 19:17:18,866 - admin-api - INFO - 환경 변수 설정: SUPABASE_KEY=eyJhb...tmgQg
+2025-05-03 19:17:18,866 - admin-api - INFO - 환경 변수 설정: SUPABASE_SERVICE_KEY=eyJhb...tmgQg
+2025-05-03 19:17:18,866 - admin-api - INFO - 환경 변수 설정: DB_TYPE=supabase (명시적으로 설정됨)
+2025-05-03 19:17:18,866 - admin-api - INFO - 실행 명령: python3 /Volumes/lbh_project/proj/pulse/apps/crawler_api/run_crawler.py --limit 50 --format json --output output --save-to-db --download-thumbnails --skip-existing
+2025-05-03 19:20:02,251 - admin-api - INFO - macOS/Linux 환경 감지: python3 명령 사용
+2025-05-03 19:20:02,251 - admin-api - INFO - 환경 변수 설정: SUPABASE_URL=https://mdqfbcoexjdhuweziwff.supabase.co
+2025-05-03 19:20:02,251 - admin-api - INFO - 환경 변수 설정: SUPABASE_KEY=eyJhb...tmgQg
+2025-05-03 19:20:02,251 - admin-api - INFO - 환경 변수 설정: SUPABASE_SERVICE_KEY=eyJhb...tmgQg
+2025-05-03 19:20:02,251 - admin-api - INFO - 환경 변수 설정: DB_TYPE=supabase (명시적으로 설정됨)
+2025-05-03 19:20:02,252 - admin-api - INFO - 실행 명령: python3 /Volumes/lbh_project/proj/pulse/apps/crawler_api/run_crawler.py --limit 50 --format json --output output --save-to-db --download-thumbnails --skip-existing
+2025-05-03 19:25:55,486 - admin-api - ERROR - 스케줄 작업 로드 오류: 'str' object has no attribute 'isoformat'
+2025-05-03 19:25:56,767 - admin-api - ERROR - 스케줄 작업 로드 오류: 'str' object has no attribute 'isoformat'
+2025-05-03 19:26:46,082 - admin-api - ERROR - 스케줄 작업 로드 오류: 'str' object has no attribute 'isoformat'
+2025-05-03 19:27:06,214 - admin-api - ERROR - 스케줄 작업 로드 오류: 'str' object has no attribute 'isoformat'

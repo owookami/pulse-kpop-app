@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pulse 크롤러 관리자 대시보드</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link href="https://webfontworld.github.io/pretendard/Pretendard.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/admin/css/style.css">
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- 사이드바 -->
+            <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <div class="sidebar-header mb-4">
+                        <h4 class="fs-4 text-center">Pulse 크롤러</h4>
+                        <p class="text-muted text-center">관리자 대시보드</p>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#" data-page="dashboard">
+                                <i class="bi bi-speedometer2 me-2"></i>
+                                대시보드
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-page="new-job">
+                                <i class="bi bi-plus-circle me-2"></i>
+                                새 크롤링 작업
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-page="job-list">
+                                <i class="bi bi-list-task me-2"></i>
+                                작업 목록
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-page="scheduled-jobs">
+                                <i class="bi bi-calendar-check me-2"></i>
+                                예약 작업 관리
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-page="artists">
+                                <i class="bi bi-person-badge me-2"></i>
+                                아티스트 관리
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-page="groups">
+                                <i class="bi bi-people me-2"></i>
+                                그룹 관리
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-page="settings">
+                                <i class="bi bi-gear me-2"></i>
+                                설정
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 메인 콘텐츠 -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <!-- 대시보드 페이지 -->
+                <div class="page" id="dashboard">
+                    <div
+                        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">대시보드</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <button type="button" class="btn btn-sm btn-outline-primary me-2" id="refresh-stats">
+                                <i class="bi bi-arrow-clockwise"></i> 새로고침
+                            </button>
+                            <button type="button" class="btn btn-sm btn-primary" id="new-job-btn">
+                                <i class="bi bi-plus-circle"></i> 새 크롤링 작업
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 통계 카드 -->
+                    <div class="row mt-4">
+                        <div class="col-md-3 mb-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title text-muted">총 크롤링 작업</h5>
+                                    <h2 class="card-text mb-0 fw-bold" id="total-jobs">0</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title text-muted">완료된 작업</h5>
+                                    <h2 class="card-text mb-0 fw-bold text-success" id="completed-jobs">0</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title text-muted">실행 중인 작업</h5>
+                                    <h2 class="card-text mb-0 fw-bold text-primary" id="running-jobs">0</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title text-muted">실패한 작업</h5>
+                                    <h2 class="card-text mb-0 fw-bold text-danger" id="failed-jobs">0</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 최근 작업 목록 -->
+                    <h3 class="h4 mt-4 mb-3">최근 작업</h3>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>작업 ID</th>
+                                    <th>상태</th>
+                                    <th>검색 조건</th>
+                                    <th>시작 시간</th>
+                                    <th>완료 시간</th>
+                                    <th>작업</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-jobs-tbody">
+                                <tr>
+                                    <td colspan="6" class="text-center">작업이 없습니다.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 새 크롤링 작업 페이지 -->
+                <div class="page" id="new-job" style="display: none;">
+                    <div
+                        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">새 크롤링 작업</h1>
+                    </div>
+
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <form id="crawler-form">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="artist" class="form-label">아티스트</label>
+                                        <select class="form-select" id="artist" name="artist">
+                                            <option value="">선택 (옵션)</option>
+                                            <!-- 아티스트 옵션이 여기에 동적으로 추가됩니다 -->
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="group" class="form-label">그룹</label>
+                                        <select class="form-select" id="group" name="group">
+                                            <option value="">선택 (옵션)</option>
+                                            <!-- 그룹 옵션이 여기에 동적으로 추가됩니다 -->
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="event" class="form-label">이벤트 (무대)</label>
+                                        <input type="text" class="form-control" id="event" name="event"
+                                            placeholder="예: 인기가요, 뮤직뱅크">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="limit" class="form-label">검색 결과 수</label>
+                                        <input type="number" class="form-control" id="limit" name="limit" value="50"
+                                            min="1" max="500">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="start-date" class="form-label">시작 날짜</label>
+                                        <input type="date" class="form-control" id="start-date" name="start_date">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="end-date" class="form-label">종료 날짜</label>
+                                        <input type="date" class="form-control" id="end-date" name="end_date">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="format" class="form-label">결과 형식</label>
+                                        <select class="form-select" id="format" name="format">
+                                            <option value="json">JSON</option>
+                                            <option value="csv">CSV</option>
+                                            <option value="both">JSON + CSV</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="output" class="form-label">출력 디렉토리</label>
+                                        <input type="text" class="form-control" id="output" name="output"
+                                            value="output">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="save-to-db"
+                                                name="save_to_db" checked>
+                                            <label class="form-check-label" for="save-to-db">결과를 데이터베이스에 저장</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="download-thumbnails"
+                                                name="download_thumbnails">
+                                            <label class="form-check-label" for="download-thumbnails">썸네일 다운로드</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="skip-existing"
+                                                name="skip_existing">
+                                            <label class="form-check-label" for="skip-existing">이미 존재하는 비디오 건너뛰기</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <button type="button" class="btn btn-secondary me-md-2" id="cancel-job">취소</button>
+                                    <button type="submit" class="btn btn-primary">크롤링 시작</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 작업 목록 페이지 -->
+                <div class="page" id="job-list" style="display: none;">
+                    <div
+                        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">작업 목록</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <button type="button" class="btn btn-sm btn-outline-primary me-2" id="refresh-jobs">
+                                <i class="bi bi-arrow-clockwise"></i> 새로고침
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>작업 ID</th>
+                                    <th>상태</th>
+                                    <th>검색 조건</th>
+                                    <th>시작 시간</th>
+                                    <th>완료 시간</th>
+                                    <th>작업</th>
+                                </tr>
+                            </thead>
+                            <tbody id="jobs-tbody">
+                                <tr>
+                                    <td colspan="6" class="text-center">작업이 없습니다.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 예약 작업 관리 페이지 -->
+                <div class="page" id="scheduled-jobs" style="display: none;">
+                    <div
+                        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">예약 작업 관리</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <button type="button" class="btn btn-sm btn-outline-primary me-2"
+                                id="refresh-scheduled-jobs">
+                                <i class="bi bi-arrow-clockwise"></i> 새로고침
+                            </button>
+                            <button type="button" class="btn btn-sm btn-primary" id="add-scheduled-job-btn">
+                                <i class="bi bi-plus-circle"></i> 새 예약 작업
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info mb-4">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        예약 작업은 지정된 시간에 자동으로 크롤링을 실행하는 작업입니다. Cron 표현식을 사용하여 실행 주기를 지정할 수 있습니다.
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>이름</th>
+                                    <th>Cron 표현식</th>
+                                    <th>검색 조건</th>
+                                    <th>상태</th>
+                                    <th>마지막 실행</th>
+                                    <th>다음 실행</th>
+                                    <th>작업</th>
+                                </tr>
+                            </thead>
+                            <tbody id="scheduled-jobs-tbody">
+                                <tr>
+                                    <td colspan="7" class="text-center">예약된 작업이 없습니다.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 아티스트 관리 페이지 -->
+                <div class="page" id="artists" style="display: none;">
+                    <div
+                        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">아티스트 관리</h1>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        현재 아티스트 목록은 run_crawler.py에 정의된 기본 목록에서 로드됩니다.
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>이름</th>
+                                    <th>그룹</th>
+                                </tr>
+                            </thead>
+                            <tbody id="artists-tbody">
+                                <!-- 아티스트 목록이 여기에 동적으로 추가됩니다 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 그룹 관리 페이지 -->
+                <div class="page" id="groups" style="display: none;">
+                    <div
+                        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">그룹 관리</h1>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        현재 그룹 목록은 run_crawler.py에 정의된 기본 목록에서 로드됩니다.
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>이름</th>
+                                </tr>
+                            </thead>
+                            <tbody id="groups-tbody">
+                                <!-- 그룹 목록이 여기에 동적으로 추가됩니다 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 설정 페이지 -->
+                <div class="page" id="settings" style="display: none;">
+                    <div
+                        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">설정</h1>
+                    </div>
+
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">시스템 설정</h5>
+                            <p class="card-text text-muted mb-4">
+                                이 설정은 .env 파일에 저장되어 있으며, 파일을 직접 편집하여 변경할 수 있습니다.
+                            </p>
+
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <th style="width: 30%;">YouTube API 키</th>
+                                            <td>********</td>
+                                        </tr>
+                                        <tr>
+                                            <th>데이터베이스 유형</th>
+                                            <td id="db-type">PostgreSQL</td>
+                                        </tr>
+                                        <tr>
+                                            <th>최대 스레드 수</th>
+                                            <td id="max-threads">4</td>
+                                        </tr>
+                                        <tr>
+                                            <th>기본 검색 결과 제한</th>
+                                            <td id="default-limit">50</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- 작업 상세 모달 -->
+    <div class="modal fade" id="job-detail-modal" tabindex="-1" aria-labelledby="job-detail-modal-label"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="job-detail-modal-label">작업 상세 정보</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="job-detail-content">
+                    <!-- 작업 상세 정보가 여기에 동적으로 추가됩니다 -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 예약 작업 추가/편집 모달 -->
+    <div class="modal fade" id="scheduled-job-modal" tabindex="-1" aria-labelledby="scheduled-job-modal-label"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="scheduled-job-modal-label">예약 작업 추가</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="scheduled-job-form">
+                        <input type="hidden" id="scheduled-job-id" name="id">
+
+                        <div class="mb-3">
+                            <label for="scheduled-job-name" class="form-label">작업 이름</label>
+                            <input type="text" class="form-control" id="scheduled-job-name" name="name" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="cron_expression" class="form-label">Cron 표현식</label>
+                            <input type="text" class="form-control" id="cron_expression" name="cron_expression" required
+                                placeholder="0 0 * * *">
+                            <div class="form-text">
+                                분 시 일 월 요일 형식으로 입력하세요. 예시:
+                                <ul class="mb-0 ps-3">
+                                    <li><code>0 0 * * *</code> - 매일 00:00에 실행</li>
+                                    <li><code>0 */6 * * *</code> - 6시간마다 실행</li>
+                                    <li><code>0 1 * * 1-5</code> - 평일 1:00에 실행</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+                        <h5 class="mb-3">크롤링 설정</h5>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="scheduled-job-artist" class="form-label">아티스트</label>
+                                <select class="form-select" id="scheduled-job-artist" name="artist">
+                                    <option value="">선택 (옵션)</option>
+                                    <!-- 아티스트 옵션이 여기에 동적으로 추가됩니다 -->
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="scheduled-job-group" class="form-label">그룹</label>
+                                <select class="form-select" id="scheduled-job-group" name="group">
+                                    <option value="">선택 (옵션)</option>
+                                    <!-- 그룹 옵션이 여기에 동적으로 추가됩니다 -->
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="scheduled-job-event" class="form-label">이벤트 (무대)</label>
+                                <input type="text" class="form-control" id="scheduled-job-event" name="event"
+                                    placeholder="예: 인기가요, 뮤직뱅크">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="scheduled-job-limit" class="form-label">검색 결과 수</label>
+                                <input type="number" class="form-control" id="scheduled-job-limit" name="limit"
+                                    value="50" min="1" max="500">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="scheduled-job-active"
+                                        name="is_active" checked>
+                                    <label class="form-check-label" for="scheduled-job-active">작업 활성화</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="scheduled-job-save-to-db"
+                                        name="save_to_db" checked>
+                                    <label class="form-check-label" for="scheduled-job-save-to-db">결과를 데이터베이스에
+                                        저장</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" id="save-scheduled-job">저장</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/admin/js/script.js"></script>
+</body>
+
+</html>
