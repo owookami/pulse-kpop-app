@@ -54,18 +54,11 @@ class RelatedVideosList extends StatelessWidget {
             style: Theme.of(context).textTheme.titleMedium,
           ),
         ),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: videos.length,
-          itemBuilder: (context, index) {
-            final video = videos[index];
-            return _RelatedVideoItem(
+        // ListView.builder 대신 모든 항목을 직접 생성
+        ...videos.map((video) => _RelatedVideoItem(
               video: video,
               onTap: () => onVideoTap(video),
-            );
-          },
-        ),
+            )),
       ],
     );
   }

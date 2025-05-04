@@ -4,9 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../auth/controller/auth_controller.dart';
 import '../../bookmark/widgets/bookmark_button.dart';
+import '../../subscription/helpers/subscription_helpers.dart';
+import '../../subscription/provider/subscription_provider.dart';
 import '../../vote/widgets/rating_panel.dart';
 import '../providers/video_player_provider.dart';
 import '../widgets/related_videos_list.dart';
@@ -24,8 +28,12 @@ class VideoPlayerScreen extends HookConsumerWidget {
   /// ID 기반 생성자
   /// 비디오 ID를 기반으로 플레이어 화면 생성
   /// [videoId]는 데이터베이스의 비디오 ID
-  static Widget fromId({required String videoId}) {
+  static Widget fromId({
+    required String videoId,
+    Key? key,
+  }) {
     return Consumer(
+      key: key,
       builder: (context, ref, _) {
         final asyncVideo = ref.watch(videoByIdProvider(videoId));
 
@@ -52,46 +60,62 @@ class VideoPlayerScreen extends HookConsumerWidget {
 
   /// YouTube URL 여부 확인
   bool _isYouTubeUrl(String url) {
-    if (url.isEmpty) {
-      debugPrint('URL이 비어있어 YouTube 동영상으로 처리할 수 없음');
-      return false;
-    }
+    return url.contains('youtube.com') || url.contains('youtu.be');
+  }
 
-    try {
-      // 표준 YouTube URL 형식 확인
-      if (url.contains('youtube.com') || url.contains('youtu.be')) {
-        debugPrint('YouTube URL 패턴 감지됨: $url');
-        return true;
-      }
+  /// 비디오 공유 처리
+  void _shareVideo(BuildContext context) {
+    Share.share(
+      '펄스 앱에서 "${video.title}" 비디오를 확인해보세요!\n'
+      '${video.videoUrl}',
+      subject: '펄스 비디오 공유: ${video.title}',
+    );
+  }
 
-      // 유효한 URL인지 확인
-      final uri = Uri.parse(url);
-      if (uri.host.contains('youtube.com') || uri.host.contains('youtu.be')) {
-        debugPrint('YouTube 호스트 확인됨: ${uri.host}');
-        return true;
-      }
-
-      // YouTube ID 형식인지 확인 (11자리 영숫자와 특수문자)
-      if (RegExp(r'^[A-Za-z0-9_-]{11}$').hasMatch(url)) {
-        debugPrint('입력이 YouTube ID 형식으로 보임: $url');
-        return true;
-      }
-
-      debugPrint('YouTube URL로 인식되지 않음: $url');
-      return false;
-    } catch (e) {
-      // URL 파싱 실패 시 텍스트 패턴으로 판단
-      debugPrint('URL 파싱 실패, 텍스트 패턴으로 판단: $e');
-      return url.contains('youtube.com') || url.contains('youtu.be');
-    }
+  // 비디오 정보 표시
+  void _showVideoInfoDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('비디오 정보'),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('제목: ${video.title}'),
+              const SizedBox(height: 8),
+              Text('ID: ${video.id}'),
+              const SizedBox(height: 8),
+              Text('플랫폼: ${video.platform}'),
+              const SizedBox(height: 8),
+              Text('플랫폼 ID: ${video.platformId}'),
+              const SizedBox(height: 8),
+              Text('URL: ${video.videoUrl}'),
+              const SizedBox(height: 8),
+              Text('설명: ${video.description ?? "설명 없음"}'),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('닫기'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final relatedVideos = ref.watch(relatedVideosProvider(video.id));
+    final relatedVideosAsync = ref.watch(relatedVideosProvider(video.id));
     final isFullScreen = useState(false);
     final isLoading = useState(true);
     final errorMessage = useState<String?>(null);
+
+    // 화면 방향 감지
+    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
 
     // 비디오 컨트롤러 상태
     final controller = useState<VideoPlayerController?>(null);
@@ -99,18 +123,50 @@ class VideoPlayerScreen extends HookConsumerWidget {
     // 유튜브 비디오 여부 확인
     final isYouTubeVideo = _isYouTubeUrl(video.videoUrl);
 
+    // 인증 및 구독 상태 확인
+    final authState = ref.watch(authControllerProvider);
+    final subscriptionState = ref.watch(subscriptionProvider);
+    final isAuthenticated = authState.isAuthenticated;
+    final isPremium = subscriptionState.isPremium;
+
+    // 접근 권한 여부
+    final hasAccessToVideo = isAuthenticated && isPremium;
+    final shouldShowSubscriptionPrompt = useState(false);
+
+    // 화면 활성화 상태 트래킹
+    final isScreenActive = useState(true);
+
     debugPrint('비디오 로드 시작: ${video.title}');
     debugPrint('비디오 URL: ${video.videoUrl}');
     debugPrint('YouTube 비디오 여부: $isYouTubeVideo');
+    debugPrint('인증 상태: $isAuthenticated, 프리미엄 상태: $isPremium');
 
     // 모델 디버깅용 로그
     if (kDebugMode) {
       debugPrint('비디오 정보: ID=${video.id}, 플랫폼=${video.platform}, 플랫폼ID=${video.platformId}');
     }
 
-    // 화면이 처음 로드될 때 실행되는 효과
+    // 구독 안내 다이얼로그 표시
+    void showSubscriptionPrompt() {
+      SubscriptionHelpers.showSubscriptionDialog(
+        context,
+        isAuthenticated,
+        isPremium,
+      );
+    }
+
+    // 비디오 초기화 & 정리를 위한 이펙트
     useEffect(() {
       debugPrint('VideoPlayerScreen useEffect 실행');
+      isScreenActive.value = true;
+
+      // 전역 동영상 상태 관리 - 현재 동영상 활성화
+      // 빌드 사이클 이후에 Provider 상태 변경을 위해 Future.microtask 사용
+      Future.microtask(() {
+        if (isScreenActive.value) {
+          ref.read(videoPlayerLifecycleProvider.notifier).startPlaying(video.id);
+        }
+      });
 
       // 일반 모드 (상태 표시줄 표시)
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
@@ -118,300 +174,255 @@ class VideoPlayerScreen extends HookConsumerWidget {
       // 화면 방향을 세로로 고정
       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-      // 비디오 URL 유효성 검사
-      if (video.videoUrl.isEmpty) {
-        errorMessage.value = '동영상 URL이 제공되지 않았습니다.';
-        isLoading.value = false;
-        debugPrint('동영상 URL이 비어있음');
-        return null;
-      }
+      // 비디오 액세스 확인 및 초기화 함수
+      Future<void> initializePlayer() async {
+        if (!isScreenActive.value) return;
 
-      // YouTube 동영상인 경우 별도 처리
-      if (isYouTubeVideo) {
-        debugPrint('YouTube 비디오 URL 감지: ${video.videoUrl}');
-        // YouTube 플레이어를 사용하므로 여기서는 로딩만 해제
-        isLoading.value = false;
-        return null;
-      }
+        // 권한 체크: 수정된 로직으로 비회원도 10개까지 시청 가능
+        final hasAccess = await SubscriptionHelpers.checkVideoAccess(context, ref, video);
 
-      try {
-        debugPrint('표준 비디오 URL 처리: ${video.videoUrl}');
-        // 비디오 컨트롤러 초기화
-        final videoController = VideoPlayerController.networkUrl(
-          Uri.parse(video.videoUrl),
-        );
+        if (!isScreenActive.value) return;
+        if (!hasAccess) {
+          if (isScreenActive.value) {
+            isLoading.value = false;
+            shouldShowSubscriptionPrompt.value = true;
+          }
+          return;
+        }
 
-        controller.value = videoController;
+        // 비디오 URL 유효성 검사
+        if (video.videoUrl.isEmpty) {
+          if (isScreenActive.value) {
+            errorMessage.value = '동영상 URL이 제공되지 않았습니다.';
+            isLoading.value = false;
+          }
+          debugPrint('동영상 URL이 비어있음');
+          return;
+        }
 
-        // 초기화 및 자동 재생
-        videoController.initialize().then((_) {
-          videoController.play();
-          isLoading.value = false;
-          debugPrint('표준 비디오 초기화 및 재생 시작 성공');
-        }).catchError((error) {
-          errorMessage.value = '동영상을 로드하는 중 오류가 발생했습니다: $error';
-          isLoading.value = false;
-          debugPrint('비디오 초기화 오류: $error');
-        });
-
-        // 화면이 언마운트될 때 컨트롤러 해제
-        return () {
-          debugPrint('VideoPlayerScreen dispose 호출됨');
-          controller.value?.pause();
+        // YouTube 동영상인 경우 별도 처리
+        if (isYouTubeVideo) {
+          debugPrint('YouTube 비디오 URL 감지: ${video.videoUrl}');
+          // YouTube 플레이어를 사용하므로 여기서는 로딩만 해제
+          if (isScreenActive.value) {
+            isLoading.value = false;
+          }
+        }
+        // 일반 비디오 처리
+        else {
+          // 기존 컨트롤러 해제
           controller.value?.dispose();
 
-          // 화면 방향 원래대로 복원
-          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-          SystemChrome.setPreferredOrientations([
-            DeviceOrientation.portraitUp,
-            DeviceOrientation.portraitDown,
-            DeviceOrientation.landscapeLeft,
-            DeviceOrientation.landscapeRight,
-          ]);
-        };
-      } catch (e) {
-        errorMessage.value = '동영상 플레이어 초기화 중 오류가 발생했습니다: $e';
-        isLoading.value = false;
-        debugPrint('비디오 컨트롤러 생성 오류: $e');
-        return null;
+          try {
+            // 새 비디오 컨트롤러 초기화
+            final newController = VideoPlayerController.networkUrl(
+              Uri.parse(video.videoUrl),
+            );
+
+            // 컨트롤러 초기화 및 재생 시작
+            await newController.initialize();
+
+            // 위젯이 아직 마운트 상태인지 확인
+            if (!isScreenActive.value) {
+              newController.dispose();
+              return;
+            }
+
+            await newController.play();
+
+            if (isScreenActive.value) {
+              controller.value = newController;
+              isLoading.value = false;
+            } else {
+              newController.dispose();
+            }
+          } catch (e) {
+            debugPrint('비디오 컨트롤러 초기화 오류: $e');
+            if (isScreenActive.value) {
+              errorMessage.value = '동영상을 로드할 수 없습니다: $e';
+              isLoading.value = false;
+            }
+          }
+        }
       }
+
+      // 비디오 초기화 실행
+      initializePlayer();
+
+      // 화면이 언마운트될 때 실행되는 정리 작업
+      return () {
+        debugPrint('VideoPlayerScreen dispose 호출됨');
+        isScreenActive.value = false;
+
+        // 비디오 리소스 정리
+        final currentController = controller.value;
+        if (currentController != null) {
+          currentController.pause();
+          currentController.dispose();
+        }
+
+        // 전역 비디오 상태 관리에 화면 비활성화 알림
+        ref.read(videoPlayerLifecycleProvider.notifier).releaseResources();
+
+        // 화면 방향 제한 해제
+        SystemChrome.setPreferredOrientations([]);
+
+        // 시스템 UI 원래대로 복원
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      };
     }, []);
 
-    // 전체 화면 토글 함수
-    void toggleFullScreen() {
-      if (isFullScreen.value) {
-        // 일반 모드로 돌아가기
-        SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-      } else {
-        // 전체 화면 모드로 전환
-        SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-        SystemChrome.setPreferredOrientations([
-          DeviceOrientation.landscapeLeft,
-          DeviceOrientation.landscapeRight,
-        ]);
-      }
-      isFullScreen.value = !isFullScreen.value;
+    // 관련 비디오 선택 처리 함수
+    void handleRelatedVideoTap(Video selectedVideo) {
+      // 비디오 재생 중지 및 컨트롤러 해제
+      controller.value?.pause();
+
+      // 비디오 상태 정리
+      ref.read(videoPlayerLifecycleProvider.notifier).releaseResources();
+
+      // 선택된 비디오로 화면 전환 (독립 화면으로 이동)
+      SubscriptionHelpers.handleVideoSelection(context, ref, selectedVideo);
     }
 
-    return Scaffold(
-      backgroundColor: isFullScreen.value ? Colors.black : null,
-      appBar: isFullScreen.value
-          ? null
-          : AppBar(
-              backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-              iconTheme: Theme.of(context).iconTheme,
-              title: Text(
-                video.title,
-                style: Theme.of(context).textTheme.titleLarge,
-                overflow: TextOverflow.ellipsis,
-              ),
-              actions: [
-                // 북마크 버튼
-                BookmarkButton(
-                  videoId: video.id,
-                  color: null,
-                ),
-              ],
-            ),
-      body: Padding(
-        padding: EdgeInsets.only(
-          top: isFullScreen.value ? MediaQuery.of(context).padding.top : 0,
-        ),
-        child: Column(
-          children: [
-            // 비디오 플레이어 영역
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: Container(
-                color: Colors.black,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    // YouTube 플레이어
-                    if (isYouTubeVideo && !isLoading.value)
-                      YouTubePlayerWidget(
-                        youtubeUrl: video.videoUrl,
-                        onFullScreenToggle: (fullScreenState) {
-                          // YouTubePlayerWidget에서 전체화면 상태가 변경되면 호출
-                          isFullScreen.value = fullScreenState;
-                        },
-                      ),
+    // WillPopScope 대체 - 뒤로가기 이벤트 처리
+    return PopScope(
+      canPop: true,
+      onPopInvoked: (didPop) {
+        if (didPop) {
+          debugPrint('VideoPlayerScreen - 뒤로 가기 감지, 리소스 정리 중');
+          // 비디오 재생 중지 및 컨트롤러 해제
+          controller.value?.pause();
 
-                    // 일반 비디오 플레이어
-                    if (!isYouTubeVideo &&
-                        !isLoading.value &&
-                        errorMessage.value == null &&
-                        controller.value != null)
-                      controller.value!.value.isInitialized
-                          ? GestureDetector(
-                              onTap: () {
-                                if (controller.value!.value.isPlaying) {
-                                  controller.value!.pause();
-                                } else {
-                                  controller.value!.play();
-                                }
-                              },
-                              child: AspectRatio(
-                                aspectRatio: controller.value!.value.aspectRatio,
-                                child: VideoPlayer(controller.value!),
+          // 비디오 리소스 정리
+          ref.read(videoPlayerLifecycleProvider.notifier).releaseResources();
+
+          // 화면 방향 제한 해제
+          SystemChrome.setPreferredOrientations([]);
+        }
+      },
+      child: Scaffold(
+        appBar: isLandscape
+            ? null
+            : AppBar(
+                title: Text(
+                  video.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    // 컨트롤러 중지
+                    controller.value?.pause();
+                    // 비디오 리소스 정리
+                    ref.read(videoPlayerLifecycleProvider.notifier).releaseResources();
+                    // 뒤로가기
+                    Navigator.of(context, rootNavigator: true).pop();
+                  },
+                ),
+                actions: [
+                  BookmarkButton(videoId: video.id),
+                  IconButton(
+                    icon: const Icon(Icons.share),
+                    onPressed: () => _shareVideo(context),
+                  ),
+                ],
+              ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              // 비디오 플레이어 영역
+              isYouTubeVideo
+                  ? YouTubePlayerWidget(
+                      youtubeUrl: video.videoUrl,
+                      platformId: video.platformId,
+                      onFullScreenToggle: (isFullscreen) {
+                        isFullScreen.value = isFullscreen;
+                      },
+                    )
+                  : AspectRatio(
+                      aspectRatio: controller.value?.value.aspectRatio ?? 16 / 9,
+                      child: errorMessage.value != null
+                          ? Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.error, color: Colors.red, size: 48),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    errorMessage.value!,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                ],
                               ),
                             )
-                          : const Center(
-                              child: Text(
-                                '동영상 초기화 중...',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
+                          : isLoading.value
+                              ? const Center(child: CircularProgressIndicator())
+                              : controller.value != null
+                                  ? VideoPlayer(controller.value!)
+                                  : const Center(
+                                      child: Text('비디오를 찾을 수 없습니다.'),
+                                    ),
+                    ),
 
-                    // 로딩 인디케이터
-                    if (isLoading.value)
-                      const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-
-                    // 오류 메시지
-                    if (errorMessage.value != null)
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
+              // 비디오 정보 영역 (가로 모드에서는 숨김)
+              if (!isLandscape && !isFullScreen.value)
+                Container(
+                  child: shouldShowSubscriptionPrompt.value
+                      ? Center(
                           child: Column(
-                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               const Icon(
-                                Icons.error_outline,
-                                color: Colors.red,
+                                Icons.lock,
                                 size: 48,
+                                color: Colors.amber,
                               ),
                               const SizedBox(height: 16),
-                              Text(
-                                errorMessage.value!,
-                                style: const TextStyle(color: Colors.red),
+                              const Text(
+                                '이 콘텐츠를 시청하려면\n구독이 필요합니다',
                                 textAlign: TextAlign.center,
-                              ),
-                              if (kDebugMode)
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 8.0),
-                                  child: Text(
-                                    'URL: ${video.videoUrl}',
-                                    style: const TextStyle(color: Colors.grey, fontSize: 12),
-                                    textAlign: TextAlign.center,
-                                  ),
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
                                 ),
+                              ),
+                              const SizedBox(height: 24),
+                              ElevatedButton(
+                                onPressed: showSubscriptionPrompt,
+                                child: const Text('구독 정보 보기'),
+                              ),
                             ],
                           ),
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            // 비디오 정보 카드
+                            VideoInfoCard(video: video),
+
+                            // 관련 비디오 목록
+                            RatingPanel(videoId: video.id),
+
+                            // 관련 비디오 목록
+                            relatedVideosAsync.when(
+                              data: (videos) => RelatedVideosList(
+                                videos: videos,
+                                onVideoTap: handleRelatedVideoTap,
+                              ),
+                              loading: () => const Center(child: CircularProgressIndicator()),
+                              error: (error, _) => Center(
+                                child: Text('관련 비디오를 불러올 수 없습니다: $error'),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-
-                    // 일반 비디오 컨트롤 오버레이 (유튜브 동영상은 자체 컨트롤 사용)
-                    if (!isYouTubeVideo &&
-                        !isLoading.value &&
-                        errorMessage.value == null &&
-                        controller.value != null &&
-                        controller.value!.value.isInitialized)
-                      Stack(
-                        children: [
-                          // 재생/일시정지 버튼
-                          Center(
-                            child: AnimatedOpacity(
-                              opacity: controller.value!.value.isPlaying ? 0.0 : 1.0,
-                              duration: const Duration(milliseconds: 300),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.black38,
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                child: Icon(
-                                  controller.value!.value.isPlaying
-                                      ? Icons.pause
-                                      : Icons.play_arrow,
-                                  color: Colors.white,
-                                  size: 50.0,
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          // 전체 화면 버튼
-                          Positioned(
-                            right: 8,
-                            bottom: 48,
-                            child: IconButton(
-                              icon: Icon(
-                                isFullScreen.value ? Icons.fullscreen_exit : Icons.fullscreen,
-                                color: Colors.white,
-                              ),
-                              onPressed: toggleFullScreen,
-                            ),
-                          ),
-
-                          // 진행 표시줄 (하단)
-                          Positioned(
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            child: VideoProgressIndicator(
-                              controller.value!,
-                              allowScrubbing: true,
-                              colors: const VideoProgressColors(
-                                playedColor: Colors.red,
-                                bufferedColor: Colors.white54,
-                                backgroundColor: Colors.black45,
-                              ),
-                              padding: const EdgeInsets.all(10),
-                            ),
-                          ),
-                        ],
-                      ),
-                  ],
                 ),
-              ),
-            ),
-
-            // 비디오 정보 및 관련 비디오
-            if (!isFullScreen.value)
-              Expanded(
-                child: ListView(
-                  children: [
-                    // 비디오 정보 카드
-                    VideoInfoCard(video: video),
-
-                    // 평가 패널
-                    RatingPanel(videoId: video.id),
-
-                    // 관련 비디오
-                    relatedVideos.when(
-                      data: (videos) => RelatedVideosList(
-                        videos: videos,
-                        onVideoTap: (selectedVideo) {
-                          // 네비게이션 전에 현재 화면의 상태를 정리
-                          // 선택된 비디오로 네비게이션할 때 route를 교체하여 메모리 관리 최적화
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return VideoPlayerScreen(video: selectedVideo);
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                      loading: () => const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: CircularProgressIndicator(),
-                        ),
-                      ),
-                      error: (error, stack) => Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text('관련 동영상을 불러올 수 없습니다: $error'),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );

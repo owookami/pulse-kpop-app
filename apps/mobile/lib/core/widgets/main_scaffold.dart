@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile/features/video_player/providers/video_player_provider.dart';
 
 /// 현재 활성화된 NavigationShell을 저장하는 전역 상태 프로바이더
 final activeNavigationShellProvider = StateProvider<StatefulNavigationShell?>((ref) => null);
 
 /// 메인 스캐폴드 위젯
 /// 하단 탭 네비게이션과 앱 바를 포함한 기본 레이아웃을 제공합니다.
-class MainScaffold extends ConsumerWidget {
+class MainScaffold extends ConsumerStatefulWidget {
   /// 생성자
   const MainScaffold({
     required this.navigationShell,
@@ -18,58 +19,102 @@ class MainScaffold extends ConsumerWidget {
   final StatefulNavigationShell navigationShell;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // 현재 선택된 탭 인덱스
-    final selectedIndex = navigationShell.currentIndex;
+  ConsumerState<MainScaffold> createState() => _MainScaffoldState();
+}
 
-    // 전역 상태에 navigationShell 설정
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(activeNavigationShellProvider.notifier).state = navigationShell;
+class _MainScaffoldState extends ConsumerState<MainScaffold> {
+  @override
+  void initState() {
+    super.initState();
+    // 빌드 사이클 외부에서 프로바이더 상태 업데이트
+    Future.microtask(() {
+      ref.read(activeNavigationShellProvider.notifier).state = widget.navigationShell;
     });
+  }
+
+  @override
+  void didUpdateWidget(MainScaffold oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // navigationShell이 변경되었을 때만 상태 업데이트
+    if (oldWidget.navigationShell != widget.navigationShell) {
+      Future.microtask(() {
+        ref.read(activeNavigationShellProvider.notifier).state = widget.navigationShell;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // 현재 선택된 탭 인덱스
+    final selectedIndex = widget.navigationShell.currentIndex;
+
+    // 화면 방향 감지 - 가로 모드에서는 탭 바를 숨김
+    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+
+    // 현재 실행 중인 비디오 플레이어 리소스 정리 함수
+    void cleanupVideoPlayerResources(BuildContext context) {
+      try {
+        // 전역 비디오 플레이어 상태 관리를 통해 리소스 정리
+        final videoLifecycle = ref.read(videoPlayerLifecycleProvider);
+
+        if (videoLifecycle.isPlaying && videoLifecycle.activeVideoId != null) {
+          debugPrint('탭 전환: 비디오 플레이어 리소스 정리 시작 (ID: ${videoLifecycle.activeVideoId})');
+
+          // 빌드 사이클 이후에 Provider 상태 변경을 위해 Future.microtask 사용
+          Future.microtask(() {
+            ref.read(videoPlayerLifecycleProvider.notifier).stopPlaying();
+          });
+        }
+      } catch (e) {
+        debugPrint('비디오 리소스 정리 오류: $e');
+      }
+    }
 
     return Scaffold(
-      body: navigationShell,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: selectedIndex,
-        onDestinationSelected: (index) {
-          // 다른 탭으로 이동
-          navigationShell.goBranch(
-            index,
-            initialLocation: index == navigationShell.currentIndex,
-          );
-        },
-        destinations: const [
-          // 홈/피드 탭
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: '홈',
-          ),
-          // 검색 탭
-          NavigationDestination(
-            icon: Icon(Icons.search_outlined),
-            selectedIcon: Icon(Icons.search),
-            label: '검색',
-          ),
-          // 북마크 탭
-          NavigationDestination(
-            icon: Icon(Icons.bookmark_outline),
-            selectedIcon: Icon(Icons.bookmark),
-            label: '북마크',
-          ),
-          // 프로필 탭
-          NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: '프로필',
-          ),
-        ],
-        // Material 3 스타일링
-        elevation: 0,
-        labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        indicatorColor: Theme.of(context).colorScheme.secondaryContainer,
-      ),
+      body: widget.navigationShell,
+      bottomNavigationBar: isLandscape
+          ? null
+          : NavigationBar(
+              destinations: const [
+                NavigationDestination(
+                  icon: Icon(Icons.home_outlined),
+                  selectedIcon: Icon(Icons.home),
+                  label: '홈',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.search_outlined),
+                  selectedIcon: Icon(Icons.search),
+                  label: '검색',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.bookmark_border_outlined),
+                  selectedIcon: Icon(Icons.bookmark),
+                  label: '북마크',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.person_outlined),
+                  selectedIcon: Icon(Icons.person),
+                  label: '프로필',
+                ),
+              ],
+              selectedIndex: selectedIndex,
+              onDestinationSelected: (index) {
+                if (selectedIndex == index) {
+                  // 이미 선택된 탭을 다시 눌렀을 때의 처리
+                  // 홈 탭에서는 맨 위로 스크롤, 다른 탭에서는 루트 경로로 이동
+                  return;
+                }
+
+                // 탭 변경 시 동영상 플레이어 자원 정리
+                cleanupVideoPlayerResources(context);
+
+                // 탭 전환
+                widget.navigationShell.goBranch(
+                  index,
+                  initialLocation: index == selectedIndex,
+                );
+              },
+            ),
     );
   }
 }

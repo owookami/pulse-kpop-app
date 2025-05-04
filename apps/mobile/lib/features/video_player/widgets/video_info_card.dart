@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile/features/bookmark/provider/bookmark_provider.dart';
 import 'package:mobile/features/vote/provider/vote_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 /// 비디오 정보 카드 위젯
 class VideoInfoCard extends ConsumerWidget {
@@ -15,6 +16,33 @@ class VideoInfoCard extends ConsumerWidget {
 
   /// 표시할 비디오 정보
   final Video video;
+
+  /// 비디오 공유 함수
+  Future<void> _shareVideo(BuildContext context) async {
+    try {
+      final String shareText = '${video.title}\n\n${video.videoUrl}';
+      final String subject = video.title;
+
+      // 공유 대화상자 표시
+      await Share.share(
+        shareText,
+        subject: subject,
+      );
+
+      debugPrint('비디오 공유 성공: ${video.title}');
+    } catch (e) {
+      debugPrint('비디오 공유 중 오류 발생: $e');
+      // 공유 실패 시 스낵바 표시
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('공유하는 중 오류가 발생했습니다: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -153,12 +181,7 @@ class VideoInfoCard extends ConsumerWidget {
                   context,
                   icon: Icons.share,
                   label: '공유',
-                  onTap: () {
-                    // TODO: 공유 기능 구현
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('공유 기능이 구현될 예정입니다.')),
-                    );
-                  },
+                  onTap: () => _shareVideo(context),
                 ),
               ],
             ),
