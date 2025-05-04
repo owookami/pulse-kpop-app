@@ -30,7 +30,7 @@ dev_dependencies:
   freezed: 2.4.2
   json_serializable: 6.7.1
   # 린트 및 분석
-  flutter_lints: 2.0.3
+  flutter_lints: 5.0.0
   
 flutter:
   # 필요한 Flutter 설정 추가 
