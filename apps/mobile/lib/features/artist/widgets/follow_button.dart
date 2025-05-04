@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../provider/artist_provider.dart';
 
@@ -7,24 +7,16 @@ import '../provider/artist_provider.dart';
 class FollowButton extends ConsumerWidget {
   /// 생성자
   const FollowButton({
-    required this.artistId,
-    this.size = const Size(120, 40),
-    this.radius = 20,
-    this.textSize = 14,
     super.key,
+    required this.artistId,
+    this.size,
   });
 
   /// 아티스트 ID
   final String artistId;
 
   /// 버튼 크기
-  final Size size;
-
-  /// 버튼 모서리 반경
-  final double radius;
-
-  /// 글자 크기
-  final double textSize;
+  final Size? size;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -32,38 +24,55 @@ class FollowButton extends ConsumerWidget {
     final isFollowing = artistState.isFollowingSelectedArtist;
     final isLoading = artistState.isLoadingFollow;
 
+    // 팔로우 상태에 따른 색상 및 텍스트
+    final buttonColor = isFollowing ? Colors.grey.shade200 : Theme.of(context).primaryColor;
+
+    final textColor = isFollowing ? Colors.black87 : Colors.white;
+
+    final buttonText = isFollowing ? '팔로잉' : '팔로우';
+    final leadingIcon = isFollowing ? Icons.check : Icons.add;
+
+    // 팔로우 버튼 클릭 핸들러
+    void handleFollow() {
+      // 로딩 중이면 중복 클릭 방지
+      if (isLoading) return;
+
+      // 아티스트 팔로우/언팔로우 토글
+      ref.read(artistProvider.notifier).toggleFollow(artistId);
+    }
+
     return SizedBox(
-      width: size.width,
-      height: size.height,
-      child: ElevatedButton(
-        onPressed:
-            isLoading ? null : () => ref.read(artistProvider.notifier).toggleFollow(artistId),
+      width: size?.width,
+      height: size?.height ?? 40,
+      child: ElevatedButton.icon(
+        onPressed: isLoading ? null : handleFollow,
         style: ElevatedButton.styleFrom(
-          backgroundColor:
-              isFollowing ? Colors.grey.shade200 : Theme.of(context).colorScheme.primary,
-          foregroundColor: isFollowing ? Colors.black87 : Colors.white,
+          backgroundColor: buttonColor,
+          foregroundColor: textColor,
+          elevation: 2,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(radius),
-            side: isFollowing ? BorderSide(color: Colors.grey.shade400) : BorderSide.none,
+            borderRadius: BorderRadius.circular(20),
           ),
-          padding: EdgeInsets.zero,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
         ),
-        child: isLoading
+        icon: isLoading
             ? SizedBox(
-                width: 20,
-                height: 20,
+                width: 16,
+                height: 16,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: Theme.of(context).primaryColor,
+                  color: textColor,
                 ),
               )
-            : Text(
-                isFollowing ? '팔로잉' : '팔로우',
-                style: TextStyle(
-                  fontSize: textSize,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+            : Icon(leadingIcon, size: 16),
+        label: Text(
+          buttonText,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: textColor,
+          ),
+        ),
       ),
     );
   }

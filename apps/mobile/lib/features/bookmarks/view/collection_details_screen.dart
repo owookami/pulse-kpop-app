@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/features/bookmarks/provider/bookmark_provider.dart';
+import 'package:mobile/features/subscription/helpers/subscription_helpers.dart';
 
 /// 북마크 컬렉션 세부 화면
 class CollectionDetailsScreen extends ConsumerWidget {
@@ -270,8 +271,8 @@ class CollectionDetailsScreen extends ConsumerWidget {
   ) {
     return GestureDetector(
       onTap: () {
-        // 비디오 플레이어 화면으로 이동
-        context.push('/video/${video.id}', extra: video);
+        // 비디오 접근 권한 확인 및 처리
+        SubscriptionHelpers.handleVideoSelection(context, ref, video);
       },
       child: Card(
         clipBehavior: Clip.antiAlias,

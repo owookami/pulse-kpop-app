@@ -13,8 +13,15 @@ import 'package:mobile/features/bookmarks/view/bookmarks_screen.dart';
 import 'package:mobile/features/bookmarks/view/collection_details_screen.dart';
 import 'package:mobile/features/bookmarks/view/collection_management_screen.dart';
 import 'package:mobile/features/feed/view/feed_screen.dart';
+import 'package:mobile/features/onboarding/provider/onboarding_provider.dart';
 import 'package:mobile/features/onboarding/view/onboarding_screen.dart';
+import 'package:mobile/features/profile/view/app_info_screen.dart';
+import 'package:mobile/features/profile/view/deactivate_account_screen.dart';
+import 'package:mobile/features/profile/view/feedback_screen.dart';
+import 'package:mobile/features/profile/view/privacy_policy_screen.dart';
 import 'package:mobile/features/profile/view/profile_screen.dart';
+import 'package:mobile/features/profile/view/subscription_screen.dart';
+import 'package:mobile/features/profile/view/terms_screen.dart';
 import 'package:mobile/features/recommendations/view/for_you_screen.dart';
 import 'package:mobile/features/search/view/discover_screen.dart';
 import 'package:mobile/features/search/view/search_screen.dart';
@@ -25,6 +32,7 @@ import 'package:mobile/routes/routes.dart';
 /// 라우터 상태 프로바이더
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authControllerProvider);
+  final onboardingState = ref.watch(onboardingProvider);
 
   return GoRouter(
     initialLocation: AppRoutes.splash,
@@ -38,56 +46,31 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isOnboardingRoute = state.matchedLocation == AppRoutes.onboarding;
 
       // 로딩 중일 때는 스플래시 화면 유지
-      if (authState.isLoading) {
+      if (authState.isLoading || onboardingState.isLoading) {
         return isSplashRoute ? null : AppRoutes.splash;
       }
 
-      // 에러 상태라면 로그인 화면으로 리다이렉트
-      if (authState.hasError) {
-        return isAuthRoute ? null : AppRoutes.login;
+      // 스플래시 화면에서는 별도의 리다이렉트 로직 없음 (스플래시 화면에서 처리)
+      if (isSplashRoute) {
+        return null;
       }
 
-      // 인증 상태에 값이 있을 때
-      if (authState.hasValue) {
-        // 인증된 사용자인 경우
-        if (authState.value!.isAuthenticated) {
-          // 온보딩이 필요한 경우 (이미 온보딩 화면이 아닐 때만 리다이렉트)
-          if (authState.value!.needsOnboarding && !isOnboardingRoute) {
-            return AppRoutes.onboarding;
-          }
-
-          // 이미 인증되었고 인증 또는 스플래시 관련 페이지에 있는 경우 홈으로 리다이렉트
-          if ((isAuthRoute || isSplashRoute) && !authState.value!.needsOnboarding) {
-            return AppRoutes.home;
-          }
-
-          // 이미 인증되었고 온보딩 페이지에 있지만 온보딩이 필요없는 경우 홈으로 리다이렉트
-          if (isOnboardingRoute && !authState.value!.needsOnboarding) {
-            return AppRoutes.home;
-          }
-
-          // 다른 모든 인증된 사용자 경로는 리다이렉트 없음
-          return null;
-        } else {
-          // 인증되지 않은 경우
-
-          // 인증되지 않았지만 인증이 필요한 페이지에 접근 시도할 때
-          if (!isAuthRoute && !isSplashRoute && !isOnboardingRoute) {
-            // 스플래시에서 로그인으로 바로 리다이렉트 시킴
-            return AppRoutes.login;
-          }
-
-          // 스플래시 화면에 있다면 로그인으로 리다이렉트
-          if (isSplashRoute) {
-            return AppRoutes.login;
-          }
-
-          // 이미 인증 관련 페이지이거나 온보딩 페이지에 있는 경우 리다이렉트 없음
-          return null;
-        }
+      // 앱 최초 실행 시 온보딩으로 리다이렉트 (로그인 상태와 관계없이)
+      if (onboardingState.isFirstLaunch && !isOnboardingRoute) {
+        return AppRoutes.onboarding;
       }
 
-      // 기본적으로 현재 경로 유지
+      // 인증 관련 페이지에 있고 이미 로그인한 상태라면 홈으로 리다이렉트
+      if (isAuthRoute && authState.value?.isAuthenticated == true) {
+        return AppRoutes.home;
+      }
+
+      // 온보딩 페이지에 있지만 온보딩이 필요없는 경우 홈으로 리다이렉트
+      if (isOnboardingRoute && !onboardingState.isFirstLaunch) {
+        return AppRoutes.home;
+      }
+
+      // 다른 모든 경로는 리다이렉트 없이 접근 허용
       return null;
     },
     routes: [
@@ -117,22 +100,39 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const ResetPasswordScreen(),
       ),
 
-      // 비디오 플레이어 화면 (전체 화면)
+      // 독립적인 전체 화면 비디오 플레이어 (하단 네비게이션 표시 없음)
       GoRoute(
-        path: AppRoutes.videoPlayer,
-        name: AppRoutes.videoPlayer,
-        builder: (context, state) {
+        path: '/fullscreen-video-player',
+        name: 'fullscreen-video-player',
+        pageBuilder: (context, state) {
           final video = state.extra as Video;
-          return VideoPlayerScreen(video: video);
+          return CustomTransitionPage<void>(
+            key: ValueKey('fullscreen_player_${video.id}'),
+            child: VideoPlayerScreen(video: video),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+            opaque: true,
+            barrierDismissible: false,
+          );
         },
       ),
 
-      // 비디오 플레이어 화면 (ID 기반)
+      // ID 기반 독립적인 전체 화면 비디오 플레이어 (하단 네비게이션 표시 없음)
       GoRoute(
-        path: AppRoutes.player,
-        builder: (context, state) {
+        path: '/fullscreen-player/:id',
+        name: 'fullscreen-player',
+        pageBuilder: (context, state) {
           final videoId = state.pathParameters['id']!;
-          return VideoPlayerScreen.fromId(videoId: videoId);
+          return CustomTransitionPage<void>(
+            key: ValueKey('fullscreen_player_id_$videoId'),
+            child: VideoPlayerScreen.fromId(videoId: videoId),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+            opaque: true,
+            barrierDismissible: false,
+          );
         },
       ),
 
@@ -155,6 +155,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.forYou,
         builder: (context, state) => const ForYouScreen(),
+      ),
+
+      // 구독 화면 (직접 접근용)
+      GoRoute(
+        path: AppRoutes.subscription,
+        builder: (context, state) => const SubscriptionScreen(),
       ),
 
       // 메인 탭 라우트 (StatefulShellRoute)
@@ -221,8 +227,6 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: AppRoutes.bookmarks,
                 builder: (context, state) {
-                  // NavigationShell을 직접 전달할 수 없으므로 MainScaffold를 수정해야 함
-                  // 이 코드는 잘못된 접근 방식입니다
                   return const BookmarksScreen();
                 },
                 routes: [
@@ -266,6 +270,36 @@ final routerProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'artists',
                     builder: (context, state) => const ArtistListScreen(),
+                  ),
+                  // 앱 정보 화면
+                  GoRoute(
+                    path: 'app-info',
+                    builder: (context, state) => const AppInfoScreen(),
+                  ),
+                  // 이용약관 화면
+                  GoRoute(
+                    path: 'terms',
+                    builder: (context, state) => const TermsScreen(),
+                  ),
+                  // 개인정보 처리방침 화면
+                  GoRoute(
+                    path: 'privacy',
+                    builder: (context, state) => const PrivacyPolicyScreen(),
+                  ),
+                  // 구독 관리 화면
+                  GoRoute(
+                    path: 'subscription',
+                    builder: (context, state) => const SubscriptionScreen(),
+                  ),
+                  // 회원 탈퇴 화면
+                  GoRoute(
+                    path: 'deactivate',
+                    builder: (context, state) => const DeactivateAccountScreen(),
+                  ),
+                  // 건의하기 화면
+                  GoRoute(
+                    path: 'feedback',
+                    builder: (context, state) => const FeedbackScreen(),
                   ),
                 ],
               ),

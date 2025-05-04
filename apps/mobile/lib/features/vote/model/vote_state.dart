@@ -14,6 +14,7 @@ class VoteState {
     this.totalVotes = 0,
     this.likeCount = 0,
     this.dislikeCount = 0,
+    this.originalLikeCount = 0, // 원본 좋아요 수 (서버에서 가져온 값)
   });
 
   /// 로딩 중 여부
@@ -43,6 +44,9 @@ class VoteState {
   /// 싫어요 수
   final int dislikeCount;
 
+  /// 원본 좋아요 수 (서버에서 가져온 값)
+  final int originalLikeCount;
+
   /// 초기 상태
   factory VoteState.initial() => const VoteState();
 
@@ -57,6 +61,7 @@ class VoteState {
     int? totalVotes,
     int? likeCount,
     int? dislikeCount,
+    int? originalLikeCount,
   }) {
     return VoteState(
       isLoading: isLoading ?? this.isLoading,
@@ -68,6 +73,7 @@ class VoteState {
       totalVotes: totalVotes ?? this.totalVotes,
       likeCount: likeCount ?? this.likeCount,
       dislikeCount: dislikeCount ?? this.dislikeCount,
+      originalLikeCount: originalLikeCount ?? this.originalLikeCount,
     );
   }
 
@@ -84,7 +90,8 @@ class VoteState {
         other.averageRating == averageRating &&
         other.totalVotes == totalVotes &&
         other.likeCount == likeCount &&
-        other.dislikeCount == dislikeCount;
+        other.dislikeCount == dislikeCount &&
+        other.originalLikeCount == originalLikeCount;
   }
 
   @override
@@ -97,6 +104,7 @@ class VoteState {
         averageRating.hashCode ^
         totalVotes.hashCode ^
         likeCount.hashCode ^
-        dislikeCount.hashCode;
+        dislikeCount.hashCode ^
+        originalLikeCount.hashCode;
   }
 }

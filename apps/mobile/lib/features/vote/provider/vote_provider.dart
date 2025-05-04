@@ -57,6 +57,8 @@ class VoteNotifier extends StateNotifier<VoteState> {
 
       response.fold(
         onSuccess: (voteInfo) {
+          final likeCount = voteInfo['likeCount'] ?? 0;
+
           state = state.copyWith(
             isLoading: false,
             error: null,
@@ -65,7 +67,8 @@ class VoteNotifier extends StateNotifier<VoteState> {
             isDisliked: voteInfo['isDisliked'] ?? false,
             averageRating: voteInfo['averageRating'] ?? 0.0,
             totalVotes: voteInfo['totalVotes'] ?? 0,
-            likeCount: voteInfo['likeCount'] ?? 0,
+            likeCount: likeCount,
+            originalLikeCount: likeCount, // 원본 좋아요 수 저장
             dislikeCount: voteInfo['dislikeCount'] ?? 0,
           );
         },
@@ -182,10 +185,13 @@ class VoteNotifier extends StateNotifier<VoteState> {
     try {
       // 상태 업데이트 (낙관적 UI)
       if (isLike) {
+        // 좋아요의 경우 원본 좋아요 수에 +1을 한 값 사용
+        final newLikeCount = willCancel ? state.originalLikeCount : state.originalLikeCount + 1;
+
         state = state.copyWith(
           isLiked: !willCancel,
           isDisliked: false, // 좋아요 선택 시 싫어요는 해제
-          likeCount: willCancel ? state.likeCount - 1 : state.likeCount + 1,
+          likeCount: newLikeCount,
           dislikeCount: state.isDisliked ? state.dislikeCount - 1 : state.dislikeCount,
           isLoading: true, // 계속 로딩 상태 유지
         );
@@ -194,7 +200,8 @@ class VoteNotifier extends StateNotifier<VoteState> {
           isDisliked: !willCancel,
           isLiked: false, // 싫어요 선택 시 좋아요는 해제
           dislikeCount: willCancel ? state.dislikeCount - 1 : state.dislikeCount + 1,
-          likeCount: state.isLiked ? state.likeCount - 1 : state.likeCount,
+          // 좋아요 취소시 원본 값으로 복원
+          likeCount: state.isLiked ? state.originalLikeCount : state.likeCount,
           isLoading: true, // 계속 로딩 상태 유지
         );
       }
@@ -219,6 +226,13 @@ class VoteNotifier extends StateNotifier<VoteState> {
       // API 호출 성공 시 최신 데이터 로드 시도
       try {
         await loadVoteInfo();
+
+        // API에서 가져온 원본 좋아요 값에 사용자의 좋아요 여부에 따라 +1 적용
+        if (state.isLiked) {
+          state = state.copyWith(
+            likeCount: state.originalLikeCount + 1,
+          );
+        }
       } catch (loadError) {
         debugPrint('좋아요/싫어요 후 데이터 로드 오류: $loadError');
         // loadVoteInfo에 실패하더라도 isLoading은 false로 설정

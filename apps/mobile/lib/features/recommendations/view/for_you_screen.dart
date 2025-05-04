@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mobile/features/bookmarks/provider/bookmark_provider.dart';
 import 'package:mobile/features/recommendations/model/recommendation_state.dart';
 import 'package:mobile/features/recommendations/provider/recommendation_provider.dart';
+import 'package:mobile/features/subscription/helpers/subscription_helpers.dart';
 import 'package:mobile/routes/routes.dart';
 
 /// 'For You' 화면
@@ -205,12 +206,8 @@ class _VideoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        context.pushNamed(
-          AppRoutes.videoPlayer,
-          extra: {
-            'video': video,
-          },
-        );
+        // 비디오 접근 권한 확인 및 처리
+        SubscriptionHelpers.handleVideoSelection(context, ref, video);
       },
       child: Container(
         width: 180,

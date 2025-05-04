@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mobile/core/widgets/buttons.dart';
 import 'package:mobile/core/widgets/input_field.dart';
 import 'package:mobile/features/auth/controller/auth_controller.dart';
+import 'package:mobile/features/subscription/helpers/subscription_helpers.dart';
 import 'package:mobile/routes/routes.dart';
 
 /// 회원가입 스크린
@@ -272,32 +273,35 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   }
 
   /// 회원가입 시도
-  void _attemptSignup() {
+  Future<void> _attemptSignup() async {
+    // 폼 검증
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    // 이용약관 동의 확인
+    if (!_acceptTerms) {
+      setState(() {
+        _errorMessage = '이용약관에 동의해주세요.';
+      });
+      return;
+    }
+
     // 에러 메시지 초기화
     setState(() {
       _errorMessage = null;
     });
 
-    // 이용약관 동의 확인
-    if (!_acceptTerms) {
-      setState(() {
-        _errorMessage = '이용약관 및 개인정보 처리방침에 동의해주세요';
-      });
-      return;
-    }
+    // 회원가입 실행
+    final success = await ref.read(authControllerProvider.notifier).signUp(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+          displayName: _usernameController.text.trim(),
+        );
 
-    // 폼 유효성 검사
-    if (_formKey.currentState?.validate() ?? false) {
-      final email = _emailController.text.trim();
-      final password = _passwordController.text;
-      final username = _usernameController.text.trim();
-
-      // 회원가입 실행
-      ref.read(authControllerProvider.notifier).signUpWithEmail(
-            email: email,
-            password: password,
-            username: username,
-          );
+    if (success && mounted) {
+      // 회원가입 성공 후 자동 로그인 상태가 되면 구독 화면으로 이동
+      SubscriptionHelpers.handleAfterSignup(context, ref);
     }
   }
 

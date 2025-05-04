@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mobile/features/auth/controller/auth_controller.dart';
+import 'package:mobile/features/onboarding/provider/onboarding_provider.dart';
 import 'package:mobile/routes/routes.dart';
 
 /// 온보딩 화면
@@ -55,7 +55,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
     try {
       // 온보딩 완료 상태 업데이트
-      await ref.read(authControllerProvider.notifier).completeOnboarding();
+      await ref.read(onboardingProvider.notifier).completeOnboarding();
 
       if (mounted) {
         // 홈 화면으로 이동

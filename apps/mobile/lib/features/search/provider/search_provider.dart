@@ -179,6 +179,7 @@ class SearchNotifier extends StateNotifier<SearchState> {
       isLoading: true,
       error: null,
       hasMore: true,
+      isSubmitted: true,
     );
 
     // 선택된 필터에 따라 검색 수행

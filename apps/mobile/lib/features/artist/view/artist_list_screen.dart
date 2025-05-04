@@ -19,6 +19,7 @@ class _ArtistListScreenState extends ConsumerState<ArtistListScreen> {
   final TextEditingController _searchController = TextEditingController();
   bool _isSearching = false;
   List<Artist> _searchResults = [];
+  bool _initialLoadComplete = false;
 
   @override
   void initState() {
@@ -37,6 +38,12 @@ class _ArtistListScreenState extends ConsumerState<ArtistListScreen> {
     await ref.read(artistProvider.notifier).getAllArtists();
     // 팔로우한 아티스트 목록 로드
     await ref.read(artistProvider.notifier).loadFollowedArtists();
+
+    if (mounted) {
+      setState(() {
+        _initialLoadComplete = true;
+      });
+    }
   }
 
   Future<void> _searchArtists(String query) async {
@@ -54,16 +61,18 @@ class _ArtistListScreenState extends ConsumerState<ArtistListScreen> {
 
     final results = await ref.read(artistProvider.notifier).searchArtists(query);
 
-    setState(() {
-      _searchResults = results;
-    });
+    if (mounted) {
+      setState(() {
+        _searchResults = results;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final artistState = ref.watch(artistProvider);
     final followedArtists = artistState.followedArtists;
-    final isLoading = artistState.isLoading;
+    // 로딩 상태는 추적하지만 UI에 표시하지 않음
     final error = artistState.error;
 
     return Scaffold(
@@ -115,29 +124,47 @@ class _ArtistListScreenState extends ConsumerState<ArtistListScreen> {
               ),
             ),
 
-          // 로딩 인디케이터
-          if (isLoading && !_isSearching)
-            const Center(
-              child: CircularProgressIndicator(),
-            )
-          else if (_isSearching)
-            // 검색 결과
-            Expanded(
-              child: _searchResults.isEmpty
-                  ? const Center(
-                      child: Text('검색 결과가 없습니다'),
-                    )
-                  : _buildArtistList(_searchResults),
-            )
-          else
-            // 팔로우한 아티스트 목록
-            Expanded(
-              child: followedArtists.isEmpty
-                  ? const Center(
-                      child: Text('아직 팔로우한 아티스트가 없습니다'),
-                    )
-                  : _buildArtistList(followedArtists),
-            ),
+          // 콘텐츠 영역
+          Expanded(
+            child: _isSearching
+                ? // 검색 결과
+                _searchResults.isEmpty
+                    ? const Center(
+                        child: Text('검색 결과가 없습니다'),
+                      )
+                    : _buildArtistList(_searchResults)
+                : // 팔로우한 아티스트 목록
+                followedArtists.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.people_outline,
+                              size: 64,
+                              color: Colors.grey,
+                            ),
+                            const SizedBox(height: 16),
+                            const Text(
+                              '아직 팔로우한 아티스트가 없습니다',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            Text(
+                              '아티스트를 검색해서 팔로우해보세요!',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : _buildArtistList(followedArtists),
+          ),
         ],
       ),
     );

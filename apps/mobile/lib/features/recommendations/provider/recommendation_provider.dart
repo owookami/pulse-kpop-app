@@ -21,7 +21,7 @@ class RecommendationNotifier extends AsyncNotifier<RecommendationState> {
 
     // 인증 상태 감시하고 사용자 ID 접근
     final authState = ref.watch(authControllerProvider);
-    _userId = authState.whenData((state) => state.user?.id).value;
+    _userId = authState.user?.id;
 
     // 사용자가 로그인되지 않았으면 빈 상태 반환
     if (_userId == null) {

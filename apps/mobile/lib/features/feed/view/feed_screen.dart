@@ -1,10 +1,12 @@
 import 'package:api_client/api_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import 'package:mobile/features/auth/controller/auth_controller.dart';
 import 'package:mobile/features/feed/model/feed_state.dart';
 import 'package:mobile/features/feed/provider/feed_provider.dart';
 import 'package:mobile/features/feed/widgets/video_card.dart';
+import 'package:mobile/features/subscription/helpers/subscription_helpers.dart';
+import 'package:mobile/features/subscription/provider/subscription_provider.dart';
 
 /// 피드 화면
 class FeedScreen extends ConsumerStatefulWidget {
@@ -23,6 +25,9 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
   // 연속적인 로드 요청 방지를 위한 플래그
   bool _isLoadingMore = false;
 
+  // 현재 시청 횟수
+  int _viewCount = 0;
+
   @override
   bool get wantKeepAlive => true;
 
@@ -35,6 +40,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
     // 스크롤 위치 복원을 위한 포스트 프레임 콜백
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _restoreScrollPosition();
+      _loadViewCount();
     });
   }
 
@@ -93,7 +99,20 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
 
   void _onVideoTap(Video video) {
     ref.read(selectedVideoProvider.notifier).update((_) => video);
-    context.push('/video-player', extra: video);
+    SubscriptionHelpers.handleVideoSelection(context, ref, video);
+
+    // 시청 횟수 업데이트 - UI 반영을 위해
+    Future.delayed(const Duration(milliseconds: 500), () {
+      _loadViewCount();
+    });
+  }
+
+  // 시청 횟수 로드
+  Future<void> _loadViewCount() async {
+    final count = await SubscriptionHelpers.loadGuestViewCount();
+    setState(() {
+      _viewCount = count;
+    });
   }
 
   @override
@@ -106,6 +125,10 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
     final error = feedState.error;
     final isLoadingMore = feedState.loadingMore;
     final isOffline = feedState.isOffline;
+
+    // 무료 시청 정보
+    final remainingViews = SubscriptionHelpers.maxGuestViewCount - _viewCount;
+    final hasRemainingViews = remainingViews > 0;
 
     // 탭 컨트롤러 인덱스 업데이트
     if (_tabController.index != currentTab.index) {
@@ -142,6 +165,46 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
                     '오프라인 모드',
                     style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                   ),
+                ],
+              ),
+            ),
+
+          // 프리미엄 구독 안내 배너
+          if (!ref.watch(authControllerProvider).isAuthenticated ||
+              !ref.watch(subscriptionProvider).isPremium)
+            Container(
+              color: Colors.blue.shade700,
+              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+              width: double.infinity,
+              child: Row(
+                children: [
+                  const Icon(Icons.star, size: 16, color: Colors.white),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      !ref.watch(authControllerProvider).isAuthenticated
+                          ? '무료 시청 $remainingViews회 남음 (총 ${SubscriptionHelpers.maxGuestViewCount}회)'
+                          : '프리미엄 구독으로 모든 콘텐츠를 무제한 시청하세요',
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  TextButton(
+                    onPressed: () {
+                      // 구독 화면으로 이동
+                      Navigator.pushNamed(context, '/subscription');
+                    },
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.blue.shade900,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    child: const Text('무제한 시청하기'),
+                  )
                 ],
               ),
             ),

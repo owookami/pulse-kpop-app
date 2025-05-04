@@ -46,6 +46,7 @@ class SearchState {
     this.sortOption = SearchSortOption.relevance,
     this.dateRange,
     this.isLoadingMore = false,
+    this.isSubmitted = false,
   });
 
   /// 검색어
@@ -87,6 +88,9 @@ class SearchState {
   /// 추가 로딩 상태
   final bool isLoadingMore;
 
+  /// 검색이 명시적으로 수행되었는지 여부
+  final bool isSubmitted;
+
   /// 초기 상태
   factory SearchState.initial() => const SearchState();
 
@@ -105,6 +109,7 @@ class SearchState {
     SearchSortOption? sortOption,
     DateTimeRange? dateRange,
     bool? isLoadingMore,
+    bool? isSubmitted,
   }) {
     return SearchState(
       query: query ?? this.query,
@@ -120,6 +125,7 @@ class SearchState {
       sortOption: sortOption ?? this.sortOption,
       dateRange: dateRange ?? this.dateRange,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      isSubmitted: isSubmitted ?? this.isSubmitted,
     );
   }
 
@@ -139,7 +145,8 @@ class SearchState {
         other.selectedFilter == selectedFilter &&
         other.sortOption == sortOption &&
         other.dateRange == dateRange &&
-        other.isLoadingMore == isLoadingMore;
+        other.isLoadingMore == isLoadingMore &&
+        other.isSubmitted == isSubmitted;
   }
 
   @override
@@ -157,6 +164,7 @@ class SearchState {
         sortOption,
         dateRange,
         isLoadingMore,
+        isSubmitted,
       );
 }
 

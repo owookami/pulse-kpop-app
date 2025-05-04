@@ -261,7 +261,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final password = _passwordController.text;
 
       // 로그인 실행
-      ref.read(authControllerProvider.notifier).signInWithEmail(
+      ref.read(authControllerProvider.notifier).signIn(
             email: email,
             password: password,
           );

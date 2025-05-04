@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mobile/core/widgets/main_scaffold.dart';
 import 'package:mobile/features/bookmarks/model/bookmark_state.dart';
 import 'package:mobile/features/bookmarks/provider/bookmark_provider.dart';
+import 'package:mobile/features/subscription/helpers/subscription_helpers.dart';
 import 'package:mobile/routes/routes.dart';
 
 /// 북마크 화면
@@ -206,7 +207,7 @@ class _BookmarkedVideosTab extends ConsumerWidget {
         }
 
         // 북마크된 비디오 목록 표시
-        return _buildVideoList(context, state.bookmarkedVideos);
+        return _buildVideoList(context, state.bookmarkedVideos, ref);
       },
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stackTrace) => Center(
@@ -237,7 +238,7 @@ class _BookmarkedVideosTab extends ConsumerWidget {
   }
 
   // 비디오 목록 위젯
-  Widget _buildVideoList(BuildContext context, List<Video> videos) {
+  Widget _buildVideoList(BuildContext context, List<Video> videos, WidgetRef ref) {
     return GridView.builder(
       padding: const EdgeInsets.all(16.0),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -249,17 +250,17 @@ class _BookmarkedVideosTab extends ConsumerWidget {
       itemCount: videos.length,
       itemBuilder: (context, index) {
         final video = videos[index];
-        return _buildVideoCard(context, video);
+        return _buildVideoCard(context, ref, video);
       },
     );
   }
 
   // 비디오 카드 위젯
-  Widget _buildVideoCard(BuildContext context, Video video) {
+  Widget _buildVideoCard(BuildContext context, WidgetRef ref, Video video) {
     return GestureDetector(
       onTap: () {
-        // 비디오 플레이어 화면으로 이동
-        context.push('/video/${video.id}', extra: video);
+        // 비디오 접근 권한 확인 및 처리
+        SubscriptionHelpers.handleVideoSelection(context, ref, video);
       },
       child: Card(
         clipBehavior: Clip.antiAlias,

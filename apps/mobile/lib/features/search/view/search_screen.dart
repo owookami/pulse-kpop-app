@@ -358,8 +358,12 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with AutomaticKeepA
 
   // 검색 결과
   Widget _buildSearchResults(SearchState state) {
-    // 로딩 중
-    if (state.isLoading && state.results.isEmpty && state.artistResults.isEmpty) {
+    // 로딩 중 - 검색어가 있고 검색 결과가 아직 없을 때만 로딩바 표시
+    if (state.isLoading &&
+        state.results.isEmpty &&
+        state.artistResults.isEmpty &&
+        state.query.isNotEmpty &&
+        state.isSubmitted) {
       return const Center(child: CircularProgressIndicator());
     }
 
@@ -371,8 +375,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with AutomaticKeepA
       );
     }
 
-    // 결과 없음
-    if (!state.isLoading && state.results.isEmpty && state.artistResults.isEmpty) {
+    // 결과 없음 - 검색어가 있지만 결과가 없을 때만 표시
+    if (!state.isLoading &&
+        state.results.isEmpty &&
+        state.artistResults.isEmpty &&
+        state.query.isNotEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -396,6 +403,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with AutomaticKeepA
           ],
         ),
       );
+    }
+
+    // 검색어가 없는 경우 빈 화면 표시
+    if (state.query.isEmpty) {
+      return const SizedBox.shrink();
     }
 
     // 결과 표시
