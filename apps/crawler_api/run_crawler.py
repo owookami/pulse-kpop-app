@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -13,11 +13,15 @@ import argparse
 import datetime
 import json
 import uuid
-from typing import Dict, Any, List, Optional
+import time
+import concurrent.futures
+from pathlib import Path
+from typing import Dict, Any, List, Optional, Union, Tuple
 
 # 필요한 모듈 임포트
 from dotenv import load_dotenv
 from basic_crawler import YouTubeCrawler
+from postgrest.exceptions import APIError as PostgrestAPIError
 
 # 로깅 설정
 os.makedirs('logs', exist_ok=True)
@@ -33,6 +37,11 @@ logger = logging.getLogger("pulse-crawler")
 
 # 환경 변수 로드
 load_dotenv()
+
+# 기본 설정
+DEFAULT_OUTPUT_DIR = Path("output")
+MAX_RETRIES = 3
+RETRY_DELAY = 2  # 초
 
 # 아티스트 목록 (실제 애플리케이션에서는 데이터베이스에서 가져옴)
 DEFAULT_ARTISTS = [
