@@ -11,7 +11,7 @@ jobs:
     name: 린트 및 포맷팅 검사
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Flutter 설치
         uses: subosito/flutter-action@v2
@@ -40,7 +40,7 @@ jobs:
     name: 테스트
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Flutter 설치
         uses: subosito/flutter-action@v2
