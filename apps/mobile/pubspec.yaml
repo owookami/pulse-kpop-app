@@ -75,7 +75,7 @@ dependencies:
   youtube_explode_dart: ^2.3.1
   url_launcher: ^6.3.1
   share_plus: ^11.0.0
-  package_info_plus: ^4.1.0
+  package_info_plus: ^8.3.0
   in_app_purchase: ^3.2.1
   fluttertoast: ^8.2.12
   in_app_purchase_storekit: ^0.3.22+1
