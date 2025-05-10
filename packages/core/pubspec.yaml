@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   # 모델 생성 및 직렬화
-  freezed_annotation: 2.4.1
+  freezed_annotation: 2.4.4
   json_annotation: 4.8.1
   uuid: 4.1.0
   # 유틸리티
