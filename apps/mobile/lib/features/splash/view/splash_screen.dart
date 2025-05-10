@@ -14,41 +14,19 @@ class SplashScreen extends ConsumerStatefulWidget {
   ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerProviderStateMixin {
-  // 페이드인 애니메이션을 위한 컨트롤러
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
-
+class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
-
-    // 애니메이션 컨트롤러 초기화
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 800),
-    );
-
-    // 페이드인 애니메이션 설정
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
-
-    // 애니메이션 시작
-    _animationController.forward();
 
     // 앱 상태 확인 및 다음 화면으로 이동
     _checkAppState();
   }
 
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
   /// 앱 상태 확인 및 적절한 화면으로 이동
   Future<void> _checkAppState() async {
-    // 스플래시 화면 최소 표시 시간
-    await Future.delayed(const Duration(milliseconds: 1500));
+    // 스플래시 화면 최소 표시 시간 (1초로 단축)
+    await Future.delayed(const Duration(seconds: 1));
 
     if (!mounted) return;
 
@@ -63,18 +41,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
 
     // 최초 실행 시 온보딩 화면으로 이동
     if (onboardingState.isFirstLaunch) {
-      // 애니메이션 후 이동
-      _animationController.reverse().then((_) {
-        context.go(AppRoutes.onboarding);
-      });
+      context.go(AppRoutes.onboarding);
       return;
     }
 
     // 인증 상태에 관계없이 항상 홈 화면으로 이동
-    // 애니메이션 후 이동
-    _animationController.reverse().then((_) {
-      context.go(AppRoutes.home);
-    });
+    context.go(AppRoutes.home);
   }
 
   @override
@@ -83,14 +55,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
 
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor, // 앱 테마에 맞춘 배경색
-      body: FadeTransition(
-        opacity: _fadeAnimation,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // 앱 로고
-              Image.asset(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // 앱 로고
+            Hero(
+              tag: 'app_logo',
+              child: Image.asset(
                 'assets/images/logo.png',
                 width: 150,
                 height: 150,
@@ -101,29 +73,29 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
                   color: Colors.white,
                 ),
               ),
-              const SizedBox(height: 24),
-              Text(
-                l10n.splash_app_name,
-                style: const TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              l10n.splash_app_name,
+              style: const TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
-              const SizedBox(height: 8),
-              Text(
-                l10n.splash_app_description,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.white70,
-                ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.splash_app_description,
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.white70,
               ),
-              const SizedBox(height: 48),
-              const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 48),
+            const CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+          ],
         ),
       ),
     );
