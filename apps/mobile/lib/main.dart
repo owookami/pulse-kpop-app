@@ -1,7 +1,6 @@
 import 'package:api_client/api_client.dart' as api_client;
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mobile/core/services/locale_service.dart';
@@ -28,9 +27,8 @@ late Locale _userLocale;
 
 /// 앱의 시작점
 void main() async {
-  // 네이티브 스플래시 유지
-  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  // 앱 초기화
+  WidgetsFlutterBinding.ensureInitialized();
 
   // 앱 시작 전 초기화 함수
   await _initialize();
