@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mobile/features/auth/controller/auth_controller.dart';
+import 'package:mobile/core/l10n/app_localizations.dart';
 import 'package:mobile/features/onboarding/provider/onboarding_provider.dart';
 import 'package:mobile/routes/routes.dart';
 
@@ -23,8 +23,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   /// 앱 상태 확인 및 적절한 화면으로 이동
   Future<void> _checkAppState() async {
-    // 스플래시 화면 최소 표시 시간 (2초)
-    await Future.delayed(const Duration(seconds: 2));
+    // 스플래시 화면 최소 표시 시간 (1.5초로 수정)
+    await Future.delayed(const Duration(milliseconds: 1500));
+
+    if (!mounted) return;
+
+    // 앱 초기화를 위한 추가 지연
+    await Future.delayed(const Duration(milliseconds: 500));
 
     if (!mounted) return;
 
@@ -39,22 +44,20 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
     // 최초 실행 시 온보딩 화면으로 이동
     if (onboardingState.isFirstLaunch) {
+      // 이전 방식으로 이동 (go 메서드 사용)
       context.go(AppRoutes.onboarding);
       return;
     }
 
-    // 인증 상태 확인
-    final authState = ref.read(authControllerProvider);
-
-    // 인증 상태에 관계없이 홈 화면으로 이동
-    if (authState.hasValue && !authState.isLoading) {
-      // 모든 사용자를 홈 화면으로 이동
-      context.go(AppRoutes.home);
-    }
+    // 인증 상태에 관계없이 항상 홈 화면으로 이동
+    // pushReplacement 대신 go 메서드 사용
+    context.go(AppRoutes.home);
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Scaffold(
       body: Center(
         child: Column(
@@ -73,17 +76,17 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
               ),
             ),
             const SizedBox(height: 24),
-            const Text(
-              'Pulse',
-              style: TextStyle(
+            Text(
+              l10n.splash_app_name,
+              style: const TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'K-POP 팬캠 플랫폼',
-              style: TextStyle(
+            Text(
+              l10n.splash_app_description,
+              style: const TextStyle(
                 fontSize: 16,
                 color: Colors.grey,
               ),
