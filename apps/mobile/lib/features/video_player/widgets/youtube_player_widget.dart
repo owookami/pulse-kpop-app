@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mobile/core/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
@@ -402,62 +403,71 @@ class _YouTubePlayerWidgetState extends State<YouTubePlayerWidget> with WidgetsB
     }
   }
 
+  /// 에러 상태 표시
+  Widget _buildErrorWidget(BuildContext context, String error) {
+    final l10n = AppLocalizations.of(context);
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.error,
+              color: Colors.red, size: 48, semanticLabel: l10n.video_player_error_icon),
+          const SizedBox(height: 8),
+          Text(
+            l10n.video_player_youtube_error(error),
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: Colors.red),
+          ),
+          const SizedBox(height: 16),
+          // 외부 YouTube 앱으로 열기 버튼
+          if (widget.platformId != null)
+            ElevatedButton.icon(
+              icon: const Icon(Icons.open_in_new),
+              label: Text(l10n.video_player_open_youtube),
+              onPressed: () async {
+                final url = 'https://www.youtube.com/watch?v=${widget.platformId}';
+                try {
+                  await launchUrl(Uri.parse(url));
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('${l10n.app_error_launching_url}: $e')),
+                    );
+                  }
+                }
+              },
+            ),
+          const SizedBox(height: 8),
+          // 재시도 버튼
+          TextButton.icon(
+            icon: const Icon(Icons.refresh),
+            label: Text(l10n.video_player_retry),
+            onPressed: () {
+              _initializePlayerSafely();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     if (_isError) {
-      return Container(
-        color: Colors.black,
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.error_outline, color: Colors.red, size: 48),
-              const SizedBox(height: 16),
-              Text(
-                _errorMessage,
-                style: const TextStyle(color: Colors.red),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Video ID: $_videoId\nPlatform ID: ${widget.platformId ?? "없음"}\nURL: ${widget.youtubeUrl}',
-                style: const TextStyle(color: Colors.white70, fontSize: 12),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _isError = false;
-                        _isLoading = true;
-                        _playerInitialized = false;
-                      });
-                      _initializePlayerSafely();
-                    },
-                    child: const Text('재시도'),
-                  ),
-                  const SizedBox(width: 16),
-                  ElevatedButton(onPressed: _openYouTubeVideo, child: const Text('YouTube에서 보기')),
-                ],
-              ),
-            ],
-          ),
-        ),
-      );
+      return _buildErrorWidget(context, _errorMessage);
     }
 
     if (_isLoading) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 16),
-            Text('유튜브 동영상을 불러오는 중...', style: TextStyle(color: Colors.white)),
+            const CircularProgressIndicator(),
+            const SizedBox(height: 16),
+            Text(l10n.video_player_youtube_loading, style: const TextStyle(color: Colors.white)),
           ],
         ),
       );
@@ -475,13 +485,14 @@ class _YouTubePlayerWidgetState extends State<YouTubePlayerWidget> with WidgetsB
                 children: [
                   const Icon(Icons.play_circle_outline, size: 72, color: Colors.white70),
                   const SizedBox(height: 16),
-                  const Text(
-                    '웹 환경에서는 외부 YouTube 플레이어로 재생해야 합니다.',
-                    style: TextStyle(color: Colors.white),
+                  Text(
+                    l10n.video_player_web_player_message,
+                    style: const TextStyle(color: Colors.white),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
-                  ElevatedButton(onPressed: _openYouTubeVideo, child: const Text('YouTube에서 보기')),
+                  ElevatedButton(
+                      onPressed: _openYouTubeVideo, child: Text(l10n.video_player_open_youtube)),
                 ],
               ),
             ),
@@ -530,13 +541,14 @@ class _YouTubePlayerWidgetState extends State<YouTubePlayerWidget> with WidgetsB
           children: [
             const Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 48),
             const SizedBox(height: 16),
-            const Text(
-              '플레이어 초기화 실패',
-              style: TextStyle(color: Colors.white),
+            Text(
+              l10n.video_player_player_init_failed,
+              style: const TextStyle(color: Colors.white),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
-            ElevatedButton(onPressed: _openYouTubeVideo, child: const Text('YouTube에서 보기')),
+            ElevatedButton(
+                onPressed: _openYouTubeVideo, child: Text(l10n.video_player_open_youtube)),
           ],
         ),
       ),

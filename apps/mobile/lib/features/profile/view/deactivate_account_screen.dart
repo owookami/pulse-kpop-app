@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile/core/l10n/app_localizations.dart';
 import 'package:mobile/features/auth/controller/auth_controller.dart';
 import 'package:mobile/routes/routes.dart';
 
@@ -21,10 +22,11 @@ class _DeactivateAccountScreenState extends ConsumerState<DeactivateAccountScree
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('회원 탈퇴'),
+        title: Text(l10n.deactivate_title),
         backgroundColor: Colors.red.shade50,
       ),
       body: Padding(
@@ -39,24 +41,24 @@ class _DeactivateAccountScreenState extends ConsumerState<DeactivateAccountScree
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      '⚠️ 주의',
-                      style: TextStyle(
+                    Text(
+                      l10n.deactivate_warning,
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      '회원 탈퇴 시 다음 정보가 모두 삭제되며 복구할 수 없습니다:',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    Text(
+                      l10n.deactivate_warning_message,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
-                    _buildBulletPoint('프로필 정보'),
-                    _buildBulletPoint('북마크한 영상'),
-                    _buildBulletPoint('좋아요 및 댓글 기록'),
-                    _buildBulletPoint('팔로우한 아티스트 정보'),
-                    _buildBulletPoint('구독 정보 (유료 구독 중인 경우 별도 해지 필요)'),
+                    _buildBulletPoint(l10n.deactivate_warning_profile),
+                    _buildBulletPoint(l10n.deactivate_warning_bookmarks),
+                    _buildBulletPoint(l10n.deactivate_warning_activity),
+                    _buildBulletPoint(l10n.deactivate_warning_artists),
+                    _buildBulletPoint(l10n.deactivate_warning_subscription),
                   ],
                 ),
               ),
@@ -83,9 +85,7 @@ class _DeactivateAccountScreenState extends ConsumerState<DeactivateAccountScree
                               _isConfirmed = !_isConfirmed;
                             });
                           },
-                    child: const Text(
-                      '위 내용을 모두 이해했으며, 계정을 삭제하는 데 동의합니다.',
-                    ),
+                    child: Text(l10n.deactivate_confirm_checkbox),
                   ),
                 ),
               ],
@@ -117,7 +117,7 @@ class _DeactivateAccountScreenState extends ConsumerState<DeactivateAccountScree
                           color: Colors.white,
                         ),
                       )
-                    : const Text('회원 탈퇴 진행'),
+                    : Text(l10n.deactivate_button),
               ),
             ),
             const SizedBox(height: 12),
@@ -125,7 +125,7 @@ class _DeactivateAccountScreenState extends ConsumerState<DeactivateAccountScree
               width: double.infinity,
               child: TextButton(
                 onPressed: _isLoading ? null : () => context.pop(),
-                child: const Text('취소'),
+                child: Text(l10n.deactivate_cancel),
               ),
             ),
           ],
@@ -148,21 +148,23 @@ class _DeactivateAccountScreenState extends ConsumerState<DeactivateAccountScree
   }
 
   Future<void> _confirmDeactivation() async {
+    final l10n = AppLocalizations.of(context);
+
     // 최종 확인 다이얼로그 표시
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('최종 확인'),
-        content: const Text('계정을 삭제하면 모든 데이터가 영구적으로 삭제됩니다. 정말 계속하시겠습니까?'),
+        title: Text(l10n.deactivate_confirm_title),
+        content: Text(l10n.deactivate_confirm_message),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('취소'),
+            child: Text(l10n.common_cancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('삭제'),
+            child: Text(l10n.common_delete),
           ),
         ],
       ),
@@ -187,12 +189,12 @@ class _DeactivateAccountScreenState extends ConsumerState<DeactivateAccountScree
           context: context,
           barrierDismissible: false,
           builder: (context) => AlertDialog(
-            title: const Text('탈퇴 완료'),
-            content: const Text('계정이 성공적으로 삭제되었습니다.'),
+            title: Text(l10n.deactivate_success_title),
+            content: Text(l10n.deactivate_success_message),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('확인'),
+                child: Text(l10n.common_confirm),
               ),
             ],
           ),

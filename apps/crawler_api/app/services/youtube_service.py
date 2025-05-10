@@ -211,37 +211,87 @@ class YouTubeAPIService:
         """
         비디오가 팬캠인지 분석
         
-        다음 조건 중 하나 이상 충족해야 함:
-        - 제목에 '직캠', 'fancam', 'focus', '포커스' 등의 키워드 포함
-        - 설명에 특정 키워드 포함
-        - 태그에 특정 키워드 포함
+        다음 조건을 충족해야 함:
+        1. 제목에 '직캠', 'fancam', 'focus', '포커스' 등의 키워드 포함
+        2. 제목이나 설명에 부적절한 키워드가 없어야 함
+        3. 일정 품질 이상의 영상이어야 함
         """
         title = video_data.get("title", "").lower()
         description = video_data.get("description", "").lower()
         tags = [tag.lower() for tag in video_data.get("tags", [])]
+        channel_title = video_data.get("channel_title", "").lower()
         
         # 팬캠 관련 키워드
         fancam_keywords = [
             "fancam", "fan cam", "직캠", "focus", "포커스", "cam", "full cam", 
-            "fullcam", "stage cam", "concert cam", "zoom"
+            "fullcam", "stage cam", "concert cam", "zoom", "무대", "stage", "performance"
         ]
         
-        # 제목 검사
+        # 주요 방송사/채널 (신뢰할 수 있는 출처)
+        trusted_channels = [
+            "mbc", "kbs", "sbs", "m countdown", "mnet", "music bank", "inkigayo",
+            "쇼! 음악중심", "뮤직뱅크", "엠카운트다운", "인기가요", "show champion"
+        ]
+        
+        # 부적절한 키워드 (필터링해야 할 단어)
+        inappropriate_keywords = [
+            "fake", "deepfake", "ai", "edit", "reaction", "reacting", "lyrics", "audio",
+            "compilation", "mashup", "mash up", "remix", "교차편집", "가사", "자막", "반응",
+            "shorts", "tiktok", "instagram", "릴스", "reels", "1인 리액션", 
+            "dance cover", "choreography", "안무", "cover", "커버"
+        ]
+        
+        # 1. 팬캠 키워드가 있는지 확인
+        has_fancam_keyword = False
         for keyword in fancam_keywords:
             if keyword in title:
-                return True
+                has_fancam_keyword = True
+                break
         
-        # 설명 검사 (비용 효율을 위해 제목에서 찾지 못한 경우만)
-        for keyword in fancam_keywords:
-            if keyword in description:
-                return True
+        # 2. 신뢰할 수 있는 채널인지 확인
+        is_trusted_channel = False
+        for channel in trusted_channels:
+            if channel in channel_title:
+                is_trusted_channel = True
+                break
+                
+        # 3. 부적절한 키워드가 있는지 확인
+        has_inappropriate_keyword = False
+        for keyword in inappropriate_keywords:
+            if keyword in title or keyword in description:
+                has_inappropriate_keyword = True
+                break
         
-        # 태그 검사
-        for keyword in fancam_keywords:
-            if any(keyword in tag for tag in tags):
-                return True
+        # 4. 최소 조회수 및 비디오 길이 확인
+        view_count = video_data.get("view_count", 0)
+        duration = video_data.get("duration", "")
         
-        return False
+        # ISO 8601 기간 형식 파싱 (PT1M30S = 1분 30초)
+        minutes = 0
+        seconds = 0
+        
+        if duration:
+            minutes_match = re.search(r'(\d+)M', duration)
+            if minutes_match:
+                minutes = int(minutes_match.group(1))
+                
+            seconds_match = re.search(r'(\d+)S', duration)
+            if seconds_match:
+                seconds = int(seconds_match.group(1))
+        
+        total_seconds = minutes * 60 + seconds
+        
+        # 팬캠 조건:
+        # - 팬캠 키워드가 있거나 신뢰할 수 있는 채널이어야 함
+        # - 부적절한 키워드가 없어야 함
+        # - 최소 30초 이상 길이 (너무 짧은 영상은 제외)
+        # - 최소 1,000회 이상 조회수 (인기 있는 영상만)
+        is_fancam = (has_fancam_keyword or is_trusted_channel) and \
+                    not has_inappropriate_keyword and \
+                    total_seconds >= 30 and \
+                    view_count >= 1000
+        
+        return is_fancam
 
     def _extract_artist_and_event(self, video_data: Dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:
         """
@@ -294,27 +344,87 @@ class YouTubeAPIService:
         비디오 품질 점수 계산
         
         다음 요소를 고려하여 0-100 점수 계산:
-        - 조회수 (60%)
-        - 좋아요 수 (30%)
+        - 조회수 (40%)
+        - 좋아요 수 (20%)
         - 댓글 수 (10%)
+        - 신뢰할 수 있는 채널 여부 (15%)
+        - 영상 해상도/길이 (15%)
         """
         try:
             view_count = int(video_data.get("view_count", 0))
             like_count = int(video_data.get("like_count", 0))
             comment_count = int(video_data.get("comment_count", 0))
+            channel_title = video_data.get("channel_title", "").lower()
+            duration = video_data.get("duration", "")
             
-            # 기본 점수 계산
-            view_score = min(60, (view_count / 10000) * 60) if view_count > 0 else 0
-            like_score = min(30, (like_count / 1000) * 30) if like_count > 0 else 0
+            # 1. 조회수 점수 (0-40)
+            view_score = min(40, (view_count / 10000) * 40) if view_count > 0 else 0
+            
+            # 2. 좋아요 점수 (0-20)
+            like_score = min(20, (like_count / 1000) * 20) if like_count > 0 else 0
+            
+            # 3. 댓글 점수 (0-10)
             comment_score = min(10, (comment_count / 100) * 10) if comment_count > 0 else 0
             
-            # 좋아요/조회수 비율 보너스 (최대 10점)
-            engagement_bonus = 0
-            if view_count > 0:
-                like_view_ratio = like_count / view_count
-                engagement_bonus = min(10, like_view_ratio * 1000)
+            # 4. 채널 신뢰도 점수 (0-15)
+            channel_score = 0
+            trusted_channels = [
+                "mbc", "kbs", "sbs", "m countdown", "mnet", "music bank", "inkigayo",
+                "쇼! 음악중심", "뮤직뱅크", "엠카운트다운", "인기가요", "show champion",
+                "official", "공식", "조회수", "조회", "직캠", "직캠티비"
+            ]
             
-            total_score = view_score + like_score + comment_score + engagement_bonus
+            for trusted_channel in trusted_channels:
+                if trusted_channel in channel_title:
+                    channel_score = 15
+                    break
+            
+            # 영상 길이가 적절한지 확인 (2분~5분 사이의 영상이 가장 이상적)
+            # ISO 8601 기간 형식 파싱 (PT1M30S = 1분 30초)
+            minutes = 0
+            seconds = 0
+            
+            if duration:
+                minutes_match = re.search(r'(\d+)M', duration)
+                if minutes_match:
+                    minutes = int(minutes_match.group(1))
+                    
+                seconds_match = re.search(r'(\d+)S', duration)
+                if seconds_match:
+                    seconds = int(seconds_match.group(1))
+            
+            total_seconds = minutes * 60 + seconds
+            
+            # 5. 길이 점수 (0-15)
+            # 2분~5분 사이가 이상적인 팬캠 길이
+            duration_score = 0
+            if total_seconds >= 120 and total_seconds <= 300:
+                duration_score = 15
+            elif total_seconds > 300:
+                duration_score = 10
+            elif total_seconds >= 60:
+                duration_score = 8
+            elif total_seconds >= 30:
+                duration_score = 5
+            
+            # 6. 영상 해상도 점수 (특별 보너스 최대 10점)
+            resolution_bonus = 0
+            thumbnail_url = video_data.get("thumbnail_url", "")
+            if "maxres" in thumbnail_url:
+                resolution_bonus = 10
+            elif "hq" in thumbnail_url:
+                resolution_bonus = 5
+            
+            # 7. 제목에 HD, 4K 등의 키워드가 포함된 경우 추가 보너스
+            title = video_data.get("title", "").upper()
+            resolution_keywords = ["4K", "HD", "FHD", "UHD", "1080P", "60FPS"]
+            for keyword in resolution_keywords:
+                if keyword in title:
+                    resolution_bonus = max(resolution_bonus, 8)
+                    break
+            
+            # 최종 점수 계산
+            total_score = view_score + like_score + comment_score + channel_score + duration_score + resolution_bonus
             
             # 0-100 사이로 정규화
             return round(min(100, total_score), 2)

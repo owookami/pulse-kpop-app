@@ -1,15 +1,17 @@
 [
   {
-    "id": "01234567-89ab-cdef-0123-456789abcdef",
-    "name": "테스트 스케줄",
-    "cron_expression": "*/5 * * * *",
+    "id": "bc8757c2-699e-4b30-87ed-7da18e73fa27",
+    "name": "크롤링 0 0",
+    "cron_expression": "0 0 * * *",
     "is_active": true,
     "params": {
-      "limit": 5,
-      "save_to_db": true,
-      "python_path": "/usr/bin/python3"
+      "artist": "",
+      "group": "",
+      "event": "",
+      "limit": 50,
+      "save_to_db": true
     },
-    "last_run": "2025-05-05T08:25:04.921914",
-    "next_run": "2025-05-05T08:30:00"
+    "last_run": null,
+    "next_run": "2025-05-06T00:00:00"
   }
 ]

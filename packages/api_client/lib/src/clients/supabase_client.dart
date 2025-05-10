@@ -321,6 +321,7 @@ class SupabaseClientImpl implements ISupabaseClient {
           orderedQuery = orderedQuery.order(
             fieldName,
             ascending: !isDescending,
+            nullsFirst: false, // nulls last 설정
           );
 
           print('Order applied successfully');
@@ -333,54 +334,89 @@ class SupabaseClientImpl implements ISupabaseClient {
 
       // 페이지네이션 적용
       if (limit != null) {
+        // 먼저 limit 적용
         orderedQuery = orderedQuery.limit(limit);
-      }
-      if (offset != null) {
-        orderedQuery = orderedQuery.range(offset, offset + (limit ?? 20) - 1);
+        print('Limit 설정: $limit');
       }
 
-      // 쿼리 실행
+      if (offset != null) {
+        // offset이 있을 때만 range 메서드 적용
+        // range 메서드는 start와 end 인덱스를 지정 (0부터 시작)
+        // orderedQuery = orderedQuery.range(offset, offset + (limit ?? 20) - 1);
+        // range 메서드 대신 offset 메서드 사용 (RangeError 해결)
+        orderedQuery = orderedQuery.offset(offset);
+        print('Offset 설정: $offset, Limit: ${limit ?? 20}');
+      } else {
+        // offset이 없는 경우 range 사용 안함 (처음부터 limit 개수만큼 가져옴)
+        print('첫 페이지 로드: offset 사용 안함, limit만 사용: $limit');
+      }
+
+      // 쿼리 실행 전 로깅
       print(
           '쿼리 실행 전 최종 구성: table=$table, filter=$filter, orderBy=$orderBy, limit=$limit, offset=$offset');
-      final response = await orderedQuery;
-      final List<dynamic> data = response as List<dynamic>;
-      print('쿼리 결과 수: ${data.length}');
 
-      // 타입 안전성 향상을 위한 변환 로직
-      final List<T> items = [];
-
-      for (final dynamic item in data) {
+      // 최대 3회 재시도 로직 추가
+      int retryCount = 0;
+      final maxRetries = 3;
+      while (true) {
         try {
-          // Supabase에서 반환된 데이터를 안전하게 Map<String, dynamic>으로 변환
-          Map<String, dynamic> safeMap;
+          final response = await orderedQuery.timeout(const Duration(seconds: 10));
+          final List<dynamic> data = response as List<dynamic>;
+          print('쿼리 결과 수: ${data.length}');
 
-          if (item is Map<String, dynamic>) {
-            // 이미 정확한 타입인 경우
-            safeMap = item;
-          } else if (item is Map) {
-            // 다른 Map 타입(예: _Map<String, dynamic>)인 경우 명시적으로 변환
-            safeMap = Map<String, dynamic>.from(item);
-          } else {
-            // Map이 아닌 경우 건너뛰기
-            print('예상치 못한 데이터 타입 건너뛰기: ${item.runtimeType}');
-            continue;
+          // 타입 안전성 향상을 위한 변환 로직
+          final List<T> items = [];
+
+          for (final dynamic item in data) {
+            try {
+              // Supabase에서 반환된 데이터를 안전하게 Map<String, dynamic>으로 변환
+              Map<String, dynamic> safeMap;
+
+              if (item is Map<String, dynamic>) {
+                // 이미 정확한 타입인 경우
+                safeMap = item;
+              } else if (item is Map) {
+                // 다른 Map 타입(예: _Map<String, dynamic>)인 경우 명시적으로 변환
+                safeMap = Map<String, dynamic>.from(item);
+              } else {
+                // Map이 아닌 경우 건너뛰기
+                print('예상치 못한 데이터 타입 건너뛰기: ${item.runtimeType}');
+                continue;
+              }
+
+              // fromJson 변환 시도
+              final T convertedItem = fromJson(safeMap);
+              items.add(convertedItem);
+            } catch (e) {
+              print('데이터 변환 실패: $e, 데이터: $item, 타입: ${item.runtimeType}');
+              // 변환 실패 시 이 항목은 건너뛰기
+            }
           }
 
-          // fromJson 변환 시도
-          final T convertedItem = fromJson(safeMap);
-          items.add(convertedItem);
+          return ApiResponse<List<T>>.success(items);
         } catch (e) {
-          print('데이터 변환 실패: $e, 데이터: $item, 타입: ${item.runtimeType}');
-          // 변환 실패 시 이 항목은 건너뛰기
+          retryCount++;
+          print('Supabase 쿼리 오류 ($retryCount/$maxRetries): $e');
+
+          if (retryCount >= maxRetries) {
+            // 최대 재시도 횟수 초과
+            return ApiResponse<List<T>>.failure(ApiError(
+              code: 'network_error',
+              message: '서버에 연결할 수 없습니다. 네트워크 연결을 확인하고 다시 시도해주세요.',
+            ));
+          }
+
+          // 지수 백오프 적용 (1초, 2초, 4초...)
+          final delay = Duration(milliseconds: 1000 * (1 << (retryCount - 1)));
+          print('${delay.inMilliseconds}ms 후 재시도');
+          await Future.delayed(delay);
         }
       }
-
-      return ApiResponse<List<T>>.success(items);
     } catch (e) {
       print('Supabase 쿼리 오류: $e');
       return ApiResponse<List<T>>.failure(ApiError(
         code: 'supabase_error',
-        message: e.toString(),
+        message: '데이터를 가져오는 중 오류가 발생했습니다. 네트워크 연결 상태를 확인해주세요.',
       ));
     }
   }
@@ -393,46 +429,77 @@ class SupabaseClientImpl implements ISupabaseClient {
     List<String>? columns,
   }) async {
     try {
-      final data =
-          await _client.from(table).select(columns?.join(',') ?? '*').eq('id', id).maybeSingle();
+      // 최대 3회 재시도 로직 추가
+      int retryCount = 0;
+      final maxRetries = 3;
 
-      if (data == null) {
-        return ApiResponse.success(null);
-      }
-
-      try {
-        // 안전한 타입 변환
-        Map<String, dynamic> safeMap;
-
-        // 이미 정확한 타입인 경우
-        safeMap = data;
-
-        // fromJson 변환 시도
+      while (true) {
         try {
-          return ApiResponse.success(fromJson(safeMap));
-        } catch (conversionError) {
-          print('fromJson 변환 오류: $conversionError, 데이터: $safeMap');
-          return ApiResponse.failure(
-            ApiError(
-              code: 'db/conversion-error',
-              message: 'fromJson 변환 실패: $conversionError',
-            ),
-          );
+          final data = await _client
+              .from(table)
+              .select(columns?.join(',') ?? '*')
+              .eq('id', id)
+              .maybeSingle()
+              .timeout(const Duration(seconds: 8));
+
+          if (data == null) {
+            return ApiResponse.success(null);
+          }
+
+          try {
+            // 안전한 타입 변환
+            Map<String, dynamic> safeMap;
+
+            // 이미 정확한 타입인 경우
+            safeMap = data;
+
+            // fromJson 변환 시도
+            try {
+              return ApiResponse.success(fromJson(safeMap));
+            } catch (conversionError) {
+              print('fromJson 변환 오류: $conversionError, 데이터: $safeMap');
+              return ApiResponse.failure(
+                ApiError(
+                  code: 'db/conversion-error',
+                  message: 'fromJson 변환 실패: $conversionError',
+                ),
+              );
+            }
+          } catch (conversionError) {
+            print('데이터 변환 오류: $conversionError, 데이터 타입: ${data.runtimeType}, 데이터: $data');
+            return ApiResponse.failure(
+              ApiError(
+                code: 'db/format-error',
+                message: '잘못된 데이터 형식: $conversionError',
+              ),
+            );
+          }
+        } catch (e) {
+          retryCount++;
+          print('Supabase getRecord 오류 ($retryCount/$maxRetries): $e');
+
+          if (retryCount >= maxRetries) {
+            // 최대 재시도 횟수 초과
+            return ApiResponse.failure(
+              ApiError(
+                code: 'network_error',
+                message: '서버에 연결할 수 없습니다. 네트워크 연결을 확인하고 다시 시도해주세요.',
+              ),
+            );
+          }
+
+          // 지수 백오프 적용 (1초, 2초, 4초...)
+          final delay = Duration(milliseconds: 1000 * (1 << (retryCount - 1)));
+          print('${delay.inMilliseconds}ms 후 재시도');
+          await Future.delayed(delay);
         }
-      } catch (conversionError) {
-        print('데이터 변환 오류: $conversionError, 데이터 타입: ${data.runtimeType}, 데이터: $data');
-        return ApiResponse.failure(
-          ApiError(
-            code: 'db/format-error',
-            message: '잘못된 데이터 형식: $conversionError',
-          ),
-        );
       }
     } catch (e) {
+      print('레코드 조회 중 예외 발생: $e');
       return ApiResponse.failure(
         ApiError(
           code: 'db/get-error',
-          message: '데이터 조회 중 오류가 발생했습니다: $e',
+          message: '데이터를 조회할 수 없습니다. 네트워크 연결을 확인하고 다시 시도해주세요.',
         ),
       );
     }

@@ -221,7 +221,10 @@ async function loadGroups() {
 async function loadJobs() {
     try {
         const response = await fetch(`${API_BASE_URL}/jobs`);
-        const jobs = await response.json();
+        const data = await response.json();
+
+        // jobs 객체에서 jobs 배열 추출
+        const jobs = data.jobs || [];
 
         // 대시보드 최근 작업 목록
         renderJobs(jobs, 'recent-jobs-tbody', 5);

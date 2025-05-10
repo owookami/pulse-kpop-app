@@ -1,186 +1,98 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mobile/features/onboarding/provider/onboarding_provider.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:mobile/core/l10n/app_localizations.dart';
+import 'package:mobile/features/widgets/app_button.dart';
 import 'package:mobile/routes/routes.dart';
 
+/// 온보딩 화면 컨트롤러
+final onboardingControllerProvider = StateProvider<int>((ref) => 0);
+
 /// 온보딩 화면
-class OnboardingScreen extends ConsumerStatefulWidget {
+class OnboardingScreen extends ConsumerWidget {
   /// 생성자
-  const OnboardingScreen({super.key});
+  const OnboardingScreen({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentPage = ref.watch(onboardingControllerProvider);
+    final l10n = AppLocalizations.of(context);
+    final pageController = PageController(initialPage: currentPage);
 
-class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
-  bool _isCompleting = false;
-
-  final List<_OnboardingPage> _pages = [
-    const _OnboardingPage(
-      title: 'Pulse에 오신 것을 환영합니다',
-      description: '최고의 K-POP 팬캠을 위한 앱, Pulse와 함께 여러분이 좋아하는 아티스트들의 최신 영상을 만나보세요.',
-      icon: Icons.celebration,
-    ),
-    const _OnboardingPage(
-      title: '최신 팬캠 탐색',
-      description: '최신 인기 팬캠과 트렌딩 비디오를 확인하고, 좋아하는 아티스트의 새로운 콘텐츠를 놓치지 마세요.',
-      icon: Icons.video_library,
-    ),
-    const _OnboardingPage(
-      title: '북마크 및 저장',
-      description: '좋아하는 팬캠을 북마크하고 저장하여 언제든지 다시 볼 수 있습니다.',
-      icon: Icons.bookmark,
-    ),
-    const _OnboardingPage(
-      title: '시작할 준비가 되셨나요?',
-      description: '이제 Pulse의 모든 기능을 이용해 보세요!',
-      icon: Icons.rocket_launch,
-    ),
-  ];
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  /// 온보딩 완료 처리
-  Future<void> _completeOnboarding() async {
-    setState(() {
-      _isCompleting = true;
-    });
-
-    try {
-      // 온보딩 완료 상태 업데이트
-      await ref.read(onboardingProvider.notifier).completeOnboarding();
-
-      if (mounted) {
-        // 홈 화면으로 이동
-        context.go(AppRoutes.home);
-      }
-    } catch (e) {
-      if (mounted) {
-        // 오류 발생 시 스낵바로 표시
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('온보딩 완료 처리 중 오류가 발생했습니다: $e'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isCompleting = false;
-        });
-      }
-    }
-  }
-
-  /// 다음 페이지로 이동
-  void _nextPage() {
-    if (_currentPage < _pages.length - 1) {
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    } else {
-      _completeOnboarding();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isLastPage = _currentPage == _pages.length - 1;
+    final onboardingPages = [
+      OnboardingPage(
+        image: 'assets/images/onboarding_welcome.png',
+        title: l10n.onboarding_welcome_title,
+        description: l10n.onboarding_welcome_description,
+      ),
+      OnboardingPage(
+        image: 'assets/images/onboarding_videos.png',
+        title: l10n.onboarding_videos_title,
+        description: l10n.onboarding_videos_description,
+      ),
+      OnboardingPage(
+        image: 'assets/images/onboarding_premium.png',
+        title: '프리미엄 구독으로 더 많은 혜택',
+        description:
+            '월 \$1.99의 합리적인 가격으로 모든 팬캠을 HD 화질로, 광고 없이 무제한 시청하세요. 비구독자에게는 하루 10개의 무료 시청 기회가 있습니다.',
+        // 추가 구독 혜택 정보
+        extraContent: _buildSubscriptionBenefits(context),
+      ),
+      OnboardingPage(
+        image: 'assets/images/onboarding_community.png',
+        title: l10n.onboarding_community_title,
+        description: l10n.onboarding_community_description,
+      ),
+    ];
 
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            // 건너뛰기 버튼 (마지막 페이지가 아닌 경우에만 표시)
-            if (!isLastPage)
-              Align(
-                alignment: Alignment.topRight,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: TextButton(
-                    onPressed: _isCompleting ? null : _completeOnboarding,
-                    child: const Text('건너뛰기'),
-                  ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 16.0, top: 16.0),
+                child: TextButton(
+                  onPressed: () => context.go(AppRoutes.home),
+                  child: Text(l10n.skip),
                 ),
               ),
-
-            // 페이지 뷰
+            ),
             Expanded(
-              child: PageView(
-                controller: _pageController,
-                onPageChanged: (index) {
-                  setState(() {
-                    _currentPage = index;
-                  });
-                },
-                children: _pages.map((page) {
-                  return _OnboardingPageView(page: page);
-                }).toList(),
+              child: PageView.builder(
+                controller: pageController,
+                itemCount: onboardingPages.length,
+                onPageChanged: (index) =>
+                    ref.read(onboardingControllerProvider.notifier).state = index,
+                itemBuilder: (_, index) => onboardingPages[index],
               ),
             ),
-
-            // 하단 인디케이터 및 버튼
             Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              padding: const EdgeInsets.all(30.0),
+              child: Column(
                 children: [
-                  // 페이지 인디케이터
                   Row(
-                    children: List.generate(_pages.length, (index) {
-                      return Container(
-                        width: 10,
-                        height: 10,
-                        margin: const EdgeInsets.only(right: 8),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: _currentPage == index
-                              ? theme.colorScheme.primary
-                              : theme.colorScheme.primary.withOpacity(0.3),
-                        ),
-                      );
-                    }),
-                  ),
-
-                  // 다음/시작 버튼
-                  ElevatedButton(
-                    onPressed: _isCompleting ? null : _nextPage,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
-                      ),
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(
+                      onboardingPages.length,
+                      (index) => _buildDotIndicator(context, index == currentPage),
                     ),
-                    child: _isCompleting
-                        ? SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: theme.colorScheme.onPrimary,
-                            ),
-                          )
-                        : Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(isLastPage ? '시작하기' : '다음'),
-                              const SizedBox(width: 8),
-                              Icon(
-                                isLastPage ? Icons.check : Icons.arrow_forward,
-                                size: 16,
-                              ),
-                            ],
-                          ),
+                  ),
+                  const SizedBox(height: 30),
+                  AppButton(
+                    onPressed: () {
+                      if (currentPage == onboardingPages.length - 1) {
+                        context.go(AppRoutes.home);
+                      } else {
+                        pageController.nextPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      }
+                    },
+                    text: currentPage == onboardingPages.length - 1 ? l10n.get_started : l10n.next,
                   ),
                 ],
               ),
@@ -190,63 +102,134 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       ),
     );
   }
-}
 
-/// 온보딩 페이지 데이터 모델
-class _OnboardingPage {
-  final String title;
-  final String description;
-  final IconData icon;
+  /// 페이지 인디케이터 위젯
+  Widget _buildDotIndicator(BuildContext context, bool isActive) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      width: isActive ? 12 : 8,
+      height: isActive ? 12 : 8,
+      decoration: BoxDecoration(
+        color: isActive ? Theme.of(context).colorScheme.primary : Colors.grey.shade300,
+        borderRadius: BorderRadius.circular(8),
+      ),
+    );
+  }
 
-  const _OnboardingPage({
-    required this.title,
-    required this.description,
-    required this.icon,
-  });
-}
+  /// 구독 혜택 위젯
+  Widget _buildSubscriptionBenefits(BuildContext context) {
+    final theme = Theme.of(context);
 
-/// 온보딩 페이지 뷰 위젯
-class _OnboardingPageView extends StatelessWidget {
-  final _OnboardingPage page;
+    return Container(
+      margin: const EdgeInsets.only(top: 24),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primary.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.workspace_premium,
+                color: theme.colorScheme.primary,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '프리미엄 구독 혜택',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _buildBenefitItem(context, icon: Icons.videocam, text: '무제한 팬캠 시청'),
+          _buildBenefitItem(context, icon: Icons.high_quality, text: '720p HD 화질'),
+          _buildBenefitItem(context, icon: Icons.block, text: '광고 없음'),
+          _buildBenefitItem(context, icon: Icons.cloud_download, text: '모든 영상 무제한 접근'),
+          _buildBenefitItem(context, icon: Icons.how_to_vote, text: '투표 영향력 2배'),
+        ],
+      ),
+    );
+  }
 
-  const _OnboardingPageView({required this.page});
-
-  @override
-  Widget build(BuildContext context) {
+  /// 혜택 아이템 위젯
+  Widget _buildBenefitItem(BuildContext context, {required IconData icon, required String text}) {
     final theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            color: Colors.green,
+            size: 16,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            text,
+            style: theme.textTheme.bodyMedium,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 온보딩 페이지 모델
+class OnboardingPage extends StatelessWidget {
+  /// 이미지 경로
+  final String image;
+
+  /// 제목
+  final String title;
+
+  /// 설명
+  final String description;
+
+  /// 추가 콘텐츠 위젯
+  final Widget? extraContent;
+
+  /// 생성자
+  const OnboardingPage({
+    Key? key,
+    required this.image,
+    required this.title,
+    required this.description,
+    this.extraContent,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 40.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // 아이콘
-          Icon(
-            page.icon,
-            size: 120,
-            color: theme.colorScheme.primary,
+          Image.asset(
+            image,
+            height: MediaQuery.of(context).size.height * 0.3,
           ),
-          const SizedBox(height: 40),
-
-          // 제목
+          const SizedBox(height: 30),
           Text(
-            page.title,
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            title,
+            style: Theme.of(context).textTheme.headlineSmall,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
-
-          // 설명
           Text(
-            page.description,
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
-              height: 1.5,
-            ),
+            description,
             textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
+          // 추가 콘텐츠가 있다면 표시
+          if (extraContent != null) extraContent!,
         ],
       ),
     );

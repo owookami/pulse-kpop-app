@@ -19,6 +19,9 @@ class Video {
     this.likeCount = 0,
     this.eventName,
     this.recordedDate,
+    this.publishedAt,
+    this.channelTitle,
+    this.duration,
   });
 
   /// 비디오 ID
@@ -62,6 +65,15 @@ class Video {
 
   /// 촬영 날짜
   final DateTime? recordedDate;
+
+  /// 비디오 게시 날짜
+  final DateTime? publishedAt;
+
+  /// 채널 이름
+  final String? channelTitle;
+
+  /// 비디오 길이 (ISO 8601 기간 형식: PT1H2M3S)
+  final String? duration;
 
   /// JSON으로부터 비디오 객체 생성
   factory Video.fromJson(Map<String, dynamic> json) {
@@ -158,6 +170,9 @@ class Video {
         likeCount: safeGetInt('like_count', 0),
         eventName: json['event_name']?.toString(),
         recordedDate: safeParseDate('recorded_date'),
+        publishedAt: safeParseDate('published_at'),
+        channelTitle: json['channel_title']?.toString(),
+        duration: json['duration']?.toString(),
       );
     } catch (e) {
       print('Video fromJson 에러: $e, json: $json');
@@ -220,6 +235,11 @@ class Video {
           recordedDate: json.containsKey('recorded_date')
               ? DateTime.tryParse(json['recorded_date'].toString())
               : null,
+          publishedAt: json.containsKey('published_at')
+              ? DateTime.tryParse(json['published_at'].toString())
+              : null,
+          channelTitle: json['channel_title']?.toString(),
+          duration: json['duration']?.toString(),
         );
       } catch (innerError) {
         print('심각한 Video 파싱 오류: $innerError, 기본 객체 반환');
@@ -257,6 +277,9 @@ class Video {
       'like_count': likeCount,
       'event_name': eventName,
       'recorded_date': recordedDate?.toIso8601String(),
+      'published_at': publishedAt?.toIso8601String(),
+      'channel_title': channelTitle,
+      'duration': duration,
     };
   }
 
@@ -276,6 +299,9 @@ class Video {
     int? likeCount,
     String? eventName,
     DateTime? recordedDate,
+    DateTime? publishedAt,
+    String? channelTitle,
+    String? duration,
   }) {
     return Video(
       id: id ?? this.id,
@@ -292,6 +318,9 @@ class Video {
       likeCount: likeCount ?? this.likeCount,
       eventName: eventName ?? this.eventName,
       recordedDate: recordedDate ?? this.recordedDate,
+      publishedAt: publishedAt ?? this.publishedAt,
+      channelTitle: channelTitle ?? this.channelTitle,
+      duration: duration ?? this.duration,
     );
   }
 
@@ -312,7 +341,10 @@ class Video {
         other.viewCount == viewCount &&
         other.likeCount == likeCount &&
         other.eventName == eventName &&
-        other.recordedDate == recordedDate;
+        other.recordedDate == recordedDate &&
+        other.publishedAt == publishedAt &&
+        other.channelTitle == channelTitle &&
+        other.duration == duration;
   }
 
   @override
@@ -332,6 +364,9 @@ class Video {
       likeCount,
       eventName,
       recordedDate,
+      publishedAt,
+      channelTitle,
+      duration,
     );
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 /// 인증된 사용자 모델
 @immutable
@@ -40,6 +41,19 @@ class AuthUser {
     id: '',
     email: '',
   );
+
+  /// Supabase 사용자로부터 AuthUser 생성
+  static AuthUser fromSupabaseUser(supabase.User user) {
+    return AuthUser(
+      id: user.id,
+      email: user.email ?? '',
+      displayName: user.userMetadata?['name'] as String? ?? '',
+      photoUrl: user.userMetadata?['avatar_url'] as String?,
+      createdAt: DateTime.parse(user.createdAt),
+      lastSignInAt: user.updatedAt != null ? DateTime.parse(user.updatedAt!) : null,
+      isAdmin: user.email == 'loupslim@gmail.com',
+    );
+  }
 
   /// 관리자 여부 확인
   bool get isSuperAdmin => email == 'loupslim@gmail.com';

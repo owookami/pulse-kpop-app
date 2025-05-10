@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mobile/features/subscription/model/subscription_model.dart';
+import 'package:mobile/features/subscription/model/subscription_models.dart';
 import 'package:mobile/features/subscription/service/subscription_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// 구독 상태 프로바이더
 final subscriptionStateProvider =
-    StateNotifierProvider<SubscriptionStateNotifier, AsyncValue<SubscriptionState>>((ref) {
+    StateNotifierProvider<SubscriptionStateNotifier, AsyncValue<SubscriptionStatus>>((ref) {
   final subscriptionService = ref.watch(subscriptionServiceProvider);
   return SubscriptionStateNotifier(subscriptionService);
 });
@@ -60,7 +60,7 @@ final freeVideoWatchCountProvider = StateProvider<int>((ref) {
 });
 
 /// 구독 상태 관리 노티파이어
-class SubscriptionStateNotifier extends StateNotifier<AsyncValue<SubscriptionState>> {
+class SubscriptionStateNotifier extends StateNotifier<AsyncValue<SubscriptionStatus>> {
   final SubscriptionService _subscriptionService;
 
   SubscriptionStateNotifier(this._subscriptionService) : super(const AsyncValue.loading()) {

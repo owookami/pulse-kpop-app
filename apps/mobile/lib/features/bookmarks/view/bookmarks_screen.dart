@@ -2,7 +2,9 @@ import 'package:api_client/api_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile/core/l10n/app_localizations.dart';
 import 'package:mobile/core/widgets/main_scaffold.dart';
+import 'package:mobile/features/auth/controller/auth_controller.dart';
 import 'package:mobile/features/bookmarks/model/bookmark_state.dart';
 import 'package:mobile/features/bookmarks/provider/bookmark_provider.dart';
 import 'package:mobile/features/subscription/helpers/subscription_helpers.dart';
@@ -36,27 +38,37 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen>
   @override
   Widget build(BuildContext context) {
     final bookmarkState = ref.watch(bookmarkProvider);
+    final l10n = AppLocalizations.of(context);
+    final authState = ref.watch(authControllerProvider);
+    final isLoggedIn = authState.isAuthenticated;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('북마크'),
+        title: Text(l10n.bookmarks_title),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () => ref.read(bookmarkProvider.notifier).refreshBookmarks(),
-            tooltip: '새로고침',
+            tooltip: l10n.bookmarks_refresh,
           ),
           IconButton(
             icon: const Icon(Icons.settings),
-            onPressed: () => context.push('/bookmarks/manage'),
-            tooltip: '컬렉션 관리',
+            onPressed: () {
+              // 로그인 상태 확인
+              if (isLoggedIn) {
+                context.push('/bookmarks/manage');
+              } else {
+                _showLoginRequiredDialog(context, '북마크 관리');
+              }
+            },
+            tooltip: l10n.bookmarks_collection_management,
           ),
         ],
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [
-            Tab(text: '북마크된 비디오'),
-            Tab(text: '컬렉션'),
+          tabs: [
+            Tab(text: l10n.bookmarks_videos_tab),
+            Tab(text: l10n.bookmarks_collections_tab),
           ],
         ),
       ),
@@ -64,10 +76,16 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen>
         controller: _tabController,
         children: [
           // 북마크된 비디오 탭
-          _BookmarkedVideosTab(bookmarkState: bookmarkState),
+          _BookmarkedVideosTab(
+            bookmarkState: bookmarkState,
+            isLoggedIn: isLoggedIn,
+          ),
 
           // 컬렉션 탭
-          _CollectionsTab(bookmarkState: bookmarkState),
+          _CollectionsTab(
+            bookmarkState: bookmarkState,
+            isLoggedIn: isLoggedIn,
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -89,8 +107,12 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen>
               context.go(AppRoutes.home);
             }
           } else {
-            // 컬렉션 탭에서는 새 컬렉션 생성 다이얼로그 표시
-            _showCreateCollectionDialog(context);
+            // 컬렉션 탭에서는 로그인 상태 확인 후 새 컬렉션 생성 다이얼로그 표시
+            if (isLoggedIn) {
+              _showCreateCollectionDialog(context);
+            } else {
+              _showLoginRequiredDialog(context, '컬렉션 생성');
+            }
           }
         },
         child: Icon(
@@ -100,8 +122,33 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen>
     );
   }
 
+  // 로그인 필요 다이얼로그
+  void _showLoginRequiredDialog(BuildContext context, String feature) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('로그인 필요'),
+        content: Text('$feature 기능을 사용하려면 로그인이 필요합니다.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('취소'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              context.push(AppRoutes.login);
+            },
+            child: const Text('로그인하기'),
+          ),
+        ],
+      ),
+    );
+  }
+
   // 컬렉션 생성 다이얼로그
   void _showCreateCollectionDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final nameController = TextEditingController();
     final descriptionController = TextEditingController();
     bool isPublic = false;
@@ -112,32 +159,32 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen>
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: const Text('새 컬렉션'),
+              title: Text(l10n.bookmarks_new_collection),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TextField(
                       controller: nameController,
-                      decoration: const InputDecoration(
-                        labelText: '컬렉션 이름',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: l10n.bookmarks_collection_name,
+                        border: const OutlineInputBorder(),
                       ),
                       autofocus: true,
                     ),
                     const SizedBox(height: 16),
                     TextField(
                       controller: descriptionController,
-                      decoration: const InputDecoration(
-                        labelText: '설명 (선택사항)',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: l10n.bookmarks_collection_desc,
+                        border: const OutlineInputBorder(),
                       ),
                       maxLines: 3,
                     ),
                     const SizedBox(height: 16),
                     SwitchListTile(
-                      title: const Text('공개 컬렉션'),
-                      subtitle: const Text('다른 사용자가 이 컬렉션을 볼 수 있도록 허용'),
+                      title: Text(l10n.bookmarks_collection_public),
+                      subtitle: Text(l10n.bookmarks_collection_public_desc),
                       value: isPublic,
                       onChanged: (value) {
                         setState(() {
@@ -151,13 +198,13 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen>
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('취소'),
+                  child: Text(l10n.bookmarks_cancel),
                 ),
                 TextButton(
                   onPressed: () {
                     if (nameController.text.trim().isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('컬렉션 이름을 입력하세요')),
+                        SnackBar(content: Text(l10n.bookmarks_name_required)),
                       );
                       return;
                     }
@@ -172,7 +219,7 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen>
                               : descriptionController.text.trim(),
                         );
                   },
-                  child: const Text('생성'),
+                  child: Text(l10n.bookmarks_create),
                 ),
               ],
             );
@@ -188,13 +235,17 @@ class _BookmarkedVideosTab extends ConsumerWidget {
   /// 생성자
   const _BookmarkedVideosTab({
     required this.bookmarkState,
+    required this.isLoggedIn,
   });
 
   /// 북마크 상태
   final AsyncValue<BookmarkState> bookmarkState;
+  final bool isLoggedIn;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+
     return bookmarkState.when(
       data: (state) {
         if (state.isLoading) {
@@ -217,7 +268,7 @@ class _BookmarkedVideosTab extends ConsumerWidget {
             Icon(Icons.error_outline, size: 48, color: Theme.of(context).colorScheme.error),
             const SizedBox(height: 16),
             Text(
-              '오류가 발생했습니다',
+              l10n.bookmarks_error_title,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
@@ -229,7 +280,7 @@ class _BookmarkedVideosTab extends ConsumerWidget {
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () => ref.read(bookmarkProvider.notifier).refreshBookmarks(),
-              child: const Text('다시 시도'),
+              child: Text(l10n.bookmarks_retry),
             ),
           ],
         ),
@@ -257,6 +308,8 @@ class _BookmarkedVideosTab extends ConsumerWidget {
 
   // 비디오 카드 위젯
   Widget _buildVideoCard(BuildContext context, WidgetRef ref, Video video) {
+    final l10n = AppLocalizations.of(context);
+
     return GestureDetector(
       onTap: () {
         // 비디오 접근 권한 확인 및 처리
@@ -307,7 +360,7 @@ class _BookmarkedVideosTab extends ConsumerWidget {
                       const Icon(Icons.remove_red_eye, size: 14),
                       const SizedBox(width: 4),
                       Text(
-                        '${video.viewCount}회',
+                        l10n.bookmarks_view_count(video.viewCount),
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
@@ -323,6 +376,8 @@ class _BookmarkedVideosTab extends ConsumerWidget {
 
   // 빈 상태 위젯
   Widget _buildEmptyState(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -334,14 +389,14 @@ class _BookmarkedVideosTab extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            '북마크가 없습니다',
+            l10n.bookmarks_empty_title,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   color: Colors.grey[600],
                 ),
           ),
           const SizedBox(height: 8),
           Text(
-            '비디오를 시청하는 동안 북마크를 추가하세요',
+            l10n.bookmarks_empty_desc,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: Colors.grey[600],
                 ),
@@ -351,7 +406,7 @@ class _BookmarkedVideosTab extends ConsumerWidget {
           ElevatedButton.icon(
             onPressed: () => ref.read(bookmarkProvider.notifier).refreshBookmarks(),
             icon: const Icon(Icons.home),
-            label: const Text('홈으로 이동'),
+            label: Text(l10n.bookmarks_go_home),
           ),
         ],
       ),
@@ -364,13 +419,17 @@ class _CollectionsTab extends ConsumerWidget {
   /// 생성자
   const _CollectionsTab({
     required this.bookmarkState,
+    required this.isLoggedIn,
   });
 
   /// 북마크 상태
   final AsyncValue<BookmarkState> bookmarkState;
+  final bool isLoggedIn;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+
     return bookmarkState.when(
       data: (state) {
         if (state.isLoading) {
@@ -393,7 +452,7 @@ class _CollectionsTab extends ConsumerWidget {
             Icon(Icons.error_outline, size: 48, color: Theme.of(context).colorScheme.error),
             const SizedBox(height: 16),
             Text(
-              '오류가 발생했습니다',
+              l10n.bookmarks_error_title,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
@@ -405,7 +464,7 @@ class _CollectionsTab extends ConsumerWidget {
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () => ref.read(bookmarkProvider.notifier).refreshBookmarks(),
-              child: const Text('다시 시도'),
+              child: Text(l10n.bookmarks_retry),
             ),
           ],
         ),
@@ -503,13 +562,13 @@ class _CollectionsTab extends ConsumerWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
                   Row(
                     children: [
                       const Icon(Icons.video_library, size: 14),
                       const SizedBox(width: 4),
                       Text(
-                        '${collection.bookmarkCount}개',
+                        '${collection.bookmarkCount}',
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
@@ -525,25 +584,27 @@ class _CollectionsTab extends ConsumerWidget {
 
   // 빈 상태 위젯
   Widget _buildEmptyState(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.collections_bookmark_outlined,
+            Icons.collections_bookmark,
             size: 72,
             color: Colors.grey[400],
           ),
           const SizedBox(height: 16),
           Text(
-            '컬렉션이 없습니다',
+            l10n.bookmarks_collection_empty_title,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   color: Colors.grey[600],
                 ),
           ),
           const SizedBox(height: 8),
           Text(
-            '컬렉션을 만들어 북마크를 정리하세요',
+            l10n.bookmarks_collection_empty_desc,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: Colors.grey[600],
                 ),
@@ -551,12 +612,16 @@ class _CollectionsTab extends ConsumerWidget {
           ),
           const SizedBox(height: 24),
           ElevatedButton.icon(
-            onPressed: () => ref.read(bookmarkProvider.notifier).createCollection(
-                  name: '나의 첫 컬렉션',
-                  description: '북마크한 비디오를 모아두는 첫 컬렉션입니다.',
-                ),
+            onPressed: () {
+              // 부모 StatefulWidget에 접근하여 컬렉션 생성 다이얼로그 표시
+              if (context.findAncestorStateOfType<_BookmarksScreenState>() != null) {
+                context
+                    .findAncestorStateOfType<_BookmarksScreenState>()!
+                    ._showCreateCollectionDialog(context);
+              }
+            },
             icon: const Icon(Icons.add),
-            label: const Text('컬렉션 만들기'),
+            label: Text(l10n.bookmarks_create_collection),
           ),
         ],
       ),

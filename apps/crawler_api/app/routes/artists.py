@@ -223,4 +223,141 @@ async def update_video_counts(
     
     except Exception as e:
         logger.error(f"비디오 수 업데이트 실패: {e}")
-        raise HTTPException(status_code=500, detail=f"비디오 수 업데이트 중 오류 발생: {str(e)}") 
+        raise HTTPException(status_code=500, detail=f"비디오 수 업데이트 중 오류 발생: {str(e)}")
+
+
+@router.post("/{artist_id}/add-search-keywords", response_model=ArtistResponse)
+async def add_artist_search_keywords(
+    artist_id: str,
+    keywords: List[str],
+    settings: Settings = Depends(get_settings),
+):
+    """
+    아티스트 검색어 추가
+    
+    특정 아티스트에 검색 키워드를 추가합니다. 곡명을 추가할 때는 'kpop' 키워드를 사용하지 않고
+    '곡명:노래제목' 형식으로 추가하는 것을 권장합니다.
+    """
+    try:
+        # Supabase 서비스 인스턴스 생성
+        supabase_service = SupabaseService()
+        
+        # 아티스트 존재 여부 확인
+        artists = await supabase_service.get_artists(id=artist_id, limit=1)
+        if not artists:
+            raise HTTPException(status_code=404, detail=f"ID {artist_id}인 아티스트를 찾을 수 없습니다.")
+        
+        artist = artists[0]
+        
+        # 기존 검색어에 새 검색어 추가
+        current_keywords = artist.search_keywords or []
+        
+        # 중복 검색어는 추가하지 않음
+        new_keywords = [keyword for keyword in keywords if keyword not in current_keywords]
+        updated_keywords = current_keywords + new_keywords
+        
+        # 아티스트 업데이트
+        update_data = {"search_keywords": updated_keywords}
+        updated_artist = await supabase_service.update_artist(artist_id, update_data)
+        
+        if not updated_artist:
+            raise HTTPException(status_code=500, detail="아티스트 검색어 추가 실패")
+        
+        return updated_artist
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"아티스트 검색어 추가 실패: {e}")
+        raise HTTPException(status_code=500, detail=f"아티스트 검색어 추가 중 오류 발생: {str(e)}")
+
+
+@router.post("/{artist_id}/remove-search-keywords", response_model=ArtistResponse)
+async def remove_artist_search_keywords(
+    artist_id: str,
+    keywords: List[str],
+    settings: Settings = Depends(get_settings),
+):
+    """
+    아티스트 검색어 제거
+    
+    특정 아티스트에서 검색 키워드를 제거합니다.
+    """
+    try:
+        # Supabase 서비스 인스턴스 생성
+        supabase_service = SupabaseService()
+        
+        # 아티스트 존재 여부 확인
+        artists = await supabase_service.get_artists(id=artist_id, limit=1)
+        if not artists:
+            raise HTTPException(status_code=404, detail=f"ID {artist_id}인 아티스트를 찾을 수 없습니다.")
+        
+        artist = artists[0]
+        
+        # 검색어 제거
+        current_keywords = artist.search_keywords or []
+        updated_keywords = [k for k in current_keywords if k not in keywords]
+        
+        # 아티스트 업데이트
+        update_data = {"search_keywords": updated_keywords}
+        updated_artist = await supabase_service.update_artist(artist_id, update_data)
+        
+        if not updated_artist:
+            raise HTTPException(status_code=500, detail="아티스트 검색어 제거 실패")
+        
+        return updated_artist
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"아티스트 검색어 제거 실패: {e}")
+        raise HTTPException(status_code=500, detail=f"아티스트 검색어 제거 중 오류 발생: {str(e)}")
+
+
+@router.post("/{artist_id}/add-song", response_model=ArtistResponse)
+async def add_artist_song(
+    artist_id: str,
+    song_title: str,
+    settings: Settings = Depends(get_settings),
+):
+    """
+    아티스트 노래 추가
+    
+    특정 아티스트에 노래 제목을 검색어로 추가합니다.
+    노래 제목은 '곡명:노래제목' 형식으로 저장됩니다.
+    """
+    try:
+        # Supabase 서비스 인스턴스 생성
+        supabase_service = SupabaseService()
+        
+        # 아티스트 존재 여부 확인
+        artists = await supabase_service.get_artists(id=artist_id, limit=1)
+        if not artists:
+            raise HTTPException(status_code=404, detail=f"ID {artist_id}인 아티스트를 찾을 수 없습니다.")
+        
+        artist = artists[0]
+        
+        # 기존 검색어에 새 노래 추가
+        current_keywords = artist.search_keywords or []
+        song_keyword = f"곡명:{song_title}"
+        
+        # 중복 확인
+        if song_keyword in current_keywords:
+            return artist  # 이미 있으면 바로 반환
+        
+        updated_keywords = current_keywords + [song_keyword]
+        
+        # 아티스트 업데이트
+        update_data = {"search_keywords": updated_keywords}
+        updated_artist = await supabase_service.update_artist(artist_id, update_data)
+        
+        if not updated_artist:
+            raise HTTPException(status_code=500, detail="아티스트 노래 추가 실패")
+        
+        return updated_artist
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"아티스트 노래 추가 실패: {e}")
+        raise HTTPException(status_code=500, detail=f"아티스트 노래 추가 중 오류 발생: {str(e)}") 

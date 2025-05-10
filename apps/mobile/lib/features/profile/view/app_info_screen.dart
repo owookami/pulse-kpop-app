@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile/core/l10n/app_localizations.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 /// 앱 정보 화면
@@ -37,9 +38,11 @@ class _AppInfoScreenState extends ConsumerState<AppInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('앱 정보'),
+        title: Text(l10n.profile_app_info_title),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
@@ -72,7 +75,7 @@ class _AppInfoScreenState extends ConsumerState<AppInfoScreen> {
           const SizedBox(height: 8),
           Center(
             child: Text(
-              '버전 ${_packageInfo.version} (빌드 ${_packageInfo.buildNumber})',
+              l10n.app_info_version(_packageInfo.version, _packageInfo.buildNumber),
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
@@ -81,25 +84,24 @@ class _AppInfoScreenState extends ConsumerState<AppInfoScreen> {
           // 앱 정보 섹션
           _buildInfoSection(
             context: context,
-            title: '앱 소개',
-            content: 'Pulse는 K-POP 아티스트의 팬캠 영상을 모아보고 공유할 수 있는 플랫폼입니다. '
-                '좋아하는 아티스트의 영상을 쉽게 찾고, 저장하고, 평가할 수 있습니다.',
+            title: l10n.app_info_introduction,
+            content: l10n.app_info_introduction_content,
           ),
           const SizedBox(height: 16),
 
           // 개발사 정보
           _buildInfoSection(
             context: context,
-            title: '개발사 정보',
-            content: '© 2023 Pulse Team\n모든 권리 보유',
+            title: l10n.app_info_developer,
+            content: l10n.app_info_developer_content,
           ),
           const SizedBox(height: 16),
 
           // 기술적 정보
           _buildInfoSection(
             context: context,
-            title: '기술 정보',
-            content: '이 앱은 Flutter 프레임워크로 개발되었으며, Supabase를 백엔드로 사용합니다.',
+            title: l10n.app_info_technical,
+            content: l10n.app_info_technical_content,
           ),
           const SizedBox(height: 16),
 
@@ -134,11 +136,13 @@ class _AppInfoScreenState extends ConsumerState<AppInfoScreen> {
   }
 
   List<Widget> _buildInfoLinks(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return [
       const Divider(),
       ListTile(
         leading: const Icon(Icons.library_books),
-        title: const Text('오픈소스 라이선스'),
+        title: Text(l10n.app_info_opensource),
         onTap: () {
           showLicensePage(
             context: context,
@@ -151,7 +155,7 @@ class _AppInfoScreenState extends ConsumerState<AppInfoScreen> {
       const Divider(),
       ListTile(
         leading: const Icon(Icons.policy),
-        title: const Text('개인정보 처리방침'),
+        title: Text(l10n.profile_privacy_policy),
         onTap: () {
           context.push('/profile/privacy');
         },
@@ -159,24 +163,15 @@ class _AppInfoScreenState extends ConsumerState<AppInfoScreen> {
       const Divider(),
       ListTile(
         leading: const Icon(Icons.description),
-        title: const Text('이용약관'),
+        title: Text(l10n.profile_terms),
         onTap: () {
           context.push('/profile/terms');
         },
       ),
       const Divider(),
       ListTile(
-        leading: const Icon(Icons.feedback),
-        title: const Text('건의하기'),
-        subtitle: const Text('앱 개선을 위한 의견 보내기'),
-        onTap: () {
-          context.push('/profile/feedback');
-        },
-      ),
-      const Divider(),
-      ListTile(
         leading: const Icon(Icons.contact_support),
-        title: const Text('고객 지원'),
+        title: Text(l10n.app_info_customer_support),
         onTap: () {
           // TODO: 고객 지원 화면으로 이동
         },

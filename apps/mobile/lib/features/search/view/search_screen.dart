@@ -1,10 +1,16 @@
+import 'package:api_client/api_client.dart'; // Video 클래스에 대한 import
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile/core/l10n/app_localizations.dart';
+import 'package:mobile/features/ads/service/ad_service.dart';
+import 'package:mobile/features/feed/provider/feed_provider.dart';
 import 'package:mobile/features/feed/widgets/video_card.dart';
 import 'package:mobile/features/search/model/search_state.dart';
 import 'package:mobile/features/search/provider/search_provider.dart';
 import 'package:mobile/features/shared/error_view.dart';
+import 'package:mobile/features/subscription/provider/new_subscription_provider.dart';
+import 'package:mobile/features/video_player/view/video_player_screen.dart';
 import 'package:mobile/routes/routes.dart';
 
 /// 검색 화면
@@ -21,10 +27,16 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with AutomaticKeepA
   final _focusNode = FocusNode();
   final _scrollController = ScrollController();
 
+  // AdService 인스턴스를 클래스 멤버 변수로 선언
+  late final AdService _adService;
+
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
+
+    // AdService 초기화
+    _adService = AdService();
   }
 
   @override
@@ -33,6 +45,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with AutomaticKeepA
     _focusNode.dispose();
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
+    _adService.dispose(); // AdService 리소스 해제
     super.dispose();
   }
 
@@ -68,14 +81,15 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with AutomaticKeepA
   Widget build(BuildContext context) {
     super.build(context);
     final state = ref.watch(searchProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('검색'),
+        title: Text(l10n.search_title),
         actions: [
           IconButton(
             icon: const Icon(Icons.explore),
-            tooltip: '발견',
+            tooltip: l10n.search_discover,
             onPressed: () => context.push(AppRoutes.discover),
           ),
         ],
@@ -87,7 +101,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with AutomaticKeepA
               controller: _searchController,
               focusNode: _focusNode,
               decoration: InputDecoration(
-                hintText: '아티스트, 그룹, 이벤트 등 검색',
+                hintText: l10n.search_hint,
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
@@ -131,6 +145,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with AutomaticKeepA
 
   // 필터 패널
   Widget _buildFilterPanel(SearchState state) {
+    final l10n = AppLocalizations.of(context);
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       color: Colors.grey.shade50,
@@ -140,21 +156,21 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with AutomaticKeepA
           Row(
             children: [
               _filterChip(
-                label: '전체',
+                label: l10n.search_filter_all,
                 selected: state.selectedFilter == SearchFilterType.all,
                 onSelected: (_) =>
                     ref.read(searchProvider.notifier).setFilter(SearchFilterType.all),
               ),
               const SizedBox(width: 8.0),
               _filterChip(
-                label: '영상',
+                label: l10n.search_filter_video,
                 selected: state.selectedFilter == SearchFilterType.video,
                 onSelected: (_) =>
                     ref.read(searchProvider.notifier).setFilter(SearchFilterType.video),
               ),
               const SizedBox(width: 8.0),
               _filterChip(
-                label: '아티스트',
+                label: l10n.search_filter_artist,
                 selected: state.selectedFilter == SearchFilterType.artist,
                 onSelected: (_) =>
                     ref.read(searchProvider.notifier).setFilter(SearchFilterType.artist),
@@ -169,21 +185,21 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with AutomaticKeepA
             child: Row(
               children: [
                 _sortChip(
-                  label: '관련성순',
+                  label: l10n.search_sort_relevance,
                   selected: state.sortOption == SearchSortOption.relevance,
                   onSelected: (_) =>
                       ref.read(searchProvider.notifier).setSortOption(SearchSortOption.relevance),
                 ),
                 const SizedBox(width: 8.0),
                 _sortChip(
-                  label: '최신순',
+                  label: l10n.search_sort_latest,
                   selected: state.sortOption == SearchSortOption.latest,
                   onSelected: (_) =>
                       ref.read(searchProvider.notifier).setSortOption(SearchSortOption.latest),
                 ),
                 const SizedBox(width: 8.0),
                 _sortChip(
-                  label: '인기순',
+                  label: l10n.search_sort_popularity,
                   selected: state.sortOption == SearchSortOption.popularity,
                   onSelected: (_) =>
                       ref.read(searchProvider.notifier).setSortOption(SearchSortOption.popularity),
@@ -227,6 +243,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with AutomaticKeepA
 
   // 검색 제안 및 최근 검색어
   Widget _buildSearchSuggestions(SearchState state) {
+    final l10n = AppLocalizations.of(context);
+
     if (state.suggestions.isNotEmpty) {
       // 실시간 검색어 제안 표시
       return ListView.builder(
@@ -256,16 +274,16 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with AutomaticKeepA
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    '최근 검색어',
-                    style: TextStyle(
+                  Text(
+                    l10n.search_recent,
+                    style: const TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   TextButton(
                     onPressed: () => ref.read(searchProvider.notifier).clearRecentSearches(),
-                    child: const Text('전체 삭제'),
+                    child: Text(l10n.search_clear_all),
                   ),
                 ],
               ),
@@ -297,12 +315,12 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with AutomaticKeepA
         ],
 
         // 인기 검색어
-        const SliverToBoxAdapter(
+        SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
+            padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
             child: Text(
-              '인기 검색어',
-              style: TextStyle(
+              l10n.search_popular,
+              style: const TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.bold,
               ),
@@ -358,6 +376,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with AutomaticKeepA
 
   // 검색 결과
   Widget _buildSearchResults(SearchState state) {
+    final l10n = AppLocalizations.of(context);
+
     // 로딩 중 - 검색어가 있고 검색 결과가 아직 없을 때만 로딩바 표시
     if (state.isLoading &&
         state.results.isEmpty &&
@@ -391,11 +411,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with AutomaticKeepA
             ),
             const SizedBox(height: 16),
             Text(
-              '검색 결과가 없습니다',
+              l10n.search_no_results,
               style: Theme.of(context).textTheme.titleMedium,
             ),
             Text(
-              '다른 검색어를 입력해 보세요',
+              l10n.search_try_another,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.grey.shade600,
                   ),
@@ -420,7 +440,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with AutomaticKeepA
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              '아티스트',
+              l10n.search_category_artist,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -468,13 +488,16 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with AutomaticKeepA
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              '영상',
+              l10n.search_category_video,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
             ),
           ),
-          ...state.results.map((video) => VideoCard(video: video)),
+          ...state.results.map((video) => VideoCard(
+                video: video,
+                onTap: () => _navigateToVideoPlayer(context, video),
+              )),
 
           // 추가 로딩 인디케이터
           if (state.isLoadingMore)
@@ -485,5 +508,52 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with AutomaticKeepA
         ],
       ],
     );
+  }
+
+  // 동영상 플레이어로 이동하는 함수
+  void _navigateToVideoPlayer(BuildContext context, Video video) {
+    // 현재 선택한 비디오를 저장
+    ref.read(selectedVideoProvider.notifier).state = video;
+    ref.read(feedVideosProvider.notifier).selectVideo(video);
+
+    // 구독 상태 확인
+    final isSubscribed = ref.read(isPremiumUserProvider).maybeWhen(
+          data: (value) => value,
+          orElse: () => false,
+        );
+
+    if (isSubscribed) {
+      // 구독자는 바로 비디오 플레이어로 이동
+      Navigator.of(context, rootNavigator: true).push(
+        MaterialPageRoute(
+          builder: (context) => VideoPlayerScreen(video: video),
+          fullscreenDialog: true,
+        ),
+      );
+    } else {
+      // 비구독자는 광고 표시 전에 광고 로드
+      _adService.loadInterstitialAd();
+
+      // 전면 광고 표시 후 비디오 플레이어로 이동
+      _adService.showInterstitialAd(
+        onAdDismissed: () {
+          Navigator.of(context, rootNavigator: true).push(
+            MaterialPageRoute(
+              builder: (context) => VideoPlayerScreen(video: video),
+              fullscreenDialog: true,
+            ),
+          );
+        },
+        onAdFailedToShow: () {
+          // 광고 표시 실패 시 바로 비디오 플레이어로 이동
+          Navigator.of(context, rootNavigator: true).push(
+            MaterialPageRoute(
+              builder: (context) => VideoPlayerScreen(video: video),
+              fullscreenDialog: true,
+            ),
+          );
+        },
+      );
+    }
   }
 }

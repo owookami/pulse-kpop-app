@@ -1,0 +1,71 @@
+name: Android Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:  # 수동 실행 가능
+
+jobs:
+  build_and_deploy:
+    name: Build and Deploy Android App
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./apps/mobile
+        
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.16.0'
+          channel: 'stable'
+          cache: true
+      
+      - name: Get Flutter dependencies
+        run: flutter pub get
+      
+      - name: Check for any formatting issues
+        run: flutter format --set-exit-if-changed .
+      
+      - name: Statically analyze the Dart code
+        run: flutter analyze
+      
+      - name: Run tests
+        run: flutter test
+      
+      - name: Setup Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_JKS_BASE64 }}" | base64 --decode > keystore.jks
+          echo "storeFile=keystore.jks" > android/key.properties
+          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> android/key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
+      
+      - name: Build App Bundle
+        run: flutter build appbundle --release
+      
+      - name: Upload App Bundle
+        uses: actions/upload-artifact@v3
+        with:
+          name: appbundle
+          path: apps/mobile/build/app/outputs/bundle/release/app-release.aab
+      
+      - name: Deploy to Play Store
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT_JSON }}
+          packageName: com.zan.pulse
+          releaseFiles: apps/mobile/build/app/outputs/bundle/release/app-release.aab
+          track: production  # 혹은 internal, alpha, beta 등
+          status: completed  # 완료 상태로 출시
+          changesNotSentForReview: false  # 변경사항 검토 요청 

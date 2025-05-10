@@ -36,6 +36,7 @@ class VideoCache implements Cache {
   static const String _voteInfoKey = 'video_cache_vote_';
   static const String _bookmarksKey = 'video_cache_bookmarks_';
   static const String _artistVideosKey = 'video_cache_artist_';
+  static const String _favoriteVideosKey = 'video_cache_favorites';
 
   // 캐시 유효 기간 (시간 단위)
   static const int _cacheDurationHours = 24;
@@ -234,6 +235,32 @@ class VideoCache implements Cache {
       // 캐시 파싱 실패 시 캐시 삭제
       invalidateCache(key);
       return null;
+    }
+  }
+
+  /// 즐겨찾기 비디오 캐싱
+  Future<void> cacheFavoriteVideos(List<Video> videos) async {
+    if (!_initialized) await initialize();
+
+    final jsonData = json.encode(videos.map((video) => video.toJson()).toList());
+    await _prefs.setString(_favoriteVideosKey, jsonData);
+    await _prefs.setInt('${_favoriteVideosKey}_timestamp', DateTime.now().millisecondsSinceEpoch);
+  }
+
+  /// 즐겨찾기 비디오 조회
+  List<Video>? getFavoriteVideos() {
+    if (!isValidCache(_favoriteVideosKey)) return [];
+
+    final jsonData = _prefs.getString(_favoriteVideosKey);
+    if (jsonData == null) return [];
+
+    try {
+      final List<dynamic> videoList = json.decode(jsonData);
+      return videoList.map((data) => Video.fromJson(data as Map<String, dynamic>)).toList();
+    } catch (e) {
+      // 캐시 파싱 실패 시 캐시 삭제
+      invalidateCache(_favoriteVideosKey);
+      return [];
     }
   }
 }

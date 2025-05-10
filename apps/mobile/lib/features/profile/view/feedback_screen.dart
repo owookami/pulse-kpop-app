@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile/core/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// 사용자 건의사항을 입력받고 이메일로 발송하는 화면
@@ -54,17 +55,19 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       if (await canLaunchUrl(emailUri)) {
         await launchUrl(emailUri);
         if (mounted) {
+          final l10n = AppLocalizations.of(context);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('이메일 앱이 열렸습니다. 발송을 완료해주세요.')),
+            SnackBar(content: Text(l10n.profile_feedback_email_success)),
           );
           // 메일 앱이 열리면 성공으로 간주하고 이전 화면으로 돌아감
           context.pop();
         }
       } else {
         if (mounted) {
+          final l10n = AppLocalizations.of(context);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('이메일 앱을 열 수 없습니다. 설정을 확인해주세요.'),
+            SnackBar(
+              content: Text(l10n.profile_feedback_email_error),
               backgroundColor: Colors.red,
             ),
           );
@@ -72,9 +75,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('오류가 발생했습니다: $e'),
+            content: Text(l10n.profile_feedback_error(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -97,9 +101,11 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('건의하기'),
+        title: Text(l10n.feedback_title),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
@@ -111,17 +117,17 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           key: _formKey,
           child: ListView(
             children: [
-              const Text(
-                '앱에 대한 의견이나 건의사항이 있으신가요?',
-                style: TextStyle(
+              Text(
+                l10n.feedback_question,
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
-                '소중한 의견을 보내주시면 더 나은 서비스를 제공하기 위해 노력하겠습니다.',
-                style: TextStyle(
+              Text(
+                l10n.feedback_description,
+                style: const TextStyle(
                   fontSize: 14,
                   color: Colors.grey,
                 ),
@@ -132,8 +138,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               TextFormField(
                 controller: _emailController,
                 decoration: InputDecoration(
-                  labelText: '회신받을 이메일',
-                  hintText: '답변을 받을 이메일 주소를 입력해주세요',
+                  labelText: l10n.feedback_email,
+                  hintText: l10n.feedback_email_hint,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -143,11 +149,11 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 textInputAction: TextInputAction.next,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return '이메일을 입력해주세요';
+                    return l10n.feedback_email_validation;
                   }
                   // 간단한 이메일 형식 검사
                   if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                    return '유효한 이메일 주소를 입력해주세요';
+                    return l10n.feedback_email_invalid;
                   }
                   return null;
                 },
@@ -158,8 +164,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               TextFormField(
                 controller: _subjectController,
                 decoration: InputDecoration(
-                  labelText: '제목',
-                  hintText: '건의사항 제목을 입력해주세요',
+                  labelText: l10n.feedback_subject,
+                  hintText: l10n.feedback_subject_hint,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -168,7 +174,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 textInputAction: TextInputAction.next,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return '제목을 입력해주세요';
+                    return l10n.feedback_subject_validation;
                   }
                   return null;
                 },
@@ -179,8 +185,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               TextFormField(
                 controller: _contentController,
                 decoration: InputDecoration(
-                  labelText: '내용',
-                  hintText: '건의사항 내용을 자세히 입력해주세요',
+                  labelText: l10n.feedback_content,
+                  hintText: l10n.feedback_content_hint,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -190,10 +196,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 textInputAction: TextInputAction.newline,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return '내용을 입력해주세요';
+                    return l10n.feedback_content_validation;
                   }
                   if (value.length < 10) {
-                    return '최소 10자 이상 입력해주세요';
+                    return l10n.feedback_content_length;
                   }
                   return null;
                 },
@@ -210,7 +216,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Icon(Icons.send),
-                label: Text(_isSending ? '발송 중...' : '건의사항 보내기'),
+                label: Text(_isSending ? l10n.common_sending : l10n.feedback_send),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).primaryColor,
                   foregroundColor: Colors.white,
@@ -223,9 +229,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               const SizedBox(height: 16),
 
               // 개인정보 수집 동의 안내
-              const Text(
-                '* 건의사항 접수 및 회신을 위해 이메일 주소가 수집됩니다.',
-                style: TextStyle(
+              Text(
+                l10n.feedback_privacy_notice,
+                style: const TextStyle(
                   fontSize: 12,
                   color: Colors.grey,
                 ),

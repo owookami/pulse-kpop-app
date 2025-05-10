@@ -1,6 +1,7 @@
 import 'package:api_client/api_client.dart';
 import "package:flutter/material.dart";
 import 'package:intl/intl.dart';
+import 'package:mobile/core/l10n/app_localizations.dart';
 
 /// 관련 비디오 목록 위젯
 class RelatedVideosList extends StatelessWidget {
@@ -19,6 +20,8 @@ class RelatedVideosList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     if (videos.isEmpty) {
       return Padding(
         padding: const EdgeInsets.all(16.0),
@@ -27,12 +30,12 @@ class RelatedVideosList extends StatelessWidget {
             children: [
               const SizedBox(height: 16),
               Text(
-                '관련 영상',
+                l10n.video_player_related_videos,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 8),
               Text(
-                '현재 관련 영상이 없습니다.',
+                l10n.video_player_no_related_videos,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Theme.of(context).textTheme.bodySmall?.color,
                     ),
@@ -50,7 +53,7 @@ class RelatedVideosList extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Text(
-            '관련 영상',
+            l10n.video_player_related_videos,
             style: Theme.of(context).textTheme.titleMedium,
           ),
         ),
@@ -189,6 +192,8 @@ class _RelatedVideoItemState extends State<_RelatedVideoItem> {
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
+                      // 비디오 길이 표시 (duration이 있을 경우만 표시)
+                      /* 임시 하드코딩 값 제거
                       Positioned(
                         right: 5,
                         bottom: 5,
@@ -199,7 +204,7 @@ class _RelatedVideoItemState extends State<_RelatedVideoItem> {
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
-                            '3:45', // 임시 하드코딩 값으로 대체
+                            '3:45', // 임시 하드코딩 값
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.onSurface,
                               fontSize: 10,
@@ -207,6 +212,7 @@ class _RelatedVideoItemState extends State<_RelatedVideoItem> {
                           ),
                         ),
                       ),
+                      */
                     ],
                   ),
                 ),

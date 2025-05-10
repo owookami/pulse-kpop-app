@@ -27,7 +27,7 @@ late Locale _userLocale;
 
 /// 앱의 시작점
 void main() async {
-  // 앱 초기화
+  // 위젯 바인딩 초기화
   WidgetsFlutterBinding.ensureInitialized();
 
   // 앱 시작 전 초기화 함수

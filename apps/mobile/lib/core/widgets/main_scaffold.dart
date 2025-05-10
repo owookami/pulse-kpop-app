@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile/core/l10n/app_localizations.dart';
 import 'package:mobile/features/video_player/providers/video_player_provider.dart';
 
 /// 현재 활성화된 NavigationShell을 저장하는 전역 상태 프로바이더
@@ -48,6 +49,9 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
     // 현재 선택된 탭 인덱스
     final selectedIndex = widget.navigationShell.currentIndex;
 
+    // 현지화 리소스 가져오기
+    final l10n = AppLocalizations.of(context);
+
     // 화면 방향 감지 - 가로 모드에서는 탭 바를 숨김
     final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
 
@@ -75,26 +79,26 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
       bottomNavigationBar: isLandscape
           ? null
           : NavigationBar(
-              destinations: const [
+              destinations: [
                 NavigationDestination(
-                  icon: Icon(Icons.home_outlined),
-                  selectedIcon: Icon(Icons.home),
-                  label: '홈',
+                  icon: const Icon(Icons.home_outlined),
+                  selectedIcon: const Icon(Icons.home),
+                  label: l10n.nav_home,
                 ),
                 NavigationDestination(
-                  icon: Icon(Icons.search_outlined),
-                  selectedIcon: Icon(Icons.search),
-                  label: '검색',
+                  icon: const Icon(Icons.search_outlined),
+                  selectedIcon: const Icon(Icons.search),
+                  label: l10n.nav_search,
                 ),
                 NavigationDestination(
-                  icon: Icon(Icons.bookmark_border_outlined),
-                  selectedIcon: Icon(Icons.bookmark),
-                  label: '북마크',
+                  icon: const Icon(Icons.bookmark_border_outlined),
+                  selectedIcon: const Icon(Icons.bookmark),
+                  label: l10n.nav_bookmarks,
                 ),
                 NavigationDestination(
-                  icon: Icon(Icons.person_outlined),
-                  selectedIcon: Icon(Icons.person),
-                  label: '프로필',
+                  icon: const Icon(Icons.person_outlined),
+                  selectedIcon: const Icon(Icons.person),
+                  label: l10n.nav_profile,
                 ),
               ],
               selectedIndex: selectedIndex,

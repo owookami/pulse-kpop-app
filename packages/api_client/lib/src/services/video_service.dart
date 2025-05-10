@@ -1,3 +1,5 @@
+import 'dart:async'; // TimeoutException을 위한 import 추가
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -66,7 +68,7 @@ class VideoService {
 
   /// 인기 비디오 목록 조회
   Future<ApiResponse<List<Video>>> getTrendingVideos({
-    int limit = 20,
+    int limit = 50,
     String? lastId,
     bool forceRefresh = false,
   }) async {
@@ -74,11 +76,18 @@ class VideoService {
       // 캐시 조회 로직
       final cacheKey = _trendingVideosKey;
 
+      // 네트워크 상태 확인 (오프라인 또는 강제 캐시 사용 시)
+      final offline = await isOffline();
+      if (offline) {
+        _isOffline = true;
+      }
+
       // 네트워크가 없거나 캐시를 강제로 사용해야 하는 경우
       if (_isOffline || (!forceRefresh && _cache.isValidCache(cacheKey))) {
         final cachedVideos = _cache.getTrendingVideos();
-        if (cachedVideos != null) {
-          return ApiResponse<List<Video>>.success(_applyPagination(cachedVideos, lastId, limit));
+        if (cachedVideos != null && cachedVideos.isNotEmpty) {
+          final result = _applyPagination(cachedVideos, lastId, limit);
+          return ApiResponse<List<Video>>.success(result);
         }
       }
 
@@ -86,54 +95,151 @@ class VideoService {
       if (_isOffline) {
         return ApiResponse<List<Video>>.failure(ApiError(
           code: 'offline',
-          message: '오프라인 모드에서는 사용할 수 없습니다.',
+          message: '오프라인 모드입니다. 네트워크 연결을 확인하고 다시 시도해주세요.',
         ));
       }
 
-      // 온라인 API 호출 - 인기 비디오 순으로 정렬
-      final response = await _client.query<Video>(
-        table: 'videos',
-        fromJson: Video.fromJson,
-        orderBy: 'view_count.desc', // 단일 정렬 기준으로 변경
-        limit: limit,
-        filter: lastId != null ? 'id.lt.$lastId' : null,
-      );
+      // 최적화된 재시도 로직 - 중복 보호 및 타임아웃 시간 증가
+      int retryCount = 0;
+      final maxRetries = 2; // 재시도 횟수 감소
 
-      // 성공 시 캐시 저장
-      return response.fold(
-        onSuccess: (videos) async {
-          await _cache.cacheTrendingVideos(videos);
-          return ApiResponse<List<Video>>.success(
-              lastId == null ? videos : _applyPagination(videos, lastId, limit));
-        },
-        onFailure: (error) => ApiResponse<List<Video>>.failure(error),
-      );
+      while (true) {
+        try {
+          // 온라인 API 호출 - 최신순 정렬로 변경 및 타임아웃 시간 증가
+          print('인기 비디오 호출 시작: 제한=$limit, 마지막ID=$lastId');
+
+          // 더 정확한 필터 로직 구현 - ID 기반 페이징
+          String? filterCondition;
+          if (lastId != null && lastId.isNotEmpty) {
+            // ID 값이 문자열인 경우 "id.lt." 방식으로 필터링
+            filterCondition = 'id.lt.$lastId';
+            print('페이징 필터 적용: $filterCondition');
+          } else {
+            print('페이징 필터 없음: 첫 페이지 로드');
+          }
+
+          // Supabase 요청 준비 및 디버깅
+          print(
+              '쿼리 구성: table=videos, filter=$filterCondition, orderBy=created_at.desc, limit=$limit');
+
+          final response = await _client
+              .query<Video>(
+                table: 'videos',
+                fromJson: Video.fromJson,
+                orderBy: 'created_at.desc', // 최신순 - 생성일 기준 내림차순 정렬
+                limit: limit * 2, // 더 많은 데이터 요청하여 빈 결과 방지
+                filter: filterCondition, // ID 기준 페이징
+              )
+              .timeout(const Duration(seconds: 15)); // 타임아웃 증가
+
+          // 응답 로깅 강화
+          final itemCount = response.isSuccess ? (response.dataOrNull?.length ?? 0) : 0;
+          print('인기 비디오 API 응답: ${response.isSuccess ? '성공' : '실패'}, $itemCount개 항목');
+
+          if (response.isSuccess && itemCount > 0) {
+            final firstId = response.dataOrNull?.first.id;
+            final lastItemId = response.dataOrNull?.last.id;
+            print('첫 번째 ID: $firstId, 마지막 ID: $lastItemId');
+
+            // ID 연속성 확인
+            if (lastId != null && firstId == lastId) {
+              print('경고: 첫 번째 ID가 마지막 ID와 같음 - 페이징 오류 가능성');
+            }
+          } else if (response.isSuccess && itemCount == 0) {
+            print('경고: 성공적인 응답이지만 데이터 없음, lastId=$lastId');
+          }
+
+          // 성공 시 캐시 저장
+          return response.fold(
+            onSuccess: (videos) async {
+              if (videos.isEmpty) {
+                // 캐시에 저장된 비디오가 있는지 확인
+                final cachedVideos = _cache.getTrendingVideos();
+                if (cachedVideos != null && cachedVideos.isNotEmpty) {
+                  return ApiResponse<List<Video>>.success(
+                      _applyPagination(cachedVideos, lastId, limit));
+                }
+                return ApiResponse<List<Video>>.success([]);
+              }
+
+              // 캐시 저장 (백그라운드로 처리하여 UI 응답성 향상)
+              _cache.cacheTrendingVideos(videos).catchError((e) {
+                // 캐시 저장 실패해도 응답에는 영향 없음
+              });
+
+              final result = lastId == null ? videos : _applyPagination(videos, lastId, limit);
+              return ApiResponse<List<Video>>.success(result);
+            },
+            onFailure: (error) {
+              // 오류 발생 시 캐시 확인
+              final cachedVideos = _cache.getTrendingVideos();
+              if (cachedVideos != null && cachedVideos.isNotEmpty) {
+                return ApiResponse<List<Video>>.success(
+                    _applyPagination(cachedVideos, lastId, limit));
+              }
+
+              return ApiResponse<List<Video>>.failure(error);
+            },
+          );
+        } catch (e) {
+          retryCount++;
+
+          if (retryCount >= maxRetries) {
+            // 최대 재시도 횟수 초과, 캐시 확인
+            final cachedVideos = _cache.getTrendingVideos();
+            if (cachedVideos != null && cachedVideos.isNotEmpty) {
+              return ApiResponse<List<Video>>.success(
+                  _applyPagination(cachedVideos, lastId, limit));
+            }
+
+            // 캐시도 없으면 오류 반환
+            return ApiResponse<List<Video>>.failure(ApiError(
+              code: 'video_service/network-error',
+              message: '서버에 연결할 수 없습니다. 네트워크 연결을 확인하고 다시 시도해주세요.',
+            ));
+          }
+
+          // 지수 백오프 적용 (0.5초, 1초)
+          final delay = Duration(milliseconds: 500 * (1 << (retryCount - 1)));
+          await Future.delayed(delay);
+        }
+      }
     } catch (e) {
+      // 예외 발생 시 캐시 확인
+      final cachedVideos = _cache.getTrendingVideos();
+      if (cachedVideos != null && cachedVideos.isNotEmpty) {
+        return ApiResponse<List<Video>>.success(_applyPagination(cachedVideos, lastId, limit));
+      }
+
       return ApiResponse<List<Video>>.failure(ApiError(
         code: 'video_service/trending-videos-error',
-        message: e.toString(),
+        message: '데이터를 불러올 수 없습니다. 네트워크 연결을 확인하고 다시 시도해주세요.',
       ));
     }
   }
 
   /// 최근 비디오 목록 조회
   Future<ApiResponse<List<Video>>> getRisingVideos({
-    int limit = 20,
+    int limit = 50,
     String? lastId,
     bool forceRefresh = false,
   }) async {
     try {
-      print('getRisingVideos 호출: lastId=$lastId, limit=$limit, forceRefresh=$forceRefresh');
-
       // 캐시 조회 로직
       final cacheKey = _risingVideosKey;
+
+      // 네트워크 상태 확인 (오프라인 또는 강제 캐시 사용 시)
+      final offline = await isOffline();
+      if (offline) {
+        _isOffline = true;
+      }
 
       // 네트워크가 없거나 캐시를 강제로 사용해야 하는 경우
       if (_isOffline || (!forceRefresh && _cache.isValidCache(cacheKey))) {
         final cachedVideos = _cache.getRisingVideos();
-        if (cachedVideos != null) {
-          print('캐시에서 최신 비디오 ${cachedVideos.length}개 가져옴');
-          return ApiResponse<List<Video>>.success(_applyPagination(cachedVideos, lastId, limit));
+        if (cachedVideos != null && cachedVideos.isNotEmpty) {
+          final result = _applyPagination(cachedVideos, lastId, limit);
+          return ApiResponse<List<Video>>.success(result);
         }
       }
 
@@ -141,49 +247,95 @@ class VideoService {
       if (_isOffline) {
         return ApiResponse<List<Video>>.failure(ApiError(
           code: 'offline',
-          message: '오프라인 모드에서는 사용할 수 없습니다.',
+          message: '오프라인 모드입니다. 네트워크 연결을 확인하고 다시 시도해주세요.',
         ));
       }
 
-      print('최신 비디오 API 호출: lastId=$lastId');
+      // 최적화된 재시도 로직
+      int retryCount = 0;
+      final maxRetries = 2; // 재시도 횟수 감소
 
-      // 필터 생성
-      String? filter;
-      if (lastId != null) {
-        filter = 'id.lt.$lastId';
-        print('필터 적용: $filter');
+      while (true) {
+        try {
+          // 온라인 API 호출 - 최신 비디오 순으로 정렬
+          print('최신 비디오 호출 시작: 제한=$limit, 마지막ID=$lastId');
+          final response = await _client
+              .query<Video>(
+                table: 'videos',
+                fromJson: Video.fromJson,
+                orderBy: 'created_at.desc', // 최신순 - 생성일 기준 내림차순 정렬
+                limit: limit, // 명시적으로 limit 값 사용 (기본값 50)
+                filter: lastId != null ? 'id.lt.$lastId' : null,
+              )
+              .timeout(const Duration(seconds: 15)); // 타임아웃 증가
+          print(
+              '최신 비디오 API 응답: ${response.isSuccess ? '성공' : '실패'}, ${response.isSuccess ? (response.dataOrNull?.length ?? 0) : 0}개 항목');
+
+          // 성공 시 캐시 저장
+          return response.fold(
+            onSuccess: (videos) async {
+              if (videos.isEmpty) {
+                // 캐시에 저장된 비디오가 있는지 확인
+                final cachedVideos = _cache.getRisingVideos();
+                if (cachedVideos != null && cachedVideos.isNotEmpty) {
+                  return ApiResponse<List<Video>>.success(
+                      _applyPagination(cachedVideos, lastId, limit));
+                }
+                return ApiResponse<List<Video>>.success([]);
+              }
+
+              // 캐시 저장 (백그라운드로 처리하여 UI 응답성 향상)
+              _cache.cacheRisingVideos(videos).catchError((e) {
+                // 캐시 저장 실패해도 응답에는 영향 없음
+              });
+
+              final result = lastId == null ? videos : _applyPagination(videos, lastId, limit);
+              return ApiResponse<List<Video>>.success(result);
+            },
+            onFailure: (error) {
+              // 오류 발생 시 캐시 확인
+              final cachedVideos = _cache.getRisingVideos();
+              if (cachedVideos != null && cachedVideos.isNotEmpty) {
+                return ApiResponse<List<Video>>.success(
+                    _applyPagination(cachedVideos, lastId, limit));
+              }
+
+              return ApiResponse<List<Video>>.failure(error);
+            },
+          );
+        } catch (e) {
+          retryCount++;
+
+          if (retryCount >= maxRetries) {
+            // 최대 재시도 횟수 초과, 캐시 확인
+            final cachedVideos = _cache.getRisingVideos();
+            if (cachedVideos != null && cachedVideos.isNotEmpty) {
+              return ApiResponse<List<Video>>.success(
+                  _applyPagination(cachedVideos, lastId, limit));
+            }
+
+            // 캐시도 없으면 오류 반환
+            return ApiResponse<List<Video>>.failure(ApiError(
+              code: 'video_service/network-error',
+              message: '서버에 연결할 수 없습니다. 네트워크 연결을 확인하고 다시 시도해주세요.',
+            ));
+          }
+
+          // 지수 백오프 적용 (0.5초, 1초)
+          final delay = Duration(milliseconds: 500 * (1 << (retryCount - 1)));
+          await Future.delayed(delay);
+        }
+      }
+    } catch (e) {
+      // 예외 발생 시 캐시 확인
+      final cachedVideos = _cache.getRisingVideos();
+      if (cachedVideos != null && cachedVideos.isNotEmpty) {
+        return ApiResponse<List<Video>>.success(_applyPagination(cachedVideos, lastId, limit));
       }
 
-      // 온라인 API 호출 - 최신순 정렬
-      final response = await _client.query<Video>(
-        table: 'videos',
-        fromJson: Video.fromJson,
-        orderBy: 'created_at.desc', // 최신순
-        limit: limit,
-        filter: filter,
-      );
-
-      // 성공 시 캐시 저장
-      return response.fold(
-        onSuccess: (videos) async {
-          print('API에서 최신 비디오 ${videos.length}개 가져옴');
-
-          await _cache.cacheRisingVideos(videos);
-          final result = lastId == null ? videos : _applyPagination(videos, lastId, limit);
-
-          print('최종 결과: ${result.length}개 비디오 반환');
-          return ApiResponse<List<Video>>.success(result);
-        },
-        onFailure: (error) {
-          print('최신 비디오 로드 실패: ${error.message}');
-          return ApiResponse<List<Video>>.failure(error);
-        },
-      );
-    } catch (e) {
-      print('최신 비디오 로드 예외 발생: $e');
       return ApiResponse<List<Video>>.failure(ApiError(
         code: 'video_service/rising-videos-error',
-        message: e.toString(),
+        message: '데이터를 불러올 수 없습니다. 네트워크 연결을 확인하고 다시 시도해주세요.',
       ));
     }
   }
@@ -431,39 +583,30 @@ class VideoService {
     await _cache.clearAll();
   }
 
-  /// 페이지네이션 적용
+  /// 페이징 적용 - lastId 기준으로 다음 비디오 반환
   List<Video> _applyPagination(List<Video> videos, String? lastId, int limit) {
-    print('_applyPagination: lastId=$lastId, limit=$limit, 비디오 수=${videos.length}');
+    print('_applyPagination 호출: videos.length=${videos.length}, lastId=$lastId, limit=$limit');
 
-    if (lastId == null) {
-      print('lastId 없음, 처음부터 $limit개 반환');
-      return videos.take(limit).toList();
-    }
-
-    // lastId와 동일한 ID를 가진 비디오의 인덱스 찾기
-    final startIndex = videos.indexWhere((video) => video.id == lastId);
-    print('lastId=$lastId에 해당하는 비디오의 인덱스: $startIndex');
-
-    if (startIndex == -1) {
-      // ID를 찾을 수 없는 경우는 모든 비디오를 새로운 페이지로 간주
-      print('lastId를 찾을 수 없음, 모든 비디오 반환 (최대 $limit개)');
-      return videos.take(limit).toList();
-    }
-
-    if (startIndex >= videos.length - 1) {
-      // 이미 마지막 아이템인 경우 빈 리스트 반환
-      print('lastId가 이미 마지막 아이템, 빈 리스트 반환');
+    if (videos.isEmpty) {
+      print('비디오 목록이 비어있어 빈 리스트 반환');
       return [];
     }
 
-    // startIndex 다음부터 limit 개수만큼 비디오 가져오기
-    final result = videos.skip(startIndex + 1).take(limit).toList();
-    print('${startIndex + 1}번 인덱스부터 $limit개 반환, 실제 반환 개수: ${result.length}');
-    return result;
+    // 원래 로직에서는 lastId 유무에 따라 limit 개수만큼 반환했지만,
+    // 무한 스크롤이 제대로 동작하지 않는 문제가 있어
+    // 모든 비디오를 반환하도록 수정합니다.
+    print('수정된 로직: 항상 모든 비디오 데이터 반환 (${videos.length}개)');
+
+    if (videos.isNotEmpty) {
+      print('반환되는 첫 번째 비디오 ID: ${videos[0].id}, 마지막 비디오 ID: ${videos[videos.length - 1].id}');
+    }
+
+    // 모든 비디오 반환
+    return videos;
   }
 
   /// 인기 비디오 가져오기
-  Future<List<Video>> getPopularVideos({int limit = 10}) async {
+  Future<List<Video>> getPopularVideos({int limit = 50}) async {
     final response = await getTrendingVideos(limit: limit);
     return response.fold(
       onSuccess: (videos) => videos,
@@ -474,7 +617,7 @@ class VideoService {
   /// 아티스트 ID 목록으로 비디오 가져오기
   Future<List<Video>> getVideosByArtistIds({
     required List<String> artistIds,
-    int limit = 10,
+    int limit = 50,
   }) async {
     if (artistIds.isEmpty) {
       return const [];
@@ -987,4 +1130,37 @@ class VideoService {
   static const String _videoDetailsKey = 'video_cache_details_';
   static const String _artistVideosKey = 'video_cache_artist_';
   static const String _voteInfoKey = 'vote_info_';
+
+  /// 최신 비디오 목록 조회 (래퍼 메서드)
+  Future<List<Video>> getLatestVideos({
+    int limit = 20,
+    String? lastId,
+    bool forceRefresh = false,
+  }) async {
+    final response = await getRisingVideos(
+      limit: limit,
+      lastId: lastId,
+      forceRefresh: forceRefresh,
+    );
+
+    return response.fold(
+      onSuccess: (videos) => videos,
+      onFailure: (error) => [],
+    );
+  }
+
+  /// 즐겨찾기 비디오 목록 조회
+  Future<List<Video>> getFavoriteVideos({
+    int limit = 20,
+    String? lastId,
+    bool forceRefresh = false,
+  }) async {
+    try {
+      // 즐겨찾기 비디오는 캐시에서만 가져오기
+      final cachedVideos = _cache.getFavoriteVideos() ?? [];
+      return _applyPagination(cachedVideos, lastId, limit);
+    } catch (e) {
+      return [];
+    }
+  }
 }

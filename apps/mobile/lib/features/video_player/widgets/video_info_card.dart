@@ -2,6 +2,7 @@ import 'package:api_client/api_client.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:mobile/core/l10n/app_localizations.dart';
 import 'package:mobile/features/bookmark/provider/bookmark_provider.dart';
 import 'package:mobile/features/vote/provider/vote_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -19,9 +20,11 @@ class VideoInfoCard extends ConsumerWidget {
 
   /// 비디오 공유 함수
   Future<void> _shareVideo(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
     try {
-      final String shareText = '${video.title}\n\n${video.videoUrl}';
-      final String subject = video.title;
+      // 간단한 메시지와 YouTube URL만 포함하도록 수정
+      final String shareText = l10n.video_player_share_message(video.title, video.videoUrl);
+      final String subject = l10n.video_player_share_subject(video.title);
 
       // 공유 대화상자 표시
       await Share.share(
@@ -36,7 +39,7 @@ class VideoInfoCard extends ConsumerWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('공유하는 중 오류가 발생했습니다: $e'),
+            content: Text(l10n.video_player_share_error(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -46,6 +49,7 @@ class VideoInfoCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     // 투표 상태 조회
     final voteState = ref.watch(voteProvider(video.id));
 
@@ -117,7 +121,7 @@ class VideoInfoCard extends ConsumerWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      _formatCount(video.viewCount),
+                      _formatCount(video.viewCount, l10n),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Colors.grey,
                           ),
@@ -137,7 +141,7 @@ class VideoInfoCard extends ConsumerWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      _formatCount(voteState.likeCount),
+                      _formatCount(voteState.likeCount, l10n),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Colors.grey,
                           ),
@@ -169,7 +173,7 @@ class VideoInfoCard extends ConsumerWidget {
                 _buildActionButton(
                   context,
                   icon: bookmarkState.isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-                  label: '북마크',
+                  label: l10n.video_player_bookmark,
                   color: bookmarkState.isBookmarked ? Theme.of(context).colorScheme.primary : null,
                   isLoading: bookmarkState.isLoading,
                   onTap: () {
@@ -180,7 +184,7 @@ class VideoInfoCard extends ConsumerWidget {
                 _buildActionButton(
                   context,
                   icon: Icons.share,
-                  label: '공유',
+                  label: l10n.video_player_share,
                   onTap: () => _shareVideo(context),
                 ),
               ],
@@ -199,6 +203,9 @@ class VideoInfoCard extends ConsumerWidget {
                   textAlign: TextAlign.center,
                 ),
               ),
+
+            // 동적 변수를 사용한 복합 문자열 표시 예제
+            _buildDynamicExample(context, l10n, video),
           ],
         ),
       ),
@@ -246,13 +253,60 @@ class VideoInfoCard extends ConsumerWidget {
   }
 
   /// 숫자 포맷팅 (예: 1,200, 5.2K, 1.3M)
-  String _formatCount(int count) {
+  String _formatCount(int count, AppLocalizations l10n) {
     if (count < 1000) {
       return count.toString();
     } else if (count < 1000000) {
-      return '${(count / 1000).toStringAsFixed(1)}K';
+      return '${(count / 1000).toStringAsFixed(1)}${l10n.count_thousand_suffix}';
     } else {
-      return '${(count / 1000000).toStringAsFixed(1)}M';
+      return '${(count / 1000000).toStringAsFixed(1)}${l10n.count_million_suffix}';
     }
+  }
+
+  // 동적 변수를 활용한 국제화 예제
+  Widget _buildDynamicExample(BuildContext context, AppLocalizations localizations, Video video) {
+    // 현재 날짜 포맷팅
+    final now = DateTime.now();
+    final formattedDate =
+        '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+
+    // 임의의 조회수와 좋아요 수 (실제로는 API에서 받아오겠지만 예제로 하드코딩)
+    final viewCount = (1000 + (video.hashCode % 9000)).toString();
+    final likeCount = (100 + (video.hashCode % 900)).toString();
+
+    // 동적 변수를 포함한 문자열 생성
+    final dynamicMessage = localizations.formatMessage(
+      'dynamic_complex',
+      {
+        'artist': video.channelTitle ?? 'Unknown Artist',
+        'title': video.title,
+        'uploadDate': video.createdAt != null
+            ? '${video.createdAt.year}-${video.createdAt.month.toString().padLeft(2, '0')}-${video.createdAt.day.toString().padLeft(2, '0')}'
+            : formattedDate,
+        'viewCount': viewCount,
+        'category': video.eventName ?? 'General',
+      },
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Divider(),
+        const SizedBox(height: 8),
+        Text(
+          '동적 국제화 예제:',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          dynamicMessage,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        const SizedBox(height: 8),
+        const Divider(),
+      ],
+    );
   }
 }

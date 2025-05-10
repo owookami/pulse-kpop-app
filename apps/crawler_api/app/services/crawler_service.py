@@ -127,9 +127,21 @@ class CrawlerService:
             # 아티스트 검색어 구성
             search_keywords = []
             
-            # 기본 검색어
+            # 기본 검색어 (직접적인 아티스트 이름 + 키워드)
             search_keywords.append(f"{artist.name} 직캠")
             search_keywords.append(f"{artist.name} fancam")
+            
+            # 인기 음악 프로그램 + 아티스트 이름
+            popular_shows = ["음악중심", "인기가요", "엠카운트다운", "쇼! 음악중심", "뮤직뱅크"]
+            for show in popular_shows:
+                search_keywords.append(f"{artist.name} {show}")
+                search_keywords.append(f"{show} {artist.name} 직캠")
+            
+            # 음악 프로그램 영어명
+            english_shows = ["Music Core", "Inkigayo", "M Countdown", "Music Bank", "Show Champion"]
+            for show in english_shows:
+                search_keywords.append(f"{artist.name} {show}")
+                search_keywords.append(f"{show} {artist.name} fancam")
             
             # 추가 검색어가 있으면 추가
             if artist.search_keywords:
@@ -140,6 +152,23 @@ class CrawlerService:
                 for alt_name in artist.alternate_names:
                     search_keywords.append(f"{alt_name} 직캠")
                     search_keywords.append(f"{alt_name} fancam")
+                    # 대체 이름도 음악 프로그램과 조합
+                    for show in popular_shows:
+                        search_keywords.append(f"{alt_name} {show}")
+            
+            # 최근 발매된 곡이 검색어에 있으면 우선 사용
+            songs_keywords = [kw for kw in artist.search_keywords if '곡명:' in kw]
+            if songs_keywords:
+                # 곡명: 접두사 제거하고 실제 곡명만 추출
+                songs = [kw.replace('곡명:', '').strip() for kw in songs_keywords]
+                for song in songs:
+                    search_keywords.append(f"{artist.name} {song} 직캠")
+                    search_keywords.append(f"{artist.name} {song} fancam")
+                    # 영어로도 검색
+                    search_keywords.append(f"{artist.name} {song} focus")
+            
+            # 중복 제거
+            search_keywords = list(set(search_keywords))
             
             # 저장된 비디오 수
             saved_count = 0

@@ -41,6 +41,8 @@ export 'src/providers/cache_providers.dart' hide videoCacheProvider;
 export 'src/services/artist_service.dart';
 // export 'src/services/auth_service.dart';
 export 'src/services/bookmark_service.dart';
+// export 'src/services/vote_service.dart';
+export 'src/services/crawler_service.dart';
 // export 'src/services/comment_service.dart';
 // export 'src/services/notification_service.dart';
 // export 'src/services/profile_service.dart';
@@ -49,5 +51,4 @@ export 'src/services/services.dart';
 // export 'src/services/user_service.dart';
 // 서비스 내보내기
 export 'src/services/video_service.dart';
-// export 'src/services/vote_service.dart';
 export 'src/types/types.dart';

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mobile/core/l10n/app_localizations.dart';
 import 'package:mobile/core/theme.dart';
+import 'package:mobile/main.dart';
 import 'package:mobile/routes/router.dart';
 
 /// 앱의 루트 위젯
@@ -20,17 +22,26 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   Widget build(BuildContext context) {
     final router = ref.watch(routerProvider);
+    final locale = ref.watch(localeProvider);
 
     return PopScope(
       canPop: false,
       onPopInvoked: _handlePopInvoked,
       child: MaterialApp.router(
         title: 'Pulse',
+        debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: ThemeMode.system, // 시스템 설정에 따름
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: locale,
         routerConfig: router,
-        debugShowCheckedModeBanner: false,
       ),
     );
   }
@@ -42,6 +53,8 @@ class _MyAppState extends ConsumerState<MyApp> {
     }
 
     final now = DateTime.now();
+    final context = this.context;
+    final l10n = AppLocalizations.of(context);
 
     // 마지막으로 뒤로가기를 누른 적이 없거나, 마지막으로 누른 시간에서 2초가 지났으면
     if (_lastBackPressedTime == null ||
@@ -51,7 +64,7 @@ class _MyAppState extends ConsumerState<MyApp> {
 
       // 안내 메시지 표시
       Fluttertoast.showToast(
-          msg: "앱을 종료하려면 뒤로가기를 한번 더 누르세요",
+          msg: l10n.common_exit_app_message,
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,

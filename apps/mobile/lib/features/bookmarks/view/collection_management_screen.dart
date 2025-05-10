@@ -2,6 +2,7 @@ import 'package:api_client/api_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile/core/l10n/app_localizations.dart';
 import 'package:mobile/features/bookmarks/provider/bookmark_provider.dart';
 import 'package:mobile/routes/routes.dart';
 
@@ -13,15 +14,16 @@ class CollectionManagementScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bookmarkState = ref.watch(bookmarkProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('컬렉션 관리'),
+        title: Text(l10n.collection_management_title),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () => _showCreateCollectionDialog(context, ref),
-            tooltip: '새 컬렉션',
+            tooltip: l10n.collection_management_new,
           ),
         ],
       ),
@@ -45,7 +47,7 @@ class CollectionManagementScreen extends ConsumerWidget {
               const Icon(Icons.error_outline, size: 48, color: Colors.red),
               const SizedBox(height: 16),
               Text(
-                '컬렉션을 불러오는 중 오류가 발생했습니다.',
+                l10n.collection_management_error,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               if (error is ApiError)
@@ -57,7 +59,7 @@ class CollectionManagementScreen extends ConsumerWidget {
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () => ref.read(bookmarkProvider.notifier).refreshBookmarks(),
-                child: const Text('다시 시도'),
+                child: Text(l10n.common_retry),
               ),
             ],
           ),
@@ -83,6 +85,8 @@ class CollectionManagementScreen extends ConsumerWidget {
 
   // 빈 상태 위젯
   Widget _buildEmptyState(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -90,12 +94,12 @@ class CollectionManagementScreen extends ConsumerWidget {
           const Icon(Icons.collections_bookmark_outlined, size: 48, color: Colors.grey),
           const SizedBox(height: 16),
           Text(
-            '컬렉션이 없습니다.',
+            l10n.collection_management_empty,
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
           Text(
-            '북마크한 비디오를 컬렉션으로 관리해보세요.',
+            l10n.collection_management_empty_description,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium,
           ),
@@ -103,7 +107,7 @@ class CollectionManagementScreen extends ConsumerWidget {
           ElevatedButton.icon(
             onPressed: () => _showCreateCollectionDialog(context, ref),
             icon: const Icon(Icons.add),
-            label: const Text('컬렉션 만들기'),
+            label: Text(l10n.collection_management_create),
           ),
         ],
       ),
@@ -114,19 +118,20 @@ class CollectionManagementScreen extends ConsumerWidget {
   void _showCreateCollectionDialog(BuildContext context, WidgetRef ref) {
     final nameController = TextEditingController();
     final descriptionController = TextEditingController();
+    final l10n = AppLocalizations.of(context);
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('새 컬렉션 만들기'),
+        title: Text(l10n.collection_management_create_title),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: nameController,
-              decoration: const InputDecoration(
-                labelText: '컬렉션 이름',
-                hintText: '새 컬렉션 이름을 입력하세요.',
+              decoration: InputDecoration(
+                labelText: l10n.collection_management_name,
+                hintText: l10n.collection_management_name_hint,
               ),
               autofocus: true,
               textCapitalization: TextCapitalization.sentences,
@@ -134,9 +139,9 @@ class CollectionManagementScreen extends ConsumerWidget {
             const SizedBox(height: 16),
             TextField(
               controller: descriptionController,
-              decoration: const InputDecoration(
-                labelText: '설명 (선택사항)',
-                hintText: '컬렉션에 대한 설명을 입력하세요.',
+              decoration: InputDecoration(
+                labelText: l10n.collection_management_description,
+                hintText: l10n.collection_management_description_hint,
               ),
               maxLines: 3,
               textCapitalization: TextCapitalization.sentences,
@@ -146,7 +151,7 @@ class CollectionManagementScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('취소'),
+            child: Text(l10n.collection_management_cancel),
           ),
           ElevatedButton(
             onPressed: () {
@@ -160,7 +165,7 @@ class CollectionManagementScreen extends ConsumerWidget {
                 Navigator.of(context).pop();
               }
             },
-            child: const Text('만들기'),
+            child: Text(l10n.collection_management_create_button),
           ),
         ],
       ),
@@ -180,6 +185,8 @@ class _CollectionListItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: ListTile(
@@ -189,7 +196,7 @@ class _CollectionListItem extends ConsumerWidget {
         trailing: IconButton(
           icon: const Icon(Icons.delete),
           onPressed: () => _showDeleteDialog(context, ref),
-          tooltip: '컬렉션 삭제',
+          tooltip: l10n.common_delete,
         ),
         onTap: () {
           context.push(
@@ -203,15 +210,17 @@ class _CollectionListItem extends ConsumerWidget {
 
   // 삭제 확인 다이얼로그
   void _showDeleteDialog(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('컬렉션 삭제'),
-        content: Text('\'${collection.name}\' 컬렉션을 정말 삭제하시겠습니까?'),
+        title: Text(l10n.collection_management_delete_title),
+        content: Text(l10n.collection_management_delete_message(collection.name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('취소'),
+            child: Text(l10n.collection_management_cancel),
           ),
           ElevatedButton(
             onPressed: () {
@@ -222,7 +231,7 @@ class _CollectionListItem extends ConsumerWidget {
               foregroundColor: Colors.white,
               backgroundColor: Colors.red,
             ),
-            child: const Text('삭제'),
+            child: Text(l10n.collection_management_delete_button),
           ),
         ],
       ),

@@ -401,159 +401,160 @@ def get_python_command():
 # 크롤러 실행 함수
 async def run_crawler(job_id: str, params: Dict[str, Any]):
     """크롤링 작업 실행"""
-    # 작업 정보 가져오기
-    job = get_job(job_id)
-    if not job:
-        logger.error(f"작업 {job_id}를 찾을 수 없음")
-        return
-    
-    # 작업 상태 업데이트
-    job.status = "running"
-    save_job(job)
-    
-    # 출력 디렉토리 설정
-    output_dir = os.path.join("output", job_id)
-    os.makedirs(output_dir, exist_ok=True)
-    
-    # 로그 파일 설정
-    log_file = os.path.join("logs", f"job_{job_id}.log")
-    
-    # python 명령 가져오기
-    python_cmd = get_python_command()
-    
-    # 현재 디렉토리 기준으로 run_crawler.py의 절대 경로 구성
-    crawler_script = os.path.join(os.getcwd(), "run_crawler.py")
-    
-    # 명령줄 인수 생성
-    cmd = [python_cmd, crawler_script]
-    
-    if params.get("artist"):
-        cmd.extend(["--artist", params["artist"]])
-    
-    if params.get("group"):
-        cmd.extend(["--group", params["group"]])
-    
-    if params.get("event"):
-        cmd.extend(["--event", params["event"]])
-    
-    if params.get("limit"):
-        cmd.extend(["--limit", str(params["limit"])])
-    
-    if params.get("start_date"):
-        cmd.extend(["--start-date", params["start_date"]])
-    
-    if params.get("end_date"):
-        cmd.extend(["--end-date", params["end_date"]])
-    
-    if params.get("format"):
-        cmd.extend(["--format", params["format"]])
-    
-    if params.get("output"):
-        cmd.extend(["--output", params["output"]])
-    
-    if params.get("save_to_db"):
-        cmd.append("--save-to-db")
-    
-    if params.get("download_thumbnails"):
-        cmd.append("--download-thumbnails")
-    
-    if params.get("skip_existing"):
-        cmd.append("--skip-existing")
-    
-    # 환경 변수 설정 - .env 파일에서 읽어온 값을 명시적으로 전달
-    env = os.environ.copy()
-    env["YOUTUBE_API_KEY"] = os.getenv("YOUTUBE_API_KEY")
-    env["SUPABASE_URL"] = os.getenv("SUPABASE_URL")
-    env["SUPABASE_KEY"] = os.getenv("SUPABASE_KEY")
-    env["SUPABASE_SERVICE_KEY"] = os.getenv("SUPABASE_SERVICE_KEY")
-    env["DB_HOST"] = os.getenv("DB_HOST")
-    env["DB_PORT"] = os.getenv("DB_PORT")
-    env["DB_NAME"] = os.getenv("DB_NAME")
-    env["DB_USER"] = os.getenv("DB_USER")
-    env["DB_PASSWORD"] = os.getenv("DB_PASSWORD")
-    env["DB_TYPE"] = "supabase"  # DB 타입을 명시적으로 설정
-
-    # 환경 변수 설정 로깅 (보안을 위해 키의 일부만 표시)
-    logger.info(f"환경 변수 설정: SUPABASE_URL={env['SUPABASE_URL']}")
-    
-    if env.get("SUPABASE_KEY"):
-        key_preview = env["SUPABASE_KEY"][:5] + "..." + env["SUPABASE_KEY"][-5:] if len(env["SUPABASE_KEY"]) > 10 else "설정되지 않음"
-        logger.info(f"환경 변수 설정: SUPABASE_KEY={key_preview}")
-    else:
-        logger.warning("환경 변수 설정: SUPABASE_KEY가 설정되지 않았습니다.")
+    try:
+        # 작업 정보 가져오기
+        job = get_job(job_id)
+        if not job:
+            logger.error(f"작업 {job_id}를 찾을 수 없음")
+            return
         
-    if env.get("SUPABASE_SERVICE_KEY"):
-        key_preview = env["SUPABASE_SERVICE_KEY"][:5] + "..." + env["SUPABASE_SERVICE_KEY"][-5:] if len(env["SUPABASE_SERVICE_KEY"]) > 10 else "설정되지 않음"
-        logger.info(f"환경 변수 설정: SUPABASE_SERVICE_KEY={key_preview}")
-    else:
-        logger.warning("환경 변수 설정: SUPABASE_SERVICE_KEY가 설정되지 않았습니다.")
-    
-    logger.info(f"환경 변수 설정: DB_TYPE=supabase (명시적으로 설정됨)")
-    
-    # 크롤링 작업 명령 로깅
-    logger.info(f"실행 명령: {' '.join(cmd)}")
-    
-    # 명령 실행 - 환경 변수 전달
-    with open(log_file, "w", encoding="utf-8") as f:
-        process = subprocess.Popen(
-            cmd,
-            stdout=f,
-            stderr=subprocess.STDOUT,
-            text=True,
-            bufsize=1,
-            env=env  # 환경 변수 전달
-        )
-    
-    # 프로세스가 완료될 때까지 대기
-    return_code = process.wait()
-    
-    # 작업 상태 및 결과 업데이트
-    job = get_job(job_id)  # 최신 상태 로드
-    job.end_time = datetime.now()
-    
-    if return_code == 0:
-        job.status = "completed"
-        # 생성된 파일 목록 가져오기
-        files = []
-        for root, _, filenames in os.walk(output_dir):
-            for filename in filenames:
-                files.append(os.path.join(root, filename))
-        
-        job.result = JobResult(
-            message="크롤링 작업이 성공적으로 완료되었습니다.",
-            output_dir=output_dir,
-            files=files
-        )
-    else:
-        job.status = "failed"
-        
-        # 로그 파일에서 오류 읽기
-        error_message = "알 수 없는 오류가 발생했습니다."
-        try:
-            with open(log_file, "r", encoding="utf-8") as f:
-                log_content = f.read()
-                error_message = log_content[-500:] if len(log_content) > 500 else log_content
-        except Exception as e:
-            logger.error(f"Error reading log file: {e}")
-        
-        job.result = JobResult(
-            error=error_message
-        )
-    
-    save_job(job)
-    
-except Exception as e:
-    logger.error(f"Error running crawler for job {job_id}: {e}")
-    
-    # 작업 상태 업데이트
-    job = get_job(job_id)
-    if job:
-        job.status = "failed"
-        job.end_time = datetime.now()
-        job.result = JobResult(
-            error=str(e)
-        )
+        # 작업 상태 업데이트
+        job.status = "running"
         save_job(job)
+        
+        # 출력 디렉토리 설정
+        output_dir = os.path.join("output", job_id)
+        os.makedirs(output_dir, exist_ok=True)
+        
+        # 로그 파일 설정
+        log_file = os.path.join("logs", f"job_{job_id}.log")
+        
+        # python 명령 가져오기
+        python_cmd = get_python_command()
+        
+        # 현재 디렉토리 기준으로 run_crawler.py의 절대 경로 구성
+        crawler_script = os.path.join(os.getcwd(), "run_crawler.py")
+        
+        # 명령줄 인수 생성
+        cmd = [python_cmd, crawler_script]
+        
+        if params.get("artist"):
+            cmd.extend(["--artist", params["artist"]])
+        
+        if params.get("group"):
+            cmd.extend(["--group", params["group"]])
+        
+        if params.get("event"):
+            cmd.extend(["--event", params["event"]])
+        
+        if params.get("limit"):
+            cmd.extend(["--limit", str(params["limit"])])
+        
+        if params.get("start_date"):
+            cmd.extend(["--start-date", params["start_date"]])
+        
+        if params.get("end_date"):
+            cmd.extend(["--end-date", params["end_date"]])
+        
+        if params.get("format"):
+            cmd.extend(["--format", params["format"]])
+        
+        if params.get("output"):
+            cmd.extend(["--output", params["output"]])
+        
+        if params.get("save_to_db"):
+            cmd.append("--save-to-db")
+        
+        if params.get("download_thumbnails"):
+            cmd.append("--download-thumbnails")
+        
+        if params.get("skip_existing"):
+            cmd.append("--skip-existing")
+        
+        # 환경 변수 설정 - .env 파일에서 읽어온 값을 명시적으로 전달
+        env = os.environ.copy()
+        env["YOUTUBE_API_KEY"] = os.getenv("YOUTUBE_API_KEY")
+        env["SUPABASE_URL"] = os.getenv("SUPABASE_URL")
+        env["SUPABASE_KEY"] = os.getenv("SUPABASE_KEY")
+        env["SUPABASE_SERVICE_KEY"] = os.getenv("SUPABASE_SERVICE_KEY")
+        env["DB_HOST"] = os.getenv("DB_HOST")
+        env["DB_PORT"] = os.getenv("DB_PORT")
+        env["DB_NAME"] = os.getenv("DB_NAME")
+        env["DB_USER"] = os.getenv("DB_USER")
+        env["DB_PASSWORD"] = os.getenv("DB_PASSWORD")
+        env["DB_TYPE"] = "supabase"  # DB 타입을 명시적으로 설정
+
+        # 환경 변수 설정 로깅 (보안을 위해 키의 일부만 표시)
+        logger.info(f"환경 변수 설정: SUPABASE_URL={env['SUPABASE_URL']}")
+        
+        if env.get("SUPABASE_KEY"):
+            key_preview = env["SUPABASE_KEY"][:5] + "..." + env["SUPABASE_KEY"][-5:] if len(env["SUPABASE_KEY"]) > 10 else "설정되지 않음"
+            logger.info(f"환경 변수 설정: SUPABASE_KEY={key_preview}")
+        else:
+            logger.warning("환경 변수 설정: SUPABASE_KEY가 설정되지 않았습니다.")
+            
+        if env.get("SUPABASE_SERVICE_KEY"):
+            key_preview = env["SUPABASE_SERVICE_KEY"][:5] + "..." + env["SUPABASE_SERVICE_KEY"][-5:] if len(env["SUPABASE_SERVICE_KEY"]) > 10 else "설정되지 않음"
+            logger.info(f"환경 변수 설정: SUPABASE_SERVICE_KEY={key_preview}")
+        else:
+            logger.warning("환경 변수 설정: SUPABASE_SERVICE_KEY가 설정되지 않았습니다.")
+        
+        logger.info(f"환경 변수 설정: DB_TYPE=supabase (명시적으로 설정됨)")
+        
+        # 크롤링 작업 명령 로깅
+        logger.info(f"실행 명령: {' '.join(cmd)}")
+        
+        # 명령 실행 - 환경 변수 전달
+        with open(log_file, "w", encoding="utf-8") as f:
+            process = subprocess.Popen(
+                cmd,
+                stdout=f,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1,
+                env=env  # 환경 변수 전달
+            )
+        
+        # 프로세스가 완료될 때까지 대기
+        return_code = process.wait()
+        
+        # 작업 상태 및 결과 업데이트
+        job = get_job(job_id)  # 최신 상태 로드
+        job.end_time = datetime.now()
+        
+        if return_code == 0:
+            job.status = "completed"
+            # 생성된 파일 목록 가져오기
+            files = []
+            for root, _, filenames in os.walk(output_dir):
+                for filename in filenames:
+                    files.append(os.path.join(root, filename))
+            
+            job.result = JobResult(
+                message="크롤링 작업이 성공적으로 완료되었습니다.",
+                output_dir=output_dir,
+                files=files
+            )
+        else:
+            job.status = "failed"
+            
+            # 로그 파일에서 오류 읽기
+            error_message = "알 수 없는 오류가 발생했습니다."
+            try:
+                with open(log_file, "r", encoding="utf-8") as f:
+                    log_content = f.read()
+                    error_message = log_content[-500:] if len(log_content) > 500 else log_content
+            except Exception as e:
+                logger.error(f"Error reading log file: {e}")
+            
+            job.result = JobResult(
+                error=error_message
+            )
+        
+        save_job(job)
+        
+    except Exception as e:
+        logger.error(f"Error running crawler for job {job_id}: {e}")
+        
+        # 작업 상태 업데이트
+        job = get_job(job_id)
+        if job:
+            job.status = "failed"
+            job.end_time = datetime.now()
+            job.result = JobResult(
+                error=str(e)
+            )
+            save_job(job)
 
 # API 엔드포인트
 @app.get("/api/artists", response_model=List[ArtistBase])
@@ -1020,6 +1021,14 @@ def update_scheduled_job_status(job_id: str, status: ScheduledJobStatus):
         except Exception as file_error:
             logger.error(f"파일 저장 오류: {str(file_error)}")
             raise IOError(f"작업 목록 파일 저장 오류: {str(file_error)}")
+        
+        # 작업 스케줄링
+        if job_data.is_active:
+            try:
+                schedule_job(job_data)
+                logger.info(f"작업 {job_id} 스케줄링 성공")
+            except Exception as sched_error:
+                logger.warning(f"작업 스케줄링 경고 (작업은 저장됨): {str(sched_error)}")
         
         logger.info(f"예약 작업 상태 업데이트 완료: {job_id}")
         return {"id": job_id, "is_active": status.is_active}

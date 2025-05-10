@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/core/l10n/app_localizations.dart';
 
 /// 커스텀 비디오 플레이어 컨트롤
 class CustomPlayerControls extends StatelessWidget {
@@ -53,6 +54,8 @@ class CustomPlayerControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     // LayoutBuilder를 사용하여 사용 가능한 공간을 확인
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -85,10 +88,11 @@ class CustomPlayerControls extends StatelessWidget {
                             color: Colors.white,
                           ),
                           onPressed: onMuteToggle,
+                          tooltip: isMuted ? l10n.video_player_unmute : l10n.video_player_mute,
                         ),
 
                         // 재생 속도 설정 버튼
-                        _buildPlaybackSpeedButton(context),
+                        _buildPlaybackSpeedButton(context, l10n),
                       ],
                     ),
                   ),
@@ -103,6 +107,7 @@ class CustomPlayerControls extends StatelessWidget {
                           color: Colors.white,
                         ),
                         onPressed: onPlayPause,
+                        tooltip: isPlaying ? l10n.video_player_pause : l10n.video_player_play,
                       ),
                     ),
                   ),
@@ -129,6 +134,7 @@ class CustomPlayerControls extends StatelessWidget {
                             min: 0,
                             max: duration.toDouble() > 0 ? duration.toDouble() : 1,
                             onChanged: (value) => onSeek(value.toInt()),
+                            label: l10n.video_player_progress,
                           ),
                         ),
 
@@ -149,6 +155,9 @@ class CustomPlayerControls extends StatelessWidget {
                                 color: Colors.white,
                               ),
                               onPressed: onFullScreenToggle,
+                              tooltip: isFullScreen
+                                  ? l10n.video_player_exit_fullscreen
+                                  : l10n.video_player_fullscreen,
                             ),
                           ],
                         ),
@@ -165,9 +174,9 @@ class CustomPlayerControls extends StatelessWidget {
   }
 
   /// 재생 속도 설정 버튼 구성
-  Widget _buildPlaybackSpeedButton(BuildContext context) {
+  Widget _buildPlaybackSpeedButton(BuildContext context, AppLocalizations l10n) {
     return PopupMenuButton<double>(
-      tooltip: '재생 속도',
+      tooltip: l10n.video_player_playback_speed,
       icon: Container(
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
         decoration: BoxDecoration(
@@ -194,9 +203,10 @@ class CustomPlayerControls extends StatelessWidget {
           value: 0.75,
           child: Text('0.75x', style: TextStyle(color: Colors.white)),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 1.0,
-          child: Text('1.0x (기본)', style: TextStyle(color: Colors.white)),
+          child: Text('${l10n.video_player_normal_speed} (1.0x)',
+              style: const TextStyle(color: Colors.white)),
         ),
         const PopupMenuItem(
           value: 1.25,

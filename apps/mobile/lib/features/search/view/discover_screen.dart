@@ -2,6 +2,7 @@ import 'package:api_client/api_client.dart';
 import 'package:flutter/material.dart' hide DateTimeRange;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile/core/l10n/app_localizations.dart';
 import 'package:mobile/features/feed/widgets/video_card.dart';
 import 'package:mobile/features/search/model/discover_state.dart';
 import 'package:mobile/features/search/provider/discover_provider.dart';
@@ -16,10 +17,11 @@ class DiscoverScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final discoverState = ref.watch(discoverProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('발견'),
+        title: Text(l10n.discover_title),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -43,12 +45,14 @@ class DiscoverScreen extends ConsumerWidget {
 
   /// 발견 화면 컨텐츠
   Widget _buildContent(BuildContext context, DiscoverState state) {
+    final l10n = AppLocalizations.of(context);
+
     return ListView(
       padding: const EdgeInsets.all(16.0),
       children: [
         // 인기 아티스트 섹션
         if (state.popularArtists.isNotEmpty) ...[
-          _buildSectionHeader(context, '인기 아티스트'),
+          _buildSectionHeader(context, l10n.discover_popular_artists),
           SizedBox(
             height: 130,
             child: ListView.builder(
@@ -65,35 +69,41 @@ class DiscoverScreen extends ConsumerWidget {
 
         // 트렌딩 비디오 섹션
         if (state.trendingVideos.isNotEmpty) ...[
-          _buildSectionHeader(context, '인기 팬캠'),
-          ...state.trendingVideos.take(3).map((video) => VideoCard(video: video)),
+          _buildSectionHeader(context, l10n.discover_trending_fancams),
+          ...state.trendingVideos.take(3).map((video) => VideoCard(
+                video: video,
+                onTap: () => Navigator.of(context).pushNamed('/video/${video.id}'),
+              )),
           TextButton(
             onPressed: () {
               // 더 많은 인기 비디오 화면으로 이동
               context.push(AppRoutes.feed);
             },
-            child: const Text('더 보기'),
+            child: Text(l10n.discover_view_more),
           ),
           const Divider(height: 32.0),
         ],
 
         // 최신 비디오 섹션
         if (state.recentVideos.isNotEmpty) ...[
-          _buildSectionHeader(context, '최신 팬캠'),
-          ...state.recentVideos.take(3).map((video) => VideoCard(video: video)),
+          _buildSectionHeader(context, l10n.discover_recent_fancams),
+          ...state.recentVideos.take(3).map((video) => VideoCard(
+                video: video,
+                onTap: () => Navigator.of(context).pushNamed('/video/${video.id}'),
+              )),
           TextButton(
             onPressed: () {
               // 더 많은 최신 비디오 화면으로 이동
               context.push(AppRoutes.feed);
             },
-            child: const Text('더 보기'),
+            child: Text(l10n.discover_view_more),
           ),
           const Divider(height: 32.0),
         ],
 
         // 인기 그룹별 영상
         if (state.groupVideos.isNotEmpty) ...[
-          _buildSectionHeader(context, '그룹별 인기 영상'),
+          _buildSectionHeader(context, l10n.discover_popular_by_group),
           Column(
             children: state.groupVideos.entries.take(3).map((entry) {
               final groupName = entry.key;
@@ -154,6 +164,8 @@ class DiscoverScreen extends ConsumerWidget {
 
   /// 그룹 섹션
   Widget _buildGroupSection(BuildContext context, String groupName, List<Video> videos) {
+    final l10n = AppLocalizations.of(context);
+
     if (videos.isEmpty) return const SizedBox();
 
     return Column(
@@ -168,14 +180,18 @@ class DiscoverScreen extends ConsumerWidget {
                 ),
           ),
         ),
-        if (videos.isNotEmpty) VideoCard(video: videos.first),
+        if (videos.isNotEmpty)
+          VideoCard(
+            video: videos.first,
+            onTap: () => Navigator.of(context).pushNamed('/video/${videos.first.id}'),
+          ),
         if (videos.length > 1)
           TextButton(
             onPressed: () {
               // 그룹 비디오 더 보기
               context.push('${AppRoutes.search}?group=$groupName');
             },
-            child: const Text('더 보기'),
+            child: Text(l10n.discover_view_more),
           ),
         const SizedBox(height: 16.0),
       ],

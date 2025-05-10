@@ -1,0 +1,25 @@
+{
+  "id": "e623ff7e-fe5c-4342-bfa7-6a87ef2c2f08",
+  "status": "completed",
+  "params": {
+    "artist": "",
+    "group": "",
+    "event": "",
+    "limit": 100,
+    "start_date": "",
+    "end_date": "",
+    "format": "json",
+    "output": "output",
+    "save_to_db": true,
+    "download_thumbnails": true,
+    "skip_existing": true
+  },
+  "start_time": "2025-05-08T19:28:38.537026",
+  "end_time": "2025-05-08T19:29:03.863548",
+  "result": {
+    "message": "크롤링 작업이 성공적으로 완료되었습니다.",
+    "output_dir": "output/e623ff7e-fe5c-4342-bfa7-6a87ef2c2f08",
+    "files": [],
+    "error": null
+  }
+}

@@ -366,25 +366,57 @@ def save_to_database(videos: List[Dict[str, Any]]) -> None:
             api_endpoint = f"{supabase_url}/rest/v1/videos"
             logger.info(f"[크롤링 프로세스] Supabase API 엔드포인트: {api_endpoint}")
             
-            # API 요청 헤더 설정
+            # API 요청 헤더 설정 (upsert 설정 추가)
             headers = {
                 "apikey": supabase_key,
                 "Authorization": f"Bearer {supabase_key}",
                 "Content-Type": "application/json",
-                "Prefer": "resolution=merge-duplicates"
+                "Prefer": "resolution=merge-duplicates,return=minimal"
             }
             logger.info(f"[크롤링 프로세스] Supabase API 헤더 설정 완료")
             
             # 현재 시간 (타임스탬프용)
             now = datetime.now().isoformat()
             
-            # 데이터 변환 - Supabase videos 테이블 구조에 맞게 조정
+            # 먼저 기존 비디오 데이터 가져오기 (중복 체크용)
+            try:
+                # YouTube 비디오 ID 목록 추출
+                platform_ids = [video.get("id", "") for video in videos]
+                
+                # 이미 존재하는 비디오 확인
+                existing_videos_response = requests.get(
+                    f"{api_endpoint}?platform=youtube&platform_id=in.({','.join(platform_ids)})",
+                    headers=headers
+                )
+                
+                if existing_videos_response.status_code == 200:
+                    existing_videos = existing_videos_response.json()
+                    existing_platform_ids = {video["platform_id"] for video in existing_videos}
+                    logger.info(f"[크롤링 프로세스] {len(existing_platform_ids)}개의 이미 존재하는 비디오 발견됨")
+                else:
+                    logger.error(f"[크롤링 프로세스] 기존 비디오 조회 실패: {existing_videos_response.status_code} - {existing_videos_response.text}")
+                    existing_platform_ids = set()
+            except Exception as e:
+                logger.error(f"[크롤링 프로세스] 기존 비디오 조회 중 오류 발생: {str(e)}")
+                existing_platform_ids = set()
+            
+            # 데이터 변환 - Supabase videos 테이블 구조에 맞게 조정 (중복 제외)
             formatted_videos = []
+            skipped_count = 0
+            new_count = 0
+            
             for video in videos:
+                video_id = video.get("id", "")
+                
+                # 이미 존재하는 비디오 건너뛰기
+                if video_id in existing_platform_ids:
+                    logger.info(f"[크롤링 프로세스] 비디오 '{video_id}'은(는) 이미 데이터베이스에 존재합니다. 건너뜁니다.")
+                    skipped_count += 1
+                    continue
+                
                 # 비디오 데이터를 Supabase 테이블 구조에 맞게 변환
                 formatted_video = {
-                    "id": str(uuid.uuid4()),  # 고유 UUID 생성
-                    "platform_id": video.get("id", ""),  # YouTube 비디오 ID
+                    "platform_id": video_id,  # YouTube 비디오 ID
                     "platform": "youtube",
                     "title": video.get("title", ""),
                     "description": video.get("description", ""),
@@ -397,13 +429,17 @@ def save_to_database(videos: List[Dict[str, Any]]) -> None:
                     "is_fancam": True,  # 팬캠으로 표시
                     "created_at": now,
                     "updated_at": now,
-                    "video_url": f"https://www.youtube.com/watch?v={video.get('id', '')}"  # 비디오 URL 추가
+                    "video_url": f"https://www.youtube.com/watch?v={video_id}"  # 비디오 URL 추가
                 }
                 
-                # 로깅
-                logger.info(f"[크롤링 프로세스] 비디오 변환: {video.get('id', '')} -> {formatted_video['id']} (platform_id: {formatted_video['platform_id']})")
-                
+                new_count += 1
                 formatted_videos.append(formatted_video)
+            
+            logger.info(f"[크롤링 프로세스] 처리 결과: 새로운 영상 {new_count}개, 중복 영상 {skipped_count}개")
+            
+            if not formatted_videos:
+                logger.info("[크롤링 프로세스] 새로 저장할 비디오가 없습니다.")
+                return
             
             # 일괄 처리할 경우 100개씩 나누어 처리 (API 제한 고려)
             batch_size = 20
@@ -413,14 +449,6 @@ def save_to_database(videos: List[Dict[str, Any]]) -> None:
                 try:
                     # 요청 전 정보 로깅
                     logger.info(f"[크롤링 프로세스] Supabase API 요청 시작 (배치 크기: {len(batch)})")
-                    
-                    # 첫 번째 항목의 데이터 형식을 로그에 기록 (디버깅용)
-                    if batch and len(batch) > 0:
-                        sample_item = batch[0]
-                        logger.info(f"[크롤링 프로세스] 샘플 데이터 형식 - tags 타입: {type(sample_item.get('tags')).__name__}")
-                        if 'tags' in sample_item and sample_item['tags']:
-                            tag_sample = sample_item['tags'][:3] if len(sample_item['tags']) > 3 else sample_item['tags']
-                            logger.info(f"[크롤링 프로세스] tags 샘플 내용(최대 3개): {tag_sample}")
                     
                     # Supabase REST API에 POST 요청
                     response = requests.post(
@@ -438,14 +466,6 @@ def save_to_database(videos: List[Dict[str, Any]]) -> None:
                         logger.error(f"[크롤링 프로세스] Supabase API 오류: {response.status_code} - {response.text}")
                         # 응답 본문 전체 로깅 (디버깅용)
                         logger.error(f"[크롤링 프로세스] 응답 본문: {response.text}")
-                        
-                        # 오류 발생 시 요청 본문의 일부를 로그에 기록
-                        try:
-                            import json
-                            req_json = json.dumps(batch[0])[:300] + "..." if batch else "{}"
-                            logger.error(f"[크롤링 프로세스] 요청 본문 샘플(첫 항목): {req_json}")
-                        except Exception as log_err:
-                            logger.error(f"[크롤링 프로세스] 요청 본문 로깅 실패: {str(log_err)}")
                         
                 except Exception as e:
                     logger.error(f"[크롤링 프로세스] Supabase API 요청 중 오류 발생: {str(e)}")

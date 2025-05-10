@@ -36,6 +36,9 @@ class AppRoutes {
   /// 구독 관리 화면
   static const subscription = '/profile/subscription';
 
+  /// 구독 상품 화면
+  static const subscriptionPlans = '/subscription-plans';
+
   /// 비디오 상세 화면
   static const video = '/video/:id';
 
@@ -59,4 +62,10 @@ class AppRoutes {
 
   /// 'For You' 화면
   static const String forYou = '/for-you';
+
+  /// 비디오 카테고리 상세 화면
+  static const videoCategory = '/category/:categoryId';
+
+  /// 구독 혜택 소개 화면
+  static const subscriptionBenefits = '/subscription/benefits';
 }

@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:mobile/core/l10n/app_localizations.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../auth/controller/auth_controller.dart';
 import '../../bookmark/widgets/bookmark_button.dart';
 import '../../subscription/helpers/subscription_helpers.dart';
-import '../../subscription/provider/subscription_provider.dart';
 import '../../vote/widgets/rating_panel.dart';
 import '../providers/video_player_provider.dart';
 import '../widgets/related_videos_list.dart';
@@ -36,6 +36,7 @@ class VideoPlayerScreen extends HookConsumerWidget {
       key: key,
       builder: (context, ref, _) {
         final asyncVideo = ref.watch(videoByIdProvider(videoId));
+        final l10n = AppLocalizations.of(context);
 
         return asyncVideo.when(
           data: (video) => VideoPlayerScreen(video: video),
@@ -47,7 +48,7 @@ class VideoPlayerScreen extends HookConsumerWidget {
           error: (error, stackTrace) => Scaffold(
             appBar: AppBar(),
             body: Center(
-              child: Text('비디오를 불러올 수 없습니다: $error'),
+              child: Text(l10n.video_player_load_error(error.toString())),
             ),
           ),
         );
@@ -65,42 +66,44 @@ class VideoPlayerScreen extends HookConsumerWidget {
 
   /// 비디오 공유 처리
   void _shareVideo(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     Share.share(
-      '펄스 앱에서 "${video.title}" 비디오를 확인해보세요!\n'
-      '${video.videoUrl}',
-      subject: '펄스 비디오 공유: ${video.title}',
+      l10n.video_player_share_message(video.title, video.videoUrl),
+      subject: l10n.video_player_share_subject(video.title),
     );
   }
 
   // 비디오 정보 표시
   void _showVideoInfoDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('비디오 정보'),
+        title: Text(l10n.video_player_info_dialog_title),
         content: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('제목: ${video.title}'),
+              Text('${l10n.video_title_prefix}${video.title}'),
               const SizedBox(height: 8),
-              Text('ID: ${video.id}'),
+              Text('${l10n.video_id_prefix}${video.id}'),
               const SizedBox(height: 8),
-              Text('플랫폼: ${video.platform}'),
+              Text('${l10n.video_platform_prefix}${video.platform}'),
               const SizedBox(height: 8),
-              Text('플랫폼 ID: ${video.platformId}'),
+              Text('${l10n.video_platform_id_prefix}${video.platformId}'),
               const SizedBox(height: 8),
-              Text('URL: ${video.videoUrl}'),
+              Text('${l10n.video_url_prefix}${video.videoUrl}'),
               const SizedBox(height: 8),
-              Text('설명: ${video.description ?? "설명 없음"}'),
+              Text(
+                  '${l10n.video_description_prefix}${video.description ?? l10n.video_player_no_description}'),
             ],
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('닫기'),
+            child: Text(l10n.common_close),
           ),
         ],
       ),
@@ -109,6 +112,7 @@ class VideoPlayerScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final relatedVideosAsync = ref.watch(relatedVideosProvider(video.id));
     final isFullScreen = useState(false);
     final isLoading = useState(true);
@@ -125,9 +129,8 @@ class VideoPlayerScreen extends HookConsumerWidget {
 
     // 인증 및 구독 상태 확인
     final authState = ref.watch(authControllerProvider);
-    final subscriptionState = ref.watch(subscriptionProvider);
+    final isPremium = SubscriptionHelpers.isPremiumUser(ref);
     final isAuthenticated = authState.isAuthenticated;
-    final isPremium = subscriptionState.isPremium;
 
     // 접근 권한 여부
     final hasAccessToVideo = isAuthenticated && isPremium;
@@ -151,7 +154,7 @@ class VideoPlayerScreen extends HookConsumerWidget {
       SubscriptionHelpers.showSubscriptionDialog(
         context,
         isAuthenticated,
-        isPremium,
+        SubscriptionHelpers.isPremiumUser(ref),
       );
     }
 
@@ -174,6 +177,29 @@ class VideoPlayerScreen extends HookConsumerWidget {
       // 화면 방향을 세로로 고정
       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
+      // 무료 시청 한도 확인 (이전 _checkFreeViewsLimit 로직 통합)
+      Future<void> checkFreeViewsLimit() async {
+        if (!isScreenActive.value) return;
+
+        final isPremium = SubscriptionHelpers.isPremiumUser(ref);
+
+        // 프리미엄 사용자는 제한 없음
+        if (isPremium) return;
+
+        // 무료 시청 한도에 도달했는지 확인 (실제 구현에서는 서비스에서 가져와야 함)
+        // 예시: 최대 10회 중 9회 사용, 현재 영상이 10회차
+        const viewsUsed = 9; // 예시 값
+        const maxViews = 10;
+
+        if (viewsUsed >= maxViews && isScreenActive.value) {
+          // 무료 시청 한도 도달 시 안내 다이얼로그 표시
+          showSubscriptionPrompt();
+        }
+      }
+
+      // 무료 시청 한도 확인 실행
+      checkFreeViewsLimit();
+
       // 비디오 액세스 확인 및 초기화 함수
       Future<void> initializePlayer() async {
         if (!isScreenActive.value) return;
@@ -193,7 +219,7 @@ class VideoPlayerScreen extends HookConsumerWidget {
         // 비디오 URL 유효성 검사
         if (video.videoUrl.isEmpty) {
           if (isScreenActive.value) {
-            errorMessage.value = '동영상 URL이 제공되지 않았습니다.';
+            errorMessage.value = l10n.video_player_load_error(l10n.video_player_youtube_id_error);
             isLoading.value = false;
           }
           debugPrint('동영상 URL이 비어있음');
@@ -239,7 +265,7 @@ class VideoPlayerScreen extends HookConsumerWidget {
           } catch (e) {
             debugPrint('비디오 컨트롤러 초기화 오류: $e');
             if (isScreenActive.value) {
-              errorMessage.value = '동영상을 로드할 수 없습니다: $e';
+              errorMessage.value = l10n.video_player_load_error(e.toString());
               isLoading.value = false;
             }
           }
@@ -310,7 +336,7 @@ class VideoPlayerScreen extends HookConsumerWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 leading: IconButton(
-                  icon: const Icon(Icons.arrow_back),
+                  icon: Icon(Icons.arrow_back, semanticLabel: l10n.video_player_back),
                   onPressed: () {
                     // 컨트롤러 중지
                     controller.value?.pause();
@@ -347,7 +373,10 @@ class VideoPlayerScreen extends HookConsumerWidget {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Icon(Icons.error, color: Colors.red, size: 48),
+                                  Icon(Icons.error,
+                                      color: Colors.red,
+                                      size: 48,
+                                      semanticLabel: l10n.video_player_error_icon),
                                   const SizedBox(height: 16),
                                   Text(
                                     errorMessage.value!,
@@ -360,11 +389,15 @@ class VideoPlayerScreen extends HookConsumerWidget {
                               ),
                             )
                           : isLoading.value
-                              ? const Center(child: CircularProgressIndicator())
+                              ? Center(
+                                  child: CircularProgressIndicator(
+                                    semanticsLabel: l10n.video_player_loading,
+                                  ),
+                                )
                               : controller.value != null
                                   ? VideoPlayer(controller.value!)
-                                  : const Center(
-                                      child: Text('비디오를 찾을 수 없습니다.'),
+                                  : Center(
+                                      child: Text(l10n.video_player_no_video),
                                     ),
                     ),
 
@@ -382,10 +415,10 @@ class VideoPlayerScreen extends HookConsumerWidget {
                                 color: Colors.amber,
                               ),
                               const SizedBox(height: 16),
-                              const Text(
-                                '이 콘텐츠를 시청하려면\n구독이 필요합니다',
+                              Text(
+                                l10n.video_player_need_subscription,
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -393,7 +426,7 @@ class VideoPlayerScreen extends HookConsumerWidget {
                               const SizedBox(height: 24),
                               ElevatedButton(
                                 onPressed: showSubscriptionPrompt,
-                                child: const Text('구독 정보 보기'),
+                                child: Text(l10n.video_player_view_subscription),
                               ),
                             ],
                           ),
@@ -415,7 +448,8 @@ class VideoPlayerScreen extends HookConsumerWidget {
                               ),
                               loading: () => const Center(child: CircularProgressIndicator()),
                               error: (error, _) => Center(
-                                child: Text('관련 비디오를 불러올 수 없습니다: $error'),
+                                child:
+                                    Text(l10n.video_player_related_videos_error(error.toString())),
                               ),
                             ),
                           ],

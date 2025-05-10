@@ -1,99 +1,58 @@
 import 'package:api_client/api_client.dart';
 
-/// 피드 탭
+/// 피드 탭 정의
 enum FeedTab {
-  /// 인기 비디오
+  /// 인기 탭
   trending,
 
-  /// 최신 비디오
+  /// 최신 탭
   rising,
 }
 
-/// 피드 상태
+/// 피드 뷰 타입 정의
+enum FeedViewType {
+  /// 인기 비디오 (조회수 기준)
+  popular,
+
+  /// 최신 비디오 (최근 업로드순)
+  latest,
+
+  /// 즐겨찾기 (나중에 구현)
+  favorites,
+}
+
+/// 피드 상태 모델
 class FeedState {
-  /// 기본 생성자
   const FeedState({
-    this.trendingVideos = const [],
-    this.risingVideos = const [],
-    this.selectedTab = FeedTab.trending,
-    this.hasMoreTrending = true,
-    this.hasMoreRising = true,
-    this.lastTrendingId,
-    this.lastRisingId,
-    this.loadingMore = false,
-    this.lastRefreshed,
+    required this.videos,
+    required this.isLoading,
+    required this.hasMore,
     this.error,
-    this.isOffline = false,
   });
 
-  /// 인기 비디오 목록
-  final List<Video> trendingVideos;
+  factory FeedState.initial() => const FeedState(
+        videos: [],
+        isLoading: false,
+        hasMore: true,
+        error: null,
+      );
 
-  /// 최신 비디오 목록
-  final List<Video> risingVideos;
-
-  /// 현재 선택된 탭
-  final FeedTab selectedTab;
-
-  /// 인기 비디오 더 있는지 여부
-  final bool hasMoreTrending;
-
-  /// 최신 비디오 더 있는지 여부
-  final bool hasMoreRising;
-
-  /// 마지막 인기 비디오 ID
-  final String? lastTrendingId;
-
-  /// 마지막 최신 비디오 ID
-  final String? lastRisingId;
-
-  /// 추가 로딩 중 여부
-  final bool loadingMore;
-
-  /// 마지막 새로고침 시간
-  final DateTime? lastRefreshed;
-
-  /// 오류 메시지
+  final List<Video> videos;
+  final bool isLoading;
+  final bool hasMore;
   final String? error;
 
-  /// 오프라인 모드 여부
-  final bool isOffline;
-
-  /// 현재 선택된 탭의 비디오 목록
-  List<Video> get currentVideos => selectedTab == FeedTab.trending ? trendingVideos : risingVideos;
-
-  /// 현재 선택된 탭의 더 불러올 수 있는지 여부
-  bool get hasMore => selectedTab == FeedTab.trending ? hasMoreTrending : hasMoreRising;
-
-  /// 현재 선택된 탭의 마지막 비디오 ID
-  String? get lastId => selectedTab == FeedTab.trending ? lastTrendingId : lastRisingId;
-
-  /// 상태 복사본 생성
   FeedState copyWith({
-    List<Video>? trendingVideos,
-    List<Video>? risingVideos,
-    FeedTab? selectedTab,
-    bool? hasMoreTrending,
-    bool? hasMoreRising,
-    String? lastTrendingId,
-    String? lastRisingId,
-    bool? loadingMore,
-    DateTime? lastRefreshed,
+    List<Video>? videos,
+    bool? isLoading,
+    bool? hasMore,
     String? error,
-    bool? isOffline,
   }) {
     return FeedState(
-      trendingVideos: trendingVideos ?? this.trendingVideos,
-      risingVideos: risingVideos ?? this.risingVideos,
-      selectedTab: selectedTab ?? this.selectedTab,
-      hasMoreTrending: hasMoreTrending ?? this.hasMoreTrending,
-      hasMoreRising: hasMoreRising ?? this.hasMoreRising,
-      lastTrendingId: lastTrendingId ?? this.lastTrendingId,
-      lastRisingId: lastRisingId ?? this.lastRisingId,
-      loadingMore: loadingMore ?? this.loadingMore,
-      lastRefreshed: lastRefreshed ?? this.lastRefreshed,
+      videos: videos ?? this.videos,
+      isLoading: isLoading ?? this.isLoading,
+      hasMore: hasMore ?? this.hasMore,
       error: error ?? this.error,
-      isOffline: isOffline ?? this.isOffline,
     );
   }
 }
