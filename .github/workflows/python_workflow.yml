@@ -73,7 +73,7 @@ jobs:
         run: pytest --cov=./app --cov-report=xml
       
       - name: 커버리지 업로드
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           file: ./crawler/coverage.xml
           fail_ci_if_error: true
