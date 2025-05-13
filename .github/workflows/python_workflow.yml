@@ -21,7 +21,7 @@ jobs:
       run:
         working-directory: ./crawler
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Python 설정
         uses: actions/setup-python@v4
@@ -55,7 +55,7 @@ jobs:
       run:
         working-directory: ./crawler
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Python 설정
         uses: actions/setup-python@v4
@@ -87,7 +87,7 @@ jobs:
       run:
         working-directory: ./crawler
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: 환경 변수 설정
         run: |
@@ -133,7 +133,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Google Cloud 인증
         uses: 'google-github-actions/auth@v1'
