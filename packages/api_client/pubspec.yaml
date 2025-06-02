@@ -44,7 +44,7 @@ dev_dependencies:
   retrofit_generator: ^9.1.9
   json_serializable: 6.7.1
   # 린트 및 분석
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
   riverpod_generator: ^2.3.2
   freezed: ^2.5.3
   envied_generator: ^1.1.1
